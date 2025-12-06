@@ -1,29 +1,38 @@
 import Usuario from "../models/usuario.js";
 
-export const generarlecturaprincipal = async (req, res) => {
+export const getPagos = async (req, res) => {
   try {
   } catch (error) {
     res.status(400).json({ error });
   }
 };
 
-export const generarlecturadiaria = async (req, res) => {
+export const getPagoUsuario = async (req, res) => {
   try {
   } catch (error) {
     res.status(400).json({ error });
   }
 };
 
-export const obtenerlecturasdeunusuario = async (req, res) => {
+export const postNuevoPago = async (req, res) => {
   try {
   } catch (error) {
     res.status(400).json({ error });
   }
 };
 
-export const obtenerlecturaporid = async (req, res) => {
+export const deletePago = async (req, res) => {
   try {
   } catch (error) {
     res.status(400).json({ error });
   }
 };
+
+export const getEstadoUsuario = async (req, res) => {
+  try {
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+};
+
+
