@@ -5,18 +5,27 @@ import {
   postNuevoPago,
   deletePago,
   getEstadoUsuario,
-} from "../controllers/pagoscontrollers.js";
+} from "../controllers/pagos.js";
+
+import { validarPago } from "../helpers/pagos.js";
+import { validarCampos } from "../middlewares/validarCampos.js";
+import { verificarPagoExiste } from "../middlewares/verificarPagoExiste.js";
 
 const router = Router();
 
-router.get("/api/pago", getPagos);
+router.get("/", getPagos);
 
-router.get("/api/pago/:id", getPagoUsuario);
+router.get("/:id", getPagoUsuario);
 
-router.post("/api/pago", postNuevoPago);
+router.post(
+  "/",
+  (req, res, next) => { req.errores = validarPago(req.body); next(); },
+  validarCampos,
+  postNuevoPago
+);
 
-router.delete("/api/pago/:id", deletePago);
+router.delete("/:id", verificarPagoExiste, deletePago);
 
-router.get("/api/pago/estado/:id", getEstadoUsuario);
+router.get("/estado/:id", getEstadoUsuario);
 
 export default router;

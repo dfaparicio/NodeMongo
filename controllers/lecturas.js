@@ -1,4 +1,4 @@
-import Usuario from "../models/usuario.js";
+/* import Usuario from "../models/usuario.js";
 
 export const generarlecturaprincipal = async (req, res) => {
   try {
@@ -27,3 +27,4 @@ export const obtenerlecturaporid = async (req, res) => {
     res.status(400).json({ error });
   }
 };
+ */

@@ -1,4 +1,4 @@
-import { Router } from "express";
+/* import { Router } from "express";
 import {
   generarlecturaprincipal,
   generarlecturadiaria,
@@ -17,3 +17,4 @@ router.get("/api/lecturas/usuario/:usuario_id", obtenerlecturasdeunusuario);
 router.get("/api/lecturas/:id", obtenerlecturaporid);
 
 export default router;
+ */

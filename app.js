@@ -1,21 +1,30 @@
-import express from "express"
-import cors from "cors"
-import 'dotenv/config'
-import { conectarMongo } from "./database/cnx-mongo.js"
-import usuarioRoute from "./routes/usuario.js"
-import lecturaRoute from "./routes/lecturas.js"
-import pagosRoute from "./routes/pagos.js"
+import express from "express";
+import cors from "cors";
+import "dotenv/config";
+import { conectarMongo } from "./database/cnx-mongo.js";
 
-const app = express()
-conectarMongo()
+// Rutas
+import usuarioRoute from "./routes/usuario.js";/* 
+import lecturaRoute from "./routes/lecturas.js"; */
+import pagosRoute from "./routes/pagos.js";
 
-app.use(cors())
-app.use(express.json())
+const app = express();
 
-app.use("/api/usuario",usuarioRoute)
-app.use("/api/lectura",lecturaRoute)
-app.use("/api/pago",pagosRoute)
+// Conectar a MongoDB
+conectarMongo();
 
-app.listen(process.env.PORT,()=>{
-    console.log(`Servidor escuchando en el puerto ${process.env.PORT}`);
-})
+// Middlewares globales
+app.use(cors());
+app.use(express.json());
+
+// Rutas
+app.use("/api/usuario", usuarioRoute);/* 
+app.use("/api/lectura", lecturaRoute); */
+app.use("/api/pago", pagosRoute);
+
+// Puerto
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`🔥 Servidor escuchando en el puerto ${PORT}`);
+});
