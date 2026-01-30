@@ -237,7 +237,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"usuario_id\": \"{{usuarioId}}\",\n  \"monto\": 100,\n  \"fecha\": \"2026-01-29\"\n}"
+              "raw": "{\n  \"usuarioId\": \"{{usuarioId}}\",\n  \"monto\": 100,\n  \"fecha\": \"2026-01-29\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/pago",

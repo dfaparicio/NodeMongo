@@ -16,33 +16,31 @@ import {
 const router = Router();
 
 router.post(
-  "/principal/:usuario_id",
+  "/principal/:usuarioId",
   [
-    check("usuario_id", "El usuario_id es obligatorio").notEmpty(),
-    check("usuario_id", "ID inválido de MongoDB").isMongoId(),
+    check("usuarioId", "El usuarioId es obligatorio").notEmpty(),
+    check("usuarioId", "ID inválido de MongoDB").isMongoId(),
   ],
-  verificarLectura,
   verificarLecturaPrincipal,
   validarCampos,
   generarlecturaprincipal,
 );
 
 router.post(
-  "/diaria/:usuario_id",
+  "/diaria/:usuarioId",
   [
-    check("usuario_id", "El usuario_id es obligatorio").notEmpty(),
-    check("usuario_id", "ID inválido de MongoDB").isMongoId(),
+    check("usuarioId", "El usuarioId es obligatorio").notEmpty(),
+    check("usuarioId", "ID inválido de MongoDB").isMongoId(),
   ],
-  verificarLectura,
   validarCampos,
   generarlecturadiaria,
 );
 
 router.get(
-  "/usuario/:usuario_id",
+  "/usuario/:usuarioId",
   [
-    check("usuario_id", "El usuario_id es obligatorio").notEmpty(),
-    check("usuario_id", "ID inválido de MongoDB").isMongoId(),
+    check("usuarioId", "El usuarioId es obligatorio").notEmpty(),
+    check("usuarioId", "ID inválido de MongoDB").isMongoId(),
   ],
   validarCampos,
   obtenerlecturasdeunusuario,

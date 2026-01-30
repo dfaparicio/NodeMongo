@@ -26,6 +26,8 @@ const LecturaSchema = new mongoose.Schema(
 
 const Lectura = mongoose.model("Lectura", LecturaSchema);
 
+export default Lectura;
+
 export const lecturaPrincipal = async (idUsuario) => {
   const lecturaExistente = await Lectura.findOne({
     usuarioId: idUsuario,
