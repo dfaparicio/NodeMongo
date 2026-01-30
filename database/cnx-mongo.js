@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 
-export const conectarMongo=()=>{
-    mongoose.connect('mongodb://127.0.0.1:27017/borraradso259')
-  .then(() => console.log('Base de Datos conectada!!!'));
+export default async function conectarMongo(){
+  try {
+    await mongoose.connect(process.env.MONGO_URL)
+    console.log('Base de Datos conectada!!!');
+  } catch (error) {
+    console.log(error);
+  }
 }
 

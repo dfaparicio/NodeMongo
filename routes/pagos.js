@@ -19,7 +19,7 @@ router.get("/:id", getPagoUsuario);
 
 router.post(
   "/",
-  (req, res, next) => { req.errores = validarPago(req.body); next(); },
+  (req, res, next) => { req.errors = validarPago(req.body); next(); },
   validarCampos,
   postNuevoPago
 );
