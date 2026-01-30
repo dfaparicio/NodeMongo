@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
-import { conectarMongo } from "./database/cnx-mongo.js";
+import conectarMongo from "./database/cnx-mongo.js";
 
 // Rutas
 import usuarioRoute from "./routes/usuario.js";/* 
