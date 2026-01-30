@@ -5,6 +5,28 @@
     "description": "Colección de endpoints para la API de Usuarios, Pagos y Lecturas (Node.js + MongoDB)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:2403/api"
+    },
+    {
+      "key": "usuarioId",
+      "value": ""
+    },
+    {
+      "key": "lecturaId",
+      "value": ""
+    },
+    {
+      "key": "pagoId",
+      "value": ""
+    },
+    {
+      "key": "geminiApiKey",
+      "value": "AIzaSyAPZfTzsS6SppwxH_JH7v0sbkYOgUs2v9I"
+    }
+  ],
   "item": [
     {
       "name": "Usuarios",
@@ -15,11 +37,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/usuarios",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["usuarios"]
+              "raw": "{{baseUrl}}/usuario",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario"]
             }
           }
         },
@@ -29,11 +49,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/usuarios/email?email=usuario@email.com",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["usuarios","email"],
+              "raw": "{{baseUrl}}/usuario/email?email=usuario@email.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario","email"],
               "query": [
                 {
                   "key": "email",
@@ -58,11 +76,9 @@
               "raw": "{\n  \"nombre\": \"Juan Perez\",\n  \"edad\": 30,\n  \"fechanacimiento\": \"1996-01-29\",\n  \"email\": \"juan@email.com\"\n}"
             },
             "url": {
-              "raw": "http://localhost:2403/usuarios",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["usuarios"]
+              "raw": "{{baseUrl}}/usuario",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario"]
             }
           }
         },
@@ -81,11 +97,9 @@
               "raw": "{\n  \"nombre\": \"Juan Actualizado\"\n}"
             },
             "url": {
-              "raw": "http://localhost:2403/usuarios/:id",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["usuarios",":id"]
+              "raw": "{{baseUrl}}/usuario/{{usuarioId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario","{{usuarioId}}"]
             }
           }
         },
@@ -95,11 +109,9 @@
             "method": "PUT",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/usuarios/activar/:id",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["usuarios","activar",":id"]
+              "raw": "{{baseUrl}}/usuario/activar/{{usuarioId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario","activar","{{usuarioId}}"]
             }
           }
         },
@@ -109,11 +121,9 @@
             "method": "PUT",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/usuarios/inactivar/:id",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["usuarios","inactivar",":id"]
+              "raw": "{{baseUrl}}/usuario/inactivar/{{usuarioId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario","inactivar","{{usuarioId}}"]
             }
           }
         },
@@ -123,11 +133,9 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/usuarios/:id",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["usuarios",":id"]
+              "raw": "{{baseUrl}}/usuario/{{usuarioId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario","{{usuarioId}}"]
             }
           }
         }
@@ -142,11 +150,9 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/lecturas/principal/:usuario_id",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["lecturas","principal",":usuario_id"]
+              "raw": "{{baseUrl}}/lectura/principal/{{usuarioId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["lectura","principal","{{usuarioId}}"]
             }
           }
         },
@@ -156,11 +162,9 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/lecturas/diaria/:usuario_id",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["lecturas","diaria",":usuario_id"]
+              "raw": "{{baseUrl}}/lectura/diaria/{{usuarioId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["lectura","diaria","{{usuarioId}}"]
             }
           }
         },
@@ -170,11 +174,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/lecturas/usuario/:usuario_id",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["lecturas","usuario",":usuario_id"]
+              "raw": "{{baseUrl}}/lectura/usuario/{{usuarioId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["lectura","usuario","{{usuarioId}}"]
             }
           }
         },
@@ -184,11 +186,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/lecturas/:id",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["lecturas",":id"]
+              "raw": "{{baseUrl}}/lectura/{{lecturaId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["lectura","{{lecturaId}}"]
             }
           }
         }
@@ -203,11 +203,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/pagos",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["pagos"]
+              "raw": "{{baseUrl}}/pago",
+              "host": ["{{baseUrl}}"],
+              "path": ["pago"]
             }
           }
         },
@@ -217,11 +215,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/pagos/:id",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["pagos",":id"]
+              "raw": "{{baseUrl}}/pago/{{pagoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["pago","{{pagoId}}"]
             }
           }
         },
@@ -236,19 +232,17 @@
               },
               {
                 "key": "gemini-api-key",
-                "value": "AIzaSyAPZfTzsS6SppwxH_JH7v0sbkYOgUs2v9I"
+                "value": "{{geminiApiKey}}"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"usuario_id\": \":usuario_id\",\n  \"monto\": 100,\n  \"fecha\": \"2026-01-29\"\n}"
+              "raw": "{\n  \"usuario_id\": \"{{usuarioId}}\",\n  \"monto\": 100,\n  \"fecha\": \"2026-01-29\"\n}"
             },
             "url": {
-              "raw": "http://localhost:2403/pagos",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["pagos"]
+              "raw": "{{baseUrl}}/pago",
+              "host": ["{{baseUrl}}"],
+              "path": ["pago"]
             }
           }
         },
@@ -258,11 +252,9 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/pagos/:id",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["pagos",":id"]
+              "raw": "{{baseUrl}}/pago/{{pagoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["pago","{{pagoId}}"]
             }
           }
         },
@@ -272,11 +264,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:2403/pagos/estado/:id",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "2403",
-              "path": ["pagos","estado",":id"]
+              "raw": "{{baseUrl}}/pago/estado/{{usuarioId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["pago","estado","{{usuarioId}}"]
             }
           }
         }
