@@ -1,0 +1,132 @@
+{
+  "lecturas": [
+    {
+      "method": "POST",
+      "path": "/principal/:usuario_id",
+      "params": ["usuario_id"],
+      "description": "Genera la lectura principal de un usuario",
+      "validations": [
+        "usuario_id obligatorio",
+        "usuario_id debe ser un ID válido de MongoDB"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/diaria/:usuario_id",
+      "params": ["usuario_id"],
+      "description": "Genera la lectura diaria de un usuario",
+      "validations": [
+        "usuario_id obligatorio",
+        "usuario_id debe ser un ID válido de MongoDB"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/usuario/:usuario_id",
+      "params": ["usuario_id"],
+      "description": "Obtiene todas las lecturas de un usuario",
+      "validations": [
+        "usuario_id obligatorio",
+        "usuario_id debe ser un ID válido de MongoDB"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/:id",
+      "params": ["id"],
+      "description": "Obtiene una lectura por su ID",
+      "validations": [
+        "id obligatorio",
+        "id debe ser un ID válido de MongoDB"
+      ]
+    }
+  ],
+  "usuarios": [
+    {
+      "method": "GET",
+      "path": "/",
+      "description": "Obtiene todos los usuarios"
+    },
+    {
+      "method": "GET",
+      "path": "/email",
+      "query": ["email"],
+      "description": "Obtiene un usuario por email",
+      "validations": ["email obligatorio", "email debe ser válido"]
+    },
+    {
+      "method": "POST",
+      "path": "/",
+      "body": ["nombre", "edad", "fechanacimiento", "email"],
+      "description": "Crea un nuevo usuario",
+      "validations": [
+        "nombre obligatorio (3-50 caracteres)",
+        "edad numérica opcional",
+        "fechanacimiento opcional y formato ISO8601",
+        "email obligatorio y válido"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/:id",
+      "params": ["id"],
+      "body": ["nombre"],
+      "description": "Actualiza un usuario",
+      "validations": ["id válido de MongoDB", "nombre obligatorio"]
+    },
+    {
+      "method": "PUT",
+      "path": "/activar/:id",
+      "params": ["id"],
+      "description": "Activa un usuario",
+      "validations": ["id válido de MongoDB"]
+    },
+    {
+      "method": "PUT",
+      "path": "/inactivar/:id",
+      "params": ["id"],
+      "description": "Inactiva un usuario",
+      "validations": ["id válido de MongoDB"]
+    },
+    {
+      "method": "DELETE",
+      "path": "/:id",
+      "params": ["id"],
+      "description": "Elimina un usuario",
+      "validations": ["id válido de MongoDB"]
+    }
+  ],
+  "pagos": [
+    {
+      "method": "GET",
+      "path": "/",
+      "description": "Obtiene todos los pagos"
+    },
+    {
+      "method": "GET",
+      "path": "/:id",
+      "params": ["id"],
+      "description": "Obtiene un pago de un usuario específico"
+    },
+    {
+      "method": "POST",
+      "path": "/",
+      "body": ["usuario_id", "monto", "fecha"],
+      "description": "Registra un nuevo pago",
+      "validations": ["validación de campos del pago"]
+    },
+    {
+      "method": "DELETE",
+      "path": "/:id",
+      "params": ["id"],
+      "description": "Elimina un pago",
+      "validations": ["verifica que el pago exista"]
+    },
+    {
+      "method": "GET",
+      "path": "/estado/:id",
+      "params": ["id"],
+      "description": "Obtiene el estado de pago de un usuario"
+    }
+  ]
+}
