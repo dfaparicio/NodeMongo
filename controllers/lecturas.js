@@ -67,8 +67,8 @@ function calcularCaminoDeVida(fecha_nacimiento) {
 
 export async function generarlecturaprincipal(req, res) {
   try {
-    const { usuario_id } = req.params;
-    const resultado = await lecturaPrincipal(usuario_id);
+    const { usuarioId } = req.params;
+    const resultado = await lecturaPrincipal(usuarioId);
 
     if (!resultado.usuario) {
       return res.status(404).json({ msg: "Usuario no encontrado" });
@@ -81,7 +81,7 @@ export async function generarlecturaprincipal(req, res) {
     if (resultado.lecturaExistente) {
       return res.status(200).json({
         msg: "Lectura principal ya generada",
-        id: resultado.lecturaExistente._id,
+        id: resultado.lecturaExistente.Id,
         contenido: JSON.parse(resultado.lecturaExistente.contenido),
       });
     }
@@ -100,7 +100,7 @@ Devuelve ÚNICAMENTE un JSON válido con nombre, numeroCamino, descripcion, tale
     const contenidoJSON = extraerJSON(contenidoIA);
 
     const idLectura = await resultado.crear(
-      usuario_id,
+      usuarioId,
       "principal",
       JSON.stringify(contenidoJSON),
     );
@@ -118,8 +118,8 @@ Devuelve ÚNICAMENTE un JSON válido con nombre, numeroCamino, descripcion, tale
 
 export async function generarlecturadiaria(req, res) {
   try {
-    const { usuario_id } = req.params;
-    const resultado = await lecturaDiaria(usuario_id);
+    const { usuarioId } = req.params;
+    const resultado = await lecturaDiaria(usuarioId);
 
     if (!resultado.usuario) {
       return res.status(404).json({ msg: "Usuario no encontrado." });
@@ -129,16 +129,16 @@ export async function generarlecturadiaria(req, res) {
     }
 
     const lecturaPrincipal =
-      await resultado.obtenerLecturaPrincipal(usuario_id);
+      await resultado.obtenerLecturaPrincipal(usuarioId);
     if (!lecturaPrincipal) {
       return res.status(400).json({ msg: "Primero genera lectura principal." });
     }
 
-    const lecturaHoy = await resultado.obtenerLecturaDiariaHoy(usuario_id);
+    const lecturaHoy = await resultado.obtenerLecturaDiariaHoy(usuarioId);
     if (lecturaHoy) {
       return res.status(200).json({
         msg: "Lectura diaria ya generada hoy",
-        id: lecturaHoy._id,
+        id: lecturaHoy.Id,
         contenido: JSON.parse(lecturaHoy.contenido),
       });
     }
@@ -155,7 +155,7 @@ Devuelve SOLO un JSON válido con fecha, mensaje, energiaDelDia, consejo
     const contenidoJSON = extraerJSON(contenidoIA);
 
     const idLectura = await resultado.crear(
-      usuario_id,
+      usuarioId,
       "diaria",
       JSON.stringify(contenidoJSON),
     );
@@ -173,8 +173,8 @@ Devuelve SOLO un JSON válido con fecha, mensaje, energiaDelDia, consejo
 
 export async function obtenerlecturasdeunusuario(req, res) {
   try {
-    const { usuario_id } = req.params;
-    const lecturas = await lecturasdeUnUsuario(usuario_id);
+    const { usuarioId } = req.params;
+    const lecturas = await lecturasdeUnUsuario(usuarioId);
 
     if (!lecturas.length)
       return res.status(404).json({ msg: "No hay lecturas" });

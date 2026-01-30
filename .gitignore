@@ -1,4 +1,4 @@
 node_modules/
-.env
-endpoints.json
-.gitignore
+#.env#
+#.endpoints.json#
+#.gitignore#

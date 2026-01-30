@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { check } from "express-validator"; // Importación necesaria
 import {
   getPagos,
   getPagoUsuario,
@@ -7,25 +8,32 @@ import {
   getEstadoUsuario,
 } from "../controllers/pagos.js";
 
-import { validarPago } from "../helpers/pagos.js";
 import { validarCampos } from "../middlewares/validarCampos.js";
 import { verificarPagoExiste } from "../middlewares/verificarPagoExiste.js";
+import { validarIdMongo } from "../middlewares/validarUsuarios.js";
 
 const router = Router();
 
 router.get("/", getPagos);
 
-router.get("/:id", getPagoUsuario);
+router.get("/:id", [validarIdMongo, validarCampos], getPagoUsuario);
 
 router.post(
   "/",
-  (req, res, next) => { req.errors = validarPago(req.body); next(); },
-  validarCampos,
+  [
+    check("usuarioId", "El ID del usuario es obligatorio").isMongoId(),
+    check("monto", "El monto debe ser un número positivo").isNumeric(),
+    validarCampos,
+  ],
   postNuevoPago
 );
 
-router.delete("/:id", verificarPagoExiste, deletePago);
+router.delete(
+  "/:id", 
+  [validarIdMongo, validarCampos, verificarPagoExiste], 
+  deletePago
+);
 
-router.get("/estado/:id", getEstadoUsuario);
+router.get("/estado/:id", [validarIdMongo, validarCampos], getEstadoUsuario);
 
 export default router;

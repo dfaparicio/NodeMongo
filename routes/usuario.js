@@ -21,9 +21,6 @@ import {
 
 const router = Router();
 
-// ========================
-//        GET
-// ========================
 router.get("/", getUsuario);
 
 router.get(
@@ -36,9 +33,6 @@ router.get(
   getUsuarioEmail
 );
 
-// ========================
-//        POST
-// ========================
 router.post(
   "/",
   [
@@ -64,9 +58,6 @@ router.post(
   postUsuario
 );
 
-// ========================
-//        PUT
-// ========================
 router.put(
   "/:id",
   [
@@ -101,9 +92,6 @@ router.put(
   putUsuarioInactivar
 );
 
-// ========================
-//        DELETE
-// ========================
 router.delete(
   "/:id",
   [

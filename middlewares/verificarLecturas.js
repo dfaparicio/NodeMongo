@@ -1,6 +1,12 @@
 import Lectura from "../models/lecturas.js";
 
 export const verificarLectura = (req, res, next) => {
+  if (!req.body) {
+    return res.status(400).json({
+      msg: "El cuerpo de la petición (body) es obligatorio",
+    });
+  }
+
   const { contenido } = req.body;
 
   if (!contenido || contenido.trim() === "") {
@@ -13,11 +19,11 @@ export const verificarLectura = (req, res, next) => {
 };
 
 export const verificarLecturaPrincipal = async (req, res, next) => {
-  const { usuario_id } = req.params;
+  const { usuarioId } = req.params;
 
   try {
     const lectura = await Lectura.findOne({
-      usuarioId: usuario_id,
+      usuarioId: usuarioId,
       tipo: "principal",
     });
 
