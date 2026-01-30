@@ -3,7 +3,7 @@ import {
   lecturaDiaria,
   lecturasdeUnUsuario,
   lecturaPorId,
-} from "../models/lecturasmodels.js";
+} from "../models/lecturas.js";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import "dotenv/config";
@@ -73,7 +73,7 @@ export async function generarlecturaprincipal(req, res) {
     if (!resultado.usuario) {
       return res.status(404).json({ msg: "Usuario no encontrado" });
     }
-    if (resultado.usuario.estado !== "activo") {
+    if (resultado.usuario.estado !== 1) {
       return res.status(403).json({
         msg: "Usuario no activo. No puede generar lectura.",
       });
@@ -87,7 +87,7 @@ export async function generarlecturaprincipal(req, res) {
     }
 
     const numeroCamino = calcularCaminoDeVida(
-      resultado.usuario.fecha_nacimiento,
+      resultado.usuario.fechanacimiento,
     );
 
     const prompt = `
@@ -124,7 +124,7 @@ export async function generarlecturadiaria(req, res) {
     if (!resultado.usuario) {
       return res.status(404).json({ msg: "Usuario no encontrado." });
     }
-    if (resultado.usuario.estado.toLowerCase() !== "activo") {
+    if (resultado.usuario.estado !== 1) {
       return res.status(403).json({ msg: "Usuario no activo." });
     }
 

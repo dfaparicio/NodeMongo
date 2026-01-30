@@ -15,25 +15,31 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:5040/api/usuarios",
+              "raw": "http://localhost:2403/api/usuario",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "5040",
-              "path": ["api", "usuarios"]
+              "port": "2403",
+              "path": ["api", "usuario"]
             }
           }
         },
         {
-          "name": "Obtener usuario por ID",
+          "name": "Obtener usuario por Email",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:5040/api/usuarios/63f2f1d1a2b3c4d5e6f7890a",
+              "raw": "http://localhost:2403/api/usuario/email?email=test@test.com",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "5040",
-              "path": ["api", "usuarios", "63f2f1d1a2b3c4d5e6f7890a"]
+              "port": "2403",
+              "path": ["api", "usuario", "email"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "test@test.com"
+                }
+              ]
             }
           }
         },
@@ -49,14 +55,28 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Diego\",\n  \"edad\": 22,\n  \"fechanacimiento\": \"2001-07-14\",\n  \"email\": \"dapariciocastro13@gmail.com\"\n}"
+              "raw": "{\n  \"nombre\": \"Diego\",\n  \"edad\": 22,\n  \"fechanacimiento\": \"2001-07-14\",\n  \"email\": \"test@test.com\"\n}"
             },
             "url": {
-              "raw": "http://localhost:5040/api/usuarios",
+              "raw": "http://localhost:2403/api/usuario",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "5040",
-              "path": ["api", "usuarios"]
+              "port": "2403",
+              "path": ["api", "usuario"]
+            }
+          }
+        },
+        {
+          "name": "Activar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:2403/api/usuario/activar/63f2f1d1a2b3c4d5e6f7890a",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "2403",
+              "path": ["api", "usuario", "activar", "63f2f1d1a2b3c4d5e6f7890a"]
             }
           }
         }
@@ -71,25 +91,11 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:5040/api/pagos",
+              "raw": "http://localhost:2403/api/pago",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "5040",
-              "path": ["api", "pagos"]
-            }
-          }
-        },
-        {
-          "name": "Obtener pago por usuario",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:5040/api/pagos/63f2f1d1a2b3c4d5e6f7890a",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "5040",
-              "path": ["api", "pagos", "63f2f1d1a2b3c4d5e6f7890a"]
+              "port": "2403",
+              "path": ["api", "pago"]
             }
           }
         },
@@ -105,14 +111,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"usuarioId\": 1,\n  \"monto\": 100,\n  \"fechaPago\": \"2026-01-29T12:00:00Z\"\n}"
+              "raw": "{\n  \"usuarioId\": \"63f2f1d1a2b3c4d5e6f7890a\",\n  \"monto\": 50000,\n  \"descripcion\": \"Mensualidad\"\n}"
             },
             "url": {
-              "raw": "http://localhost:5040/api/pagos",
+              "raw": "http://localhost:2403/api/pago",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "5040",
-              "path": ["api", "pagos"]
+              "port": "2403",
+              "path": ["api", "pago"]
             }
           }
         }
@@ -127,53 +133,25 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "http://localhost:5040/api/lecturas/principal/1",
+              "raw": "http://localhost:2403/api/lectura/principal/63f2f1d1a2b3c4d5e6f7890a",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "5040",
-              "path": ["api", "lecturas", "principal", "1"]
+              "port": "2403",
+              "path": ["api", "lectura", "principal", "63f2f1d1a2b3c4d5e6f7890a"]
             }
           }
         },
         {
-          "name": "Generar lectura diaria",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:5040/api/lecturas/diaria/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "5040",
-              "path": ["api", "lecturas", "diaria", "1"]
-            }
-          }
-        },
-        {
-          "name": "Obtener lecturas de un usuario",
+          "name": "Obtener lecturas usuario",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:5040/api/lecturas/usuario/1",
+              "raw": "http://localhost:2403/api/lectura/usuario/63f2f1d1a2b3c4d5e6f7890a",
               "protocol": "http",
               "host": ["localhost"],
-              "port": "5040",
-              "path": ["api", "lecturas", "usuario", "1"]
-            }
-          }
-        },
-        {
-          "name": "Obtener lectura por ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:5040/api/lecturas/63f2f1d1a2b3c4d5e6f7890a",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "5040",
-              "path": ["api", "lecturas", "63f2f1d1a2b3c4d5e6f7890a"]
+              "port": "2403",
+              "path": ["api", "lectura", "usuario", "63f2f1d1a2b3c4d5e6f7890a"]
             }
           }
         }

@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
+import Usuario from "./usuario.js";
 
 const LecturaSchema = new mongoose.Schema(
   {
     usuarioId: {
-      type: Number,
+      type: String,
       required: true,
     },
     tipo: {
@@ -25,13 +26,13 @@ const LecturaSchema = new mongoose.Schema(
 
 const Lectura = mongoose.model("Lectura", LecturaSchema);
 
-export const lecturaPrincipal = async (usuarioId) => {
+export const lecturaPrincipal = async (idUsuario) => {
   const lecturaExistente = await Lectura.findOne({
-    usuarioId,
+    usuarioId: idUsuario,
     tipo: "principal",
   });
 
-  const usuario = { id: usuarioId, nombre: "Usuario Ejemplo", estado: "activo", fecha_nacimiento: "2001-07-14" };
+  const usuario = await Usuario.findById(idUsuario);
 
   return {
     usuario,

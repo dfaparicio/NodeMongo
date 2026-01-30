@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { check } from "express-validator";
 import {
-  postLecturaPrincipal,
-  postLecturaDiaria,
-  getlecturasusuario,
-  getlecturaporid,
-} from "../controllers/lecturascontrollers.js";
+  generarlecturaprincipal,
+  generarlecturadiaria,
+  obtenerlecturasdeunusuario,
+  obtenerlecturaporid,
+} from "../controllers/lecturas.js";
 
 import { validarCampos } from "../middlewares/validarCampos.js";
 import {
@@ -16,46 +16,46 @@ import {
 const router = Router();
 
 router.post(
-  "/api/lecturas/principal/:usuario_id",
+  "/principal/:usuario_id",
   [
     check("usuario_id", "El usuario_id es obligatorio").notEmpty(),
-    check("usuario_id", "El usuario_id debe ser un número").isInt(),
+    check("usuario_id", "ID inválido de MongoDB").isMongoId(),
   ],
   verificarLectura,
   verificarLecturaPrincipal,
   validarCampos,
-  postLecturaPrincipal,
+  generarlecturaprincipal,
 );
 
 router.post(
-  "/api/lecturas/diaria/:usuario_id",
+  "/diaria/:usuario_id",
   [
     check("usuario_id", "El usuario_id es obligatorio").notEmpty(),
-    check("usuario_id", "El usuario_id debe ser un número").isInt(),
+    check("usuario_id", "ID inválido de MongoDB").isMongoId(),
   ],
   verificarLectura,
   validarCampos,
-  postLecturaDiaria,
+  generarlecturadiaria,
 );
 
 router.get(
-  "/api/lecturas/usuario/:usuario_id",
+  "/usuario/:usuario_id",
   [
     check("usuario_id", "El usuario_id es obligatorio").notEmpty(),
-    check("usuario_id", "El usuario_id debe ser un número").isInt(),
+    check("usuario_id", "ID inválido de MongoDB").isMongoId(),
   ],
   validarCampos,
-  getlecturasusuario,
+  obtenerlecturasdeunusuario,
 );
 
 router.get(
-  "/api/lecturas/:id",
+  "/:id",
   [
     check("id", "El ID es obligatorio").notEmpty(),
     check("id", "ID inválido de MongoDB").isMongoId(),
   ],
   validarCampos,
-  getlecturaporid,
+  obtenerlecturaporid,
 );
 
 export default router;
