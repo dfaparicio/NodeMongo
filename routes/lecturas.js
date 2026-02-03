@@ -9,7 +9,6 @@ import {
 
 import { validarCampos } from "../middlewares/validarCampos.js";
 import {
-  verificarLectura,
   verificarLecturaPrincipal,
 } from "../middlewares/verificarLecturas.js";
 
@@ -20,9 +19,9 @@ router.post(
   [
     check("usuarioId", "El usuarioId es obligatorio").notEmpty(),
     check("usuarioId", "ID inválido de MongoDB").isMongoId(),
+    validarCampos,
   ],
   verificarLecturaPrincipal,
-  validarCampos,
   generarlecturaprincipal,
 );
 
@@ -31,8 +30,8 @@ router.post(
   [
     check("usuarioId", "El usuarioId es obligatorio").notEmpty(),
     check("usuarioId", "ID inválido de MongoDB").isMongoId(),
+    validarCampos,
   ],
-  validarCampos,
   generarlecturadiaria,
 );
 
@@ -51,8 +50,8 @@ router.get(
   [
     check("id", "El ID es obligatorio").notEmpty(),
     check("id", "ID inválido de MongoDB").isMongoId(),
+    validarCampos,
   ],
-  validarCampos,
   obtenerlecturaporid,
 );
 

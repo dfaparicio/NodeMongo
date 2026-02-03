@@ -67,7 +67,7 @@ router.put(
     check("nombre", "El nombre es obligatorio").not().isEmpty(),
 
     validarCampos,
-    validarUsuarioActivoMiddleware,  // ← CORRECTO
+    validarUsuarioActivoMiddleware,  
   ],
   putUsuario
 );
