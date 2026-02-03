@@ -37,12 +37,12 @@ router.post(
 );
 
 router.get(
-  "/usuario/:usuarioId",
+  "/:usuarioId",
   [
     check("usuarioId", "El usuarioId es obligatorio").notEmpty(),
     check("usuarioId", "ID inválido de MongoDB").isMongoId(),
+    validarCampos,
   ],
-  validarCampos,
   obtenerlecturasdeunusuario,
 );
 
