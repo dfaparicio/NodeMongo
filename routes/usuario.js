@@ -52,6 +52,7 @@ router.post(
 
     check("email", "Debe ser un email válido").isEmail(),
     check("email").custom(validarEmail),
+    check("password", "La contraseña es obligatoria y debe tener más de 6 caracteres").isLength({ min: 6 }),
 
     validarCampos,
   ],
