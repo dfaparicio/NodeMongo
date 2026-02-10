@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Usuario from "../models/usuario.js";
 
-const generarJWT = (id) => {
+export const generarJWT = (id) => {
   return new Promise(
     ((resolve, reject) => {
       const payload = { id };
