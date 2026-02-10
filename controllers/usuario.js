@@ -1,4 +1,5 @@
 import Usuario from "../models/usuario.js"
+import bcrypt from "bcryptjs"
 
 export const getUsuario = async (req,res)=>{
     try {
@@ -21,11 +22,15 @@ export const getUsuarioEmail = async (req,res)=>{
 
 export const postUsuario = async(req,res)=>{
     try {
-         const {nombre,edad,fechanacimiento,email}=req.body
+         const {nombre,edad,fechanacimiento,email,password}=req.body
 
         const usuario= new Usuario({
-            nombre,edad,fechanacimiento,email
+            nombre,edad,fechanacimiento,email,password
         })
+
+        // Encriptar la contraseña
+        const salt = bcrypt.genSaltSync();
+        usuario.password = bcrypt.hashSync(password, salt);
 
         await usuario.save()
 

@@ -4,8 +4,9 @@ const usuario = new mongoose.Schema({
     nombre:{type:String,required:true},
     edad:{type:Number},
     fechanacimiento:{type:Date, default:Date.now},
-    email:{type:String,unique:true},
-    estado:{type:Number,default:0}//0 inactivo   1 activo
+    email:{type:String,unique:true, required: true},
+    password:{type:String, required: true},
+    estado:{type:Number,default:1}//0 inactivo   1 activo
 });
 
 export default mongoose.model("Usuario",usuario)

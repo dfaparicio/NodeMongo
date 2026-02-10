@@ -1,6 +1,6 @@
 import Usuario from "../models/usuario.js"
 import bcrypt  from "bcryptjs"
-import generarJWT from "../helpers/generar-jwt"
+import generarJWT from "../helpers/generar-jwt.js"
 
 const login = async (req,res)=>{
     const {email,password} = req.body
@@ -17,7 +17,7 @@ const login = async (req,res)=>{
                 error:"Contraseña incorrecta"
             })
         }
-        const token = generarJWT(usuario.id)
+        const token = await generarJWT(usuario.id)
         res.json({
             token
         })
