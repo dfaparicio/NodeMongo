@@ -7,6 +7,7 @@ import conectarMongo from "./database/cnx-mongo.js";
 import usuarioRoute from "./routes/usuario.js";
 import lecturaRoute from "./routes/lecturas.js"; 
 import pagosRoute from "./routes/pagos.js";
+import authRoute from "./routes/auth.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use("/api/usuario", usuarioRoute); 
 app.use("/api/lectura", lecturaRoute); 
 app.use("/api/pago", pagosRoute);
+app.use("/api/auth", authRoute);
 
 // Puerto
 const PORT = process.env.PORT || 3000;
