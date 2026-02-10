@@ -21,10 +21,8 @@ const pagoSchema = new mongoose.Schema({
 
 const Pago = mongoose.model("Pago", pagoSchema);
 
-// 👉 EXPORTACIÓN DEFAULT PARA EL MODELO
 export default Pago;
 
-// 👉 EXPORTACIONES NOMBRADAS PARA LAS FUNCIONES
 export const obtenerPagos = async () => {
   return await Pago.find();
 };

@@ -1,11 +1,10 @@
-import mongoose from "mongoose";
-import Usuario from "../models/usuario.js";
+import jwt from "jsonwebtoken"
 
 export const generarJWT = (id) => {
   return new Promise(
     ((resolve, reject) => {
       const payload = { id };
-      jmt.sign(
+      jwt.sign(
         payload,
         process.env.SECRETORPRIVATEKEY,
         {
@@ -23,3 +22,5 @@ export const generarJWT = (id) => {
     }),
   );
 };
+
+export default generarJWT
