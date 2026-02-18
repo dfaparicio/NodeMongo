@@ -25,6 +25,10 @@
     {
       "key": "geminiApiKey",
       "value": "AIzaSyAPZfTzsS6SppwxH_JH7v0sbkYOgUs2v9I"
+    },
+    {
+      "key": "token",
+      "value": ""
     }
   ],
   "item": [
@@ -45,10 +49,29 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"juan@email.com\",\n  \"password\": \"123456\"\n}"
             },
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "const response = pm.response.json();",
+                    "if (response.token) {",
+                    "    pm.environment.set(\"token\", response.token);",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "login"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         }
@@ -61,11 +84,20 @@
           "name": "Listar usuarios",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/usuario",
-              "host": ["{{baseUrl}}"],
-              "path": ["usuario"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario"
+              ]
             }
           }
         },
@@ -73,11 +105,21 @@
           "name": "Obtener usuario por email",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/usuario/email?email=usuario@email.com",
-              "host": ["{{baseUrl}}"],
-              "path": ["usuario", "email"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario",
+                "email"
+              ],
               "query": [
                 {
                   "key": "email",
@@ -99,12 +141,16 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Juan Perez\",\n  \"edad\": 30,\n  \"fechanacimiento\": \"1996-01-29\",\n  \"email\": \"juan@email.com\",\n  \"password\": \"1234567891011\"\n}"
+              "raw": "{\n  \"nombre\": \"Juan Perez\",\n  \"edad\": 30,\n  \"fechanacimiento\": \"1996-01-29\",\n  \"email\": \"juan@email.com\",\n  \"password\": \"123456\",\n  \"rol\": \"USER_ROLE\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/usuario",
-              "host": ["{{baseUrl}}"],
-              "path": ["usuario"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario"
+              ]
             }
           }
         },
@@ -124,8 +170,13 @@
             },
             "url": {
               "raw": "{{baseUrl}}/usuario/{{usuarioId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["usuario", "{{usuarioId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario",
+                "{{usuarioId}}"
+              ]
             }
           }
         },
@@ -133,11 +184,22 @@
           "name": "Activar usuario",
           "request": {
             "method": "PUT",
-            "header": [],
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/usuario/activar/{{usuarioId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["usuario", "activar", "{{usuarioId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario",
+                "activar",
+                "{{usuarioId}}"
+              ]
             }
           }
         },
@@ -145,11 +207,22 @@
           "name": "Inactivar usuario",
           "request": {
             "method": "PUT",
-            "header": [],
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/usuario/inactivar/{{usuarioId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["usuario", "inactivar", "{{usuarioId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario",
+                "inactivar",
+                "{{usuarioId}}"
+              ]
             }
           }
         },
@@ -157,11 +230,21 @@
           "name": "Eliminar usuario",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/usuario/{{usuarioId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["usuario", "{{usuarioId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario",
+                "{{usuarioId}}"
+              ]
             }
           }
         }
@@ -177,8 +260,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/lectura/principal/{{usuarioId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["lectura", "principal", "{{usuarioId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lectura",
+                "principal",
+                "{{usuarioId}}"
+              ]
             }
           }
         },
@@ -189,8 +278,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/lectura/diaria/{{usuarioId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["lectura", "diaria", "{{usuarioId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lectura",
+                "diaria",
+                "{{usuarioId}}"
+              ]
             }
           }
         },
@@ -201,8 +296,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/lectura/usuario/{{usuarioId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["lectura", "usuario", "{{usuarioId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lectura",
+                "usuario",
+                "{{usuarioId}}"
+              ]
             }
           }
         },
@@ -213,8 +314,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/lectura/{{lecturaId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["lectura", "{{lecturaId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lectura",
+                "{{lecturaId}}"
+              ]
             }
           }
         }
@@ -230,8 +336,12 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/pago",
-              "host": ["{{baseUrl}}"],
-              "path": ["pago"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pago"
+              ]
             }
           }
         },
@@ -242,8 +352,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/pago/{{pagoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["pago", "{{pagoId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pago",
+                "{{pagoId}}"
+              ]
             }
           }
         },
@@ -267,8 +382,12 @@
             },
             "url": {
               "raw": "{{baseUrl}}/pago",
-              "host": ["{{baseUrl}}"],
-              "path": ["pago"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pago"
+              ]
             }
           }
         },
@@ -279,8 +398,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/pago/{{pagoId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["pago", "{{pagoId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pago",
+                "{{pagoId}}"
+              ]
             }
           }
         },
@@ -291,8 +415,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/pago/estado/{{usuarioId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["pago", "estado", "{{usuarioId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pago",
+                "estado",
+                "{{usuarioId}}"
+              ]
             }
           }
         }

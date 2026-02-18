@@ -22,10 +22,10 @@ export const getUsuarioEmail = async (req,res)=>{
 
 export const postUsuario = async(req,res)=>{
     try {
-         const {nombre,edad,fechanacimiento,email,password}=req.body
+         const {nombre,edad,fechanacimiento,email,password,rol}=req.body
 
         const usuario= new Usuario({
-            nombre,edad,fechanacimiento,email,password
+            nombre,edad,fechanacimiento,email,password,rol
         })
 
         // Encriptar la contraseña
@@ -94,6 +94,4 @@ export const deleteUsuario = async(req,res)=>{
     } catch (error) {
           res.status(400).json({error})
     }
-    
-
 }

@@ -29,4 +29,11 @@ export const validarUsuarioActivo = async (id) => {
     }
 }
 
+export const validarRol = async (rol = '') => {
+    const rolesValidos = ['ADMIN_ROLE', 'USER_ROLE', 'OTHER_ROLE'];
+    if (!rolesValidos.includes(rol)) {
+        throw new Error(`El rol ${rol} no es válido. Roles válidos: ${rolesValidos}`);
+    }
+}
+
 

@@ -17,15 +17,19 @@ import { validarUsuarioActivoMiddleware } from "../middlewares/validarUsuarios.j
 import {
   validarEmail,
   validarExisteUsuario,
+  validarRol
 } from "../helpers/usuarios.js";
+import validarJWT from "../middlewares/validar-jwt.js";
+import { esAdminRole, tieneRol } from "../middlewares/validar-rol.js";
 
 const router = Router();
 
-router.get("/", getUsuario);
+router.get("/", [validarJWT, esAdminRole], getUsuario);
 
 router.get(
   "/email",
   [
+    validarJWT,
     check("email", "El email es obligatorio").not().isEmpty(),
     check("email", "Formato de email no válido").isEmail(),
     validarCampos,
@@ -53,6 +57,7 @@ router.post(
     check("email", "Debe ser un email válido").isEmail(),
     check("email").custom(validarEmail),
     check("password", "La contraseña es obligatoria y debe tener más de 6 caracteres").isLength({ min: 6 }),
+    check("rol").custom(validarRol),
 
     validarCampos,
   ],
@@ -76,6 +81,8 @@ router.put(
 router.put(
   "/activar/:id",
   [
+    validarJWT,
+    esAdminRole,
     check("id", "ID inválido").isMongoId(),
     check("id").custom(validarExisteUsuario),
     validarCampos,
@@ -86,6 +93,8 @@ router.put(
 router.put(
   "/inactivar/:id",
   [
+    validarJWT,
+    esAdminRole,
     check("id", "ID inválido").isMongoId(),
     check("id").custom(validarExisteUsuario),
     validarCampos,
@@ -96,6 +105,8 @@ router.put(
 router.delete(
   "/:id",
   [
+    validarJWT,
+    esAdminRole,
     check("id", "ID inválido").isMongoId(),
     check("id").custom(validarExisteUsuario),
     validarCampos,
