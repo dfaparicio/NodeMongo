@@ -47,13 +47,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
             }
           }
         }
@@ -69,12 +64,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/usuario",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "usuario"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario"]
             }
           }
         },
@@ -85,13 +76,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/usuario/email?email=usuario@email.com",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "usuario",
-                "email"
-              ],
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario", "email"],
               "query": [
                 {
                   "key": "email",
@@ -113,16 +99,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Juan Perez\",\n  \"edad\": 30,\n  \"fechanacimiento\": \"1996-01-29\",\n  \"email\": \"juan@email.com\"\n}"
+              "raw": "{\n  \"nombre\": \"Juan Perez\",\n  \"edad\": 30,\n  \"fechanacimiento\": \"1996-01-29\",\n  \"email\": \"juan@email.com\",\n  \"password\": \"1234567891011\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/usuario",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "usuario"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario"]
             }
           }
         },
@@ -142,13 +124,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/usuario/{{usuarioId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "usuario",
-                "{{usuarioId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario", "{{usuarioId}}"]
             }
           }
         },
@@ -159,14 +136,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/usuario/activar/{{usuarioId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "usuario",
-                "activar",
-                "{{usuarioId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario", "activar", "{{usuarioId}}"]
             }
           }
         },
@@ -177,14 +148,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/usuario/inactivar/{{usuarioId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "usuario",
-                "inactivar",
-                "{{usuarioId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario", "inactivar", "{{usuarioId}}"]
             }
           }
         },
@@ -195,13 +160,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/usuario/{{usuarioId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "usuario",
-                "{{usuarioId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["usuario", "{{usuarioId}}"]
             }
           }
         }
@@ -217,14 +177,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/lectura/principal/{{usuarioId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "lectura",
-                "principal",
-                "{{usuarioId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["lectura", "principal", "{{usuarioId}}"]
             }
           }
         },
@@ -235,14 +189,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/lectura/diaria/{{usuarioId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "lectura",
-                "diaria",
-                "{{usuarioId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["lectura", "diaria", "{{usuarioId}}"]
             }
           }
         },
@@ -253,14 +201,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/lectura/usuario/{{usuarioId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "lectura",
-                "usuario",
-                "{{usuarioId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["lectura", "usuario", "{{usuarioId}}"]
             }
           }
         },
@@ -271,13 +213,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/lectura/{{lecturaId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "lectura",
-                "{{lecturaId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["lectura", "{{lecturaId}}"]
             }
           }
         }
@@ -293,12 +230,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/pago",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "pago"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["pago"]
             }
           }
         },
@@ -309,13 +242,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/pago/{{pagoId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "pago",
-                "{{pagoId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["pago", "{{pagoId}}"]
             }
           }
         },
@@ -339,12 +267,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/pago",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "pago"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["pago"]
             }
           }
         },
@@ -355,13 +279,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/pago/{{pagoId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "pago",
-                "{{pagoId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["pago", "{{pagoId}}"]
             }
           }
         },
@@ -372,14 +291,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/pago/estado/{{usuarioId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "pago",
-                "estado",
-                "{{usuarioId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["pago", "estado", "{{usuarioId}}"]
             }
           }
         }
