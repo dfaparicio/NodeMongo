@@ -1,25 +1,40 @@
 import jwt from "jsonwebtoken"
 import Usuario from "../models/usuario.js"
 
-const validarJWT = async (req,res,next)=>{
+const validarJWT = async (req, res, next) => {
+    const token = req.header("x-token");
+
+    // --- AGREGA ESTO: Validación inicial ---
+    if (!token) {
+        return res.status(401).json({
+            msg: "No hay token en la petición"
+        });
+    }
+    // ---------------------------------------
+
     try {
-        const token = req.header("x-token")
-        const { id } = jwt.verify(token, process.env.SECRETORPRIVATEKEY);
+        // Ahora sí es seguro verificar, porque sabemos que token tiene algo
+        const { id } = jwt.verify(token, process.env.SECRETORPRIVATEKEY); 
         
-        const usuario = await Usuario.findById(id);
+        // OJO: En tu modelo suele ser _id, no id. Si falla, revisa si es { id } o { id }
+        const usuario = await Usuario.findById(id); 
+
         if (!usuario) {
-            return res.status(401).json({ msg: 'Token no válido - usuario no existe' });
+            return res.status(401).json({ msg: 'Token no válido - usuario no existe en DB' });
         }
-        if (usuario.estado === 0) {
-            return res.status(401).json({ msg: 'Token no válido - usuario inactivo' });
+
+        // Verificar si el id tiene estado true
+        if (!usuario.estado) { // Asumiendo que estado es booleano o 1/0
+             return res.status(401).json({ msg: 'Token no válido - usuario inactivo' });
         }
+        
         req.usuario = usuario;
         next();
 
     } catch (error) {
         console.log(error);
         res.status(401).json({
-            error:"Token no valido"
+            msg: "Token no válido"
         })
     }
 }

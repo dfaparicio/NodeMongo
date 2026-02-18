@@ -20,7 +20,7 @@ import {
   validarRol
 } from "../helpers/usuarios.js";
 import validarJWT from "../middlewares/validar-jwt.js";
-import { esAdminRole, tieneRol } from "../middlewares/validar-rol.js";
+import { esAdminRole } from "../middlewares/validar-rol.js";
 
 const router = Router();
 
@@ -67,6 +67,7 @@ router.post(
 router.put(
   "/:id",
   [
+    validarJWT,
     check("id", "ID inválido").isMongoId(),
     check("id").custom(validarExisteUsuario),
 
