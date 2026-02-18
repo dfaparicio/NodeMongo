@@ -5,36 +5,51 @@ import {
   lecturaPorId,
 } from "../models/lecturas.js";
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import "dotenv/config";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 async function respuestaIA(prompt) {
   try {
-    const result = await model.generateContent(prompt);
-    return result.response.text();
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+    });
+
+    return response.text;
   } catch (error) {
-    console.error("❌ Error al consultar Gemini:", error);
-    return "Ocurrió un error al interpretar el texto.";
+    console.error("❌ Error detectado:", error.message);
+    return null;
   }
 }
 
+export default respuestaIA;
+
+
+
 function extraerJSON(texto) {
-  const inicio = texto.indexOf("{");
-  const fin = texto.lastIndexOf("}");
-  if (inicio === -1 || fin === -1) throw new Error("JSON inválido");
-  const jsonLimpio = texto.slice(inicio, fin + 1);
-  return JSON.parse(jsonLimpio);
+  try {
+    if (!texto) return null;
+    const inicio = texto.indexOf("{");
+    const fin = texto.lastIndexOf("}") + 1;
+    if (inicio === -1 || fin === 0) return null;
+    const jsonString = texto.substring(inicio, fin);
+    return JSON.parse(jsonString);
+  } catch (e) {
+    console.error("❌ Error al parsear JSON:", e);
+    return null;
+  }
 }
 
-// Calcula número de camino de vida
+//LÓGICA DE APOYO
 function calcularCaminoDeVida(fecha_nacimiento) {
   const fecha = new Date(fecha_nacimiento);
-  const dia = fecha.getDate();
-  const mes = fecha.getMonth() + 1;
-  const año = fecha.getFullYear();
+  const dia = fecha.getUTCDate(); // Usar UTC para evitar errores de zona horaria
+  const mes = fecha.getUTCMonth() + 1;
+  const año = fecha.getUTCFullYear();
 
   const reducir = (num) => {
     if ([11, 22, 33].includes(num)) return num;
@@ -55,33 +70,27 @@ function calcularCaminoDeVida(fecha_nacimiento) {
       .split("")
       .reduce((a, b) => a + parseInt(b), 0),
   );
-
-  const suma = diaReducido + mesReducido + añoReducido;
-  return reducir(suma);
+  return reducir(diaReducido + mesReducido + añoReducido);
 }
 
-
-
-
-
-
-export async function generarlecturaprincipal(req, res) {
+export const generarlecturaprincipal = async (req, res) => {
   try {
+    // Usamos el ID que viene de los params, pero validamos con el middleware de JWT
     const { usuarioId } = req.params;
     const resultado = await lecturaPrincipal(usuarioId);
 
     if (!resultado.usuario) {
       return res.status(404).json({ msg: "Usuario no encontrado" });
     }
+
     if (resultado.usuario.estado !== 1) {
-      return res.status(403).json({
-        msg: "Usuario no activo. No puede generar lectura.",
-      });
+      return res.status(403).json({ msg: "Usuario no activo." });
     }
+
     if (resultado.lecturaExistente) {
       return res.status(200).json({
-        msg: "Lectura principal ya generada",
-        id: resultado.lecturaExistente.Id,
+        msg: "Lectura principal ya existe",
+        id: resultado.lecturaExistente._id,
         contenido: JSON.parse(resultado.lecturaExistente.contenido),
       });
     }
@@ -90,14 +99,18 @@ export async function generarlecturaprincipal(req, res) {
       resultado.usuario.fechanacimiento,
     );
 
-    const prompt = `
-Eres un numerólogo profesional experto en numerología pitagórica. 
-Usa este número de Camino de Vida ya calculado: ${numeroCamino}.
-Devuelve ÚNICAMENTE un JSON válido con nombre, numeroCamino, descripcion, talentos, desafios, mensajeEspiritual.
-`;
+    const prompt = `Actúa como un numerólogo experto. Genera un JSON para un Camino de Vida ${numeroCamino}. 
+    Nombre del usuario: ${resultado.usuario.nombre}.
+    Devuelve SOLO este formato JSON: {"numero": ${numeroCamino}, "descripcion": "...", "talentos": "...", "mensaje": "..."}`;
 
     const contenidoIA = await respuestaIA(prompt);
     const contenidoJSON = extraerJSON(contenidoIA);
+
+    if (!contenidoJSON) {
+      return res
+        .status(500)
+        .json({ error: "Error generando el contenido de la IA" });
+    }
 
     const idLectura = await resultado.crear(
       usuarioId,
@@ -106,7 +119,7 @@ Devuelve ÚNICAMENTE un JSON válido con nombre, numeroCamino, descripcion, tale
     );
 
     res.status(201).json({
-      msg: "Lectura principal generada",
+      msg: "Lectura principal generada con éxito",
       id: idLectura,
       contenido: contenidoJSON,
     });
@@ -114,42 +127,34 @@ Devuelve ÚNICAMENTE un JSON válido con nombre, numeroCamino, descripcion, tale
     console.error(error);
     res.status(500).json({ msg: "Error interno" });
   }
-}
+};
 
-export async function generarlecturadiaria(req, res) {
+export const generarlecturadiaria = async (req, res) => {
   try {
     const { usuarioId } = req.params;
     const resultado = await lecturaDiaria(usuarioId);
 
-    if (!resultado.usuario) {
-      return res.status(404).json({ msg: "Usuario no encontrado." });
-    }
-    if (resultado.usuario.estado !== 1) {
-      return res.status(403).json({ msg: "Usuario no activo." });
+    if (!resultado.usuario || resultado.usuario.estado !== 1) {
+      return res.status(404).json({ msg: "Usuario no encontrado o inactivo" });
     }
 
-    const lecturaPrincipal =
-      await resultado.obtenerLecturaPrincipal(usuarioId);
-    if (!lecturaPrincipal) {
-      return res.status(400).json({ msg: "Primero genera lectura principal." });
+    const principal = await resultado.obtenerLecturaPrincipal(usuarioId);
+    if (!principal) {
+      return res
+        .status(400)
+        .json({ msg: "Primero debes generar la lectura principal." });
     }
 
     const lecturaHoy = await resultado.obtenerLecturaDiariaHoy(usuarioId);
     if (lecturaHoy) {
       return res.status(200).json({
         msg: "Lectura diaria ya generada hoy",
-        id: lecturaHoy.Id,
         contenido: JSON.parse(lecturaHoy.contenido),
       });
     }
 
-    const fechaHoy = new Date().toISOString().split("T")[0];
-
-    const prompt = `
-Genera lectura diaria basada en esta lectura principal:
-${lecturaPrincipal.contenido}
-Devuelve SOLO un JSON válido con fecha, mensaje, energiaDelDia, consejo
-`;
+    const prompt = `Genera una lectura diaria basada en este perfil: ${principal.contenido}. 
+    Devuelve SOLO un JSON: {"fecha": "${new Date().toLocaleDateString()}", "mensaje": "...", "energia": "..."}`;
 
     const contenidoIA = await respuestaIA(prompt);
     const contenidoJSON = extraerJSON(contenidoIA);
@@ -162,55 +167,42 @@ Devuelve SOLO un JSON válido con fecha, mensaje, energiaDelDia, consejo
 
     res.status(201).json({
       msg: "Lectura diaria generada",
-      id: idLectura,
       contenido: contenidoJSON,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Error interno" });
   }
-}
+};
 
-export async function obtenerlecturasdeunusuario(req, res) {
+export const obtenerlecturasdeunusuario = async (req, res) => {
   try {
     const { usuarioId } = req.params;
     const lecturas = await lecturasdeUnUsuario(usuarioId);
-
-    if (!lecturas.length)
-      return res.status(404).json({ msg: "No hay lecturas" });
-
-    res.status(200).json({
-      msg: "Lecturas del usuario",
-      lecturas,
-      numeroLecturas: lecturas.length,
-    });
+    res.status(200).json({ msg: "Lecturas encontradas", lecturas });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Error interno" });
+    res.status(500).json({ msg: "Error al obtener lecturas" });
   }
-}
+};
 
-export async function obtenerlecturaporid(req, res) {
+export const obtenerlecturaporid = async (req, res) => {
   try {
     const { id } = req.params;
     const lectura = await lecturaPorId(id);
-
-    if (!lectura) return res.status(404).json({ msg: "Lectura no encontrada" });
-
-    let contenidoParseado = lectura.contenido;
-    try {
-      contenidoParseado =
-        typeof lectura.contenido === "string"
-          ? JSON.parse(lectura.contenido)
-          : lectura.contenido;
-    } catch {}
+    if (!lectura) return res.status(404).json({ msg: "No encontrada" });
 
     res.status(200).json({
-      msg: "Lectura encontrada",
-      lectura: { ...lectura.toObject(), contenido: contenidoParseado },
+      lectura: {
+        ...lectura.toObject(),
+        contenido: JSON.parse(lectura.contenido),
+      },
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Error interno" });
+    res
+      .status(500)
+      .json({
+        msg: "Error al obtener la lectura por ID",
+        error: error.message,
+      });
   }
-}
+};
