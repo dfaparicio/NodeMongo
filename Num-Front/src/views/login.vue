@@ -2,12 +2,19 @@
     <div
         class="flex h-screen w-full relative bg-background-light dark:bg-void font-display overflow-hidden text-slate-800 dark:text-slate-100">
 
-        <div class="hidden lg:flex lg:w-[60%] h-full relative overflow-hidden bg-void">
+        <div div class="hidden lg:flex lg:w-[60%] h-full relative overflow-hidden bg-void border-r border-white/5">
             <div class="absolute inset-0 w-full h-full">
-                <img src="https://images.unsplash.com/photo-1464802686167-b939a6910659?auto=format&fit=crop&q=80"
-                    class="object-cover w-full h-full opacity-80 mix-blend-overlay" alt="Nebula">
+                <img alt="Nebulosa profunda en tonos violeta e índigo"
+                    class="object-cover w-full h-full opacity-80 mix-blend-overlay"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOYC3SQk2mjOD_3Oz2LYFJi3QaADHLEXIGGNKuXHT08lXzlJaolS88F-zszgIY6Qmst4pnYXuYAWivn1GXXlX7wJXHId17ctPlFAE5Ivt-DFYsYd78Nx7xM8kFqp5boA68hMw9OXdkLe6KVHqqjLumwk575WqlyoFsl5SJ_ajsogHnqcdN9H1CNxTWoawJD38vYPo8EVNa9fID2JskLszZRmaGkOmTaI21vFJxQ6l4ssRIBOl1anYpGmLs_ivOY8o3TBN7xQrxRmE" />
             </div>
+
             <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-purple-900/30 to-background-dark/90">
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center opacity-60">
+                <img alt="Geometría sagrada dorada brillando en la oscuridad"
+                    class="object-cover w-full h-full mix-blend-screen opacity-50"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0XMIupUmXUu4OKxJegFu5lFdMLRVaacsP3VfUR5NH5CZ1Be5cRqA1kKXtQddiZCuBuiUzibqqBH6sG6nAFywNV4_pTfGJXIMKPy43H3xD0qJacj-B4BDHgvCxrahs386FqOa-mYYTfD12nztWvXu1jp6NYUSfX51Fqmp5gDcynM-vHxlWDtfrT8y52MBM3TwSE_Dov-xNfQvpeKkC2ij_dWh0T_hSXDY5PPmOydLPrzCyqGbeeULURTKRy55W_jMlaAMTQQnTR0M" />
             </div>
 
             <div class="relative z-10 w-full h-full flex flex-col justify-between p-12 text-white">
@@ -18,11 +25,23 @@
                 <div class="max-w-xl space-y-6 mb-12">
                     <h2
                         class="font-serif text-5xl italic leading-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-light via-primary to-amber-600">
-                        "El universo habla; los números revelan tu propósito."
+                        "El universo no comete errores; tus números son el mapa."
                     </h2>
                     <p class="text-lg text-gray-300 font-light">
-                        Accede a tu carta numerológica y descubre la vibración exacta que guía tu destino.
+                        Regresa a tu centro. Accede a tu portal personal para analizar tus tránsitos numéricos diarios, anticipar ciclos de energía y alinear tus decisiones con la vibración de tu destino.
                     </p>
+                    <div class="flex items-center gap-4 pt-4">
+                        <div class="flex -space-x-3">
+                            <img alt="Usuario 1" class="w-10 h-10 rounded-full border-2 border-primary/50"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4QqQfw2dZYRgRRoAmE00Hzt4rVb9gt6aynSwvSXBQ5e8xBk--yLd2XXS5iDDmo8SNtK10-uUGILlC77Ww-fqL3N6EtvBvZ6lS33LQdxC3SpaS8NVfmncJJqierNLOmkJALgL6ZmRqon9fh9WX_9CIX7cFxH9aD9xSkgeEZFIOymTqLNXKZ8VkKo7iTmSoQVFwb0Id65GwWO93LAJLjvhvURIn2lLocMYkIDin0OGDiL-K1kUnNg5O15ek04LK7gNJzMireaf2MkI" />
+                            <img alt="Usuario 2" class="w-10 h-10 rounded-full border-2 border-primary/50"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj36BvfOdcs71S5yqw-sLtzgxAIHjXiyY8In3Wr8AEln9Z093nvEeBBHj_MEIkvhcBVjTv-JJ5Hj9g9wBM_6RfQW3d7KqdfID9kuIxxb_gjfzF6dPBf24sXPqsdDmDhBmPpZ2ZdfgJTDtpYAjtR7dVuCBOAbiajo7kVwFYpdIUUy0YdzOAr64K-QOt5CRJMaeIgKJd4bfYsyV6J5a0uVP4H0qqHhV2cQFuv0YdpQylBsBkmGqMeMk9d-bO4M98VjHXKVzvdyxf4SE" />
+                            <img alt="Usuario 3" class="w-10 h-10 rounded-full border-2 border-primary/50"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLCwZXUhNVM0zwzzY8HmEGHTL1qo4mdjf59Yr-rXSCB2OTgVmXAJXKthexHpFhMzdeVYcKgd-59CXjv-17V5ZZiRLrC0r8YTd0DjGYe4FNYO-83VlwDgkY995fjm5YBTth4VMzCj3Xed7QY1fSge4kqlXdpMY8Hh94fLWomtdscHisVpJPO_sQRt6eG1j51F_1pZBYuUXhaHjaCQWsz4K-QrSKs8FGUCoeXXnBI61ywZsC-yxbtBvG-kHSR4n2cMIfVFCDFAvDMZc" />
+                        </div>
+                        <span class="text-sm text-primary/80 font-medium">Más de 12,000 personas han descubierto su
+                            camino</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -38,7 +57,8 @@
 
                 <form @submit.prevent="login" class="space-y-6">
                     <div class="space-y-2 group">
-                        <label class="block text-xs uppercase tracking-widest text-primary font-bold ml-1">Correo Electrónico</label>
+                        <label class="block text-xs uppercase tracking-widest text-primary font-bold ml-1">Correo
+                            Electrónico</label>
                         <div class="relative">
                             <span
                                 class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 group-focus-within:text-primary">
@@ -50,8 +70,8 @@
                     </div>
 
                     <div class="space-y-2 group">
-                        <label
-                            class="block text-xs uppercase tracking-widest text-primary font-bold ml-1">Clave Secreta</label>
+                        <label class="block text-xs uppercase tracking-widest text-primary font-bold ml-1">Clave
+                            Secreta</label>
                         <div class="relative">
                             <span
                                 class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 group-focus-within:text-primary">
@@ -70,19 +90,15 @@
                                 href="#">¿Olvidaste tu llave cósmica?</a>
                         </div>
                     </div>
-
-                    <button type="submit"
-                        class="w-full py-3.5 bg-gradient-to-r from-primary via-yellow-500 to-amber-600 text-background-dark font-bold rounded-lg shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
-                        <span>Revelar mi Camino</span>
-                        <span class="material-icons text-sm">east</span>
-                    </button>
+                    <PrimaryButton label="Revelar mi Camino" icon="east" />
                 </form>
 
                 <div class="relative my-8">
                     <div class="absolute inset-0 flex items-center">
                         <div class="w-full border-t border-white/10"></div>
                     </div>
-                    <div class="relative flex justify-center text-xs"><span class="px-4 bg-[#1a150e] text-gray-500">O sintoniza tu energía con</span></div>
+                    <div class="relative flex justify-center text-xs"><span class="px-4 bg-[#1a150e] text-gray-500">O
+                            sintoniza tu energía con</span></div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -99,10 +115,10 @@
                 </div>
                 <div class="mt-10 text-center">
                     <p class="text-sm text-gray-400">
-                        ¿Aún no conoces tus números?
-                        <a class="text-primary hover:text-primary-light font-semibold hover:underline decoration-primary/50 underline-offset-4 transition-all"
-                            href="#">Inicia tu viaje aquí.</a>
+                        ¿Aún no conoces tus números?, Inicia tu viaje aquí.
                     </p>
+                    <br>
+                    <PrimaryButton label="Registrarme" icon="east" :to="'/register'" />
                 </div>
             </div>
         </div>
@@ -113,6 +129,7 @@
 import { ref } from 'vue';
 import { postData } from '../services/services.js';
 import { useAuthStore } from '../store/auth.js';
+import PrimaryButton from '../components/primaryButton.vue';
 
 const email = ref("");
 const password = ref("");
@@ -135,7 +152,3 @@ const login = async () => {
     }
 }
 </script>
-
-<style scoped>
-@import "../styles/login-styles.css";
-</style>

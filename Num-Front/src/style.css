@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   1. CONFIGURACIÓN DEL TEMA (Variables Globales)
+   ========================================================================== */
 @theme {
+  /* Paleta Cósmica */
   --color-primary: #f4af25;
   --color-primary-light: #f6c35e;
   --color-primary-dark: #c78d1a;
@@ -8,14 +12,85 @@
   --color-background-dark: #221c10;
   --color-void: #0f0c08;
 
+  /* Tipografía */
   --font-display: "Manrope", sans-serif;
   --font-serif: "Playfair Display", serif;
+
+  /* Degradados personalizados */
+  --background-image-cosmic-gradient: linear-gradient(135deg, rgba(34,28,16,0.95) 0%, rgba(15,12,8,1) 100%);
 }
 
-/* Tus estilos de Stitch aquí */
-.glass-panel {
-    background: rgba(34, 28, 16, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(244, 175, 37, 0.1);
+/* ==========================================================================
+   2. COMPONENTES Y UTILIDADES (Clases reutilizables)
+   ========================================================================== */
+@layer utilities {
+  /* Panel de Cristal (Glassmorphism Premium) */
+  .glass-panel {
+    background: linear-gradient(145deg, rgba(34, 28, 16, 0.5) 0%, rgba(15, 12, 8, 0.8) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(244, 175, 37, 0.15);
+    border-top: 1px solid rgba(244, 175, 37, 0.3); /* Luz de acento superior */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  /* Botón Principal (Oro Metálico con Resplandor) */
+  .btn-premium {
+    background: linear-gradient(to right, var(--color-primary), var(--color-primary-dark));
+    color: var(--color-background-dark);
+    font-weight: 700;
+    box-shadow: 0 0 15px rgba(244, 175, 37, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  /* Estados de interacción del botón */
+  .btn-premium:hover {
+    box-shadow: 0 0 25px rgba(244, 175, 37, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-premium:active {
+    transform: translateY(1px);
+    box-shadow: 0 0 10px rgba(244, 175, 37, 0.2);
+  }
+}
+
+/* ==========================================================================
+   3. ESTILOS BASE GLOBALES (Overrides de elementos HTML)
+   ========================================================================== */
+@layer base {
+  /* Suavizado de fuentes para pantallas de alta resolución */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar Personalizado (Estética oscura y dorada) */
+  ::-webkit-scrollbar { 
+    width: 8px; 
+  }
+  
+  ::-webkit-scrollbar-track { 
+    background: #1a150c; /* Más oscuro que el fondo para dar profundidad */
+  }
+  
+  ::-webkit-scrollbar-thumb { 
+    background: #3d3424; 
+    border-radius: 4px; 
+  }
+  
+  ::-webkit-scrollbar-thumb:hover { 
+    background: #f4af25; 
+  }
+
+  /* Fix para el Autofill de Inputs en navegadores (Mantiene el Dark Mode) */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #1a160e inset !important;
+    -webkit-text-fill-color: #e5e5e5 !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
 }
