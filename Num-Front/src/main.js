@@ -1,5 +1,25 @@
 import { createApp } from 'vue'
-import './style.css'
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
+// import { Quasar, Notify, Loading, Dialog } from 'quasar'
+import router from './router/router.js'
 
-createApp(App).mount('#app')
+// Import icon libraries
+// import '@quasar/extras/material-icons/material-icons.css'
+
+// Import Quasar css
+// import 'quasar/src/css/index.sass'
+
+// Import language (default export)
+// import es from 'quasar/lang/es.js'
+
+const app = createApp(App)
+const pinia = createPinia()
+
+app.use(router)
+app.use(pinia)
+
+pinia.use(piniaPluginPersistedstate)
+
+app.mount('#app')
