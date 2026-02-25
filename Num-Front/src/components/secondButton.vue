@@ -17,7 +17,7 @@ defineProps({
 
 <style scoped>
 .numerology-btn-gold {
-  background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+  background: linear-gradient(45deg, #c7af5f 0%, #c7c164 45%, #c4a174 80%, #ffc039 100%);
   color: #2c2c2c; 
   font-weight: 700;
   border: 1px solid rgba(184, 134, 11, 0.5);

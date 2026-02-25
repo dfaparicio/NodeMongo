@@ -15,7 +15,7 @@ defineEmits(["click"]);
 
 <style scoped>
 .cosmic-gold-btn {
-  background: linear-gradient(45deg, #d4af37 0%, #f9f295 45%, #e6be8a 70%, #b8860b 100%);
+  background: linear-gradient(45deg, #cbac45 0%, #f9f295 45%, #e6be8a 70%, #b8860b 100%);
   color: #1a1a1a;
   font-weight: 800;
   border-radius: 12px;
