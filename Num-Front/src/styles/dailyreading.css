@@ -1,0 +1,125 @@
+/* --- Layout Básico --- */
+.dashboard-page {
+  height: 100vh;
+  width: 100vw;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.w-full { width: 100%; }
+.z-behind { z-index: 0; }
+.z-top { z-index: 20; }
+.z-content { z-index: 10; }
+.line-height-relaxed { line-height: 1.6; }
+.text-decoration-none { text-decoration: none; }
+.transition { transition: all 0.3s ease; }
+
+@media (min-width: 768px) {
+  .md-flex { display: flex !important; }
+}
+@media (max-width: 767px) {
+  .md-flex { display: none !important; }
+}
+
+/* --- Colores Personalizados --- */
+.text-gold { color: #f4af25; }
+.text-blue-accent { color: #38bdf8; } /* El azul eléctrico de la Imagen 2 */
+.bg-blue-accent { background-color: #38bdf8; }
+.border-white-5 { border: 1px solid rgba(255, 255, 255, 0.05); }
+.border-top-light { border-top: 1px solid rgba(255, 255, 255, 0.05); }
+
+/* --- Fondos --- */
+.bg-deep-space {
+  background-color: #0c0906; /* Tono muy oscuro, casi negro/café */
+}
+
+.grid-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+  background-size: 60px 60px; /* Separación de la cuadrícula de puntos */
+  background-position: center;
+}
+
+.warm-glow-orb {
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(244, 175, 37, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-30%, 30%);
+}
+
+/* --- Componentes Glassmorphism --- */
+.glass-panel {
+  background: rgba(20, 18, 15, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.info-card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 6px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+/* --- Tipografía y Número Principal --- */
+.giant-number {
+  font-size: clamp(150px, 20vw, 250px);
+  font-weight: 700;
+  line-height: 0.8;
+  text-shadow: 0 0 50px rgba(244, 175, 37, 0.3);
+}
+
+.badge-gold {
+  border: 1px solid rgba(244, 175, 37, 0.4);
+  color: #f4af25;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  background: rgba(244, 175, 37, 0.05);
+}
+
+/* --- Elementos Pequeños (Dots, Barras) --- */
+.color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+}
+
+.timeline-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+.timeline-dot-active {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.glow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow: 0 0 15px 4px rgba(56, 189, 248, 0.5);
+}
+
+/* Override Quasar Linear Progress para la Imagen 2 */
+:deep(.q-linear-progress__track--light) {
+  background: rgba(255, 255, 255, 0.1);
+}
+:deep(.text-info) {
+  color: #38bdf8 !important; /* Fuerza el azul celeste en la barra */
+}
+
+/* --- Hover Effects --- */
+.hover-white:hover {
+  color: white !important;
+  transition: color 0.3s ease;
+}
+
+.hover-glow:hover {
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}

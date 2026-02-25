@@ -1,0 +1,100 @@
+/* --- Backgrounds --- */
+.bg-nebula-main { background: radial-gradient(circle at 50% 0%, #2e243d 0%, #130f1c 50%, #0a080c 100%); }
+.bg-void-gradient { background: linear-gradient(to bottom, #0a080c, transparent); }
+.flare { position: absolute; width: 500px; height: 500px; border-radius: 50%; filter: blur(150px); pointer-events: none; }
+.flare-gold { background: rgba(244, 175, 37, 0.1); top: 0; right: 0; }
+.flare-purple { background: rgba(88, 28, 135, 0.2); bottom: 0; left: 0; }
+
+/* --- Hero Section --- */
+.glass-card-hero {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%) !important;
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(244, 175, 37, 0.4) !important;
+  border-radius: 16px;
+}
+.aura-blur { background: linear-gradient(to right, rgba(244, 175, 37, 0.1), rgba(147, 51, 234, 0.1)); filter: blur(40px); border-radius: 16px; }
+.luxury-border { border: 1px solid rgba(244, 175, 37, 0.1); inset: 10px; border-radius: 8px; }
+
+/* --- Holographic 7 --- */
+.text-holographic {
+  font-size: 180px; font-weight: 100;
+  background: linear-gradient(to bottom, #fff, #f4af25, transparent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 15px rgba(244, 175, 37, 0.6));
+}
+.h-visual { height: 260px; }
+.ring { position: absolute; border-radius: 50%; border: 1px solid rgba(244, 175, 37, 0.2); }
+.ring-1 { width: 180px; height: 180px; animation: spin 10s linear infinite; }
+.ring-2 { width: 220px; height: 220px; border-color: rgba(244, 175, 37, 0.1); animation: spin 15s linear reverse infinite; }
+.ring-3 { width: 160px; height: 160px; border-top-color: #f4af25; animation: spin 3s linear infinite; }
+
+/* --- Timeline Architecture --- */
+.timeline-container { padding-bottom: 100px; }
+.glowing-thread {
+  position: absolute; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, #f4af25, rgba(244, 175, 37, 0.2), transparent);
+  box-shadow: 0 0 10px rgba(244, 175, 37, 0.5);
+}
+
+@media (min-width: 1024px) {
+  .glowing-thread { left: 25%; }
+  .md-ml-20 { margin-left: calc(25% + 20px); }
+}
+
+.timeline-entry { position: relative; }
+.dot { border-radius: 50%; z-index: 20; }
+.dot-main { right: -5px; top: 32px; width: 10px; height: 10px; background: #f4af25; box-shadow: 0 0 10px #f4af25; }
+.dot-secondary { right: -4px; top: 32px; width: 8px; height: 8px; background: rgba(244, 175, 37, 0.5); }
+.dot-mobile { left: -5px; top: 32px; width: 10px; height: 10px; background: #f4af25; border: 2px solid #0a080c; }
+
+/* --- Cards --- */
+.glass-timeline-card {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 12px;
+  transition: all 0.5s ease;
+  &:hover { transform: translateY(-4px); border-color: rgba(244, 175, 37, 0.2) !important; }
+}
+.active-card {
+  background: rgba(244, 175, 37, 0.05) !important;
+  border-color: rgba(244, 175, 37, 0.3) !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* --- Utils --- */
+.text-7 { font-size: 10px; }
+.text-white-60 { color: rgba(255, 255, 255, 0.6); }
+.text-white-40 { color: rgba(255, 255, 255, 0.4); }
+.text-primary-80 { color: rgba(244, 175, 37, 0.8); }
+.border-left-primary { border-left: 2px solid rgba(244, 175, 37, 0.5); }
+.border-bottom-white-10 { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.tag-badge { font-size: 9px; letter-spacing: 1px; color: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.1); }
+
+/* --- Animations --- */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.floating-orb { animation: float 6s ease-in-out infinite; }
+
+.shimmer-btn {
+  background: rgba(244, 175, 37, 0.1) !important;
+  border: 1px solid rgba(244, 175, 37, 0.5);
+  color: white;
+  overflow: hidden;
+  position: relative;
+  &::after {
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(244, 175, 37, 0.3), transparent);
+    transform: skewX(-25deg); animation: shimmer 3s infinite;
+  }
+}
+@keyframes shimmer { 100% { left: 200%; } }
+
+.group-hover-right { transition: transform 0.3s; }
+.group:hover .group-hover-right { transform: translateX(8px); }
+
+.load-records-btn {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.3);
+  &:hover { color: #f4af25; border-bottom: 1px solid #f4af25; }
+}

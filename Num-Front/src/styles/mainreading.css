@@ -1,0 +1,97 @@
+/* --- Colors & Utilitarios --- */
+.z-behind { z-index: 0; }
+.z-top { z-index: 10; }
+.text-white-90 { color: rgba(255, 255, 255, 0.9); }
+.text-white-80 { color: rgba(255, 255, 255, 0.8); }
+.text-white-60 { color: rgba(255, 255, 255, 0.6); }
+.text-white-50 { color: rgba(255, 255, 255, 0.5); }
+.min-h-85 { min-height: 85vh; }
+.max-width-lg-container { max-width: 1000px; }
+.border-top-white-10 { border-top: 1px solid rgba(255, 255, 255, 0.1); }
+
+/* --- Background --- */
+.geometry-bg {
+  background-image: 
+    linear-gradient(rgba(17, 11, 41, 0.9), rgba(17, 11, 41, 0.8)),
+    repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(244, 175, 37, 0.03) 20px),
+    repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(244, 175, 37, 0.03) 20px);
+}
+.ambient-vignette {
+  background: linear-gradient(to bottom, transparent, rgba(34, 28, 16, 0.3), #221c10);
+}
+
+/* --- Glassmorphism & Borders --- */
+.glass-panel {
+  background: rgba(18, 18, 23, 0.4);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.prismatic-border {
+  position: relative;
+  &::before {
+    content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
+    background: linear-gradient(135deg, rgba(244, 175, 37, 0.1), rgba(138, 43, 226, 0.2), rgba(244, 175, 37, 0.1));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude; pointer-events: none;
+  }
+}
+
+.spotlight {
+  background: radial-gradient(circle at top center, rgba(244, 175, 37, 0.15), transparent 70%);
+}
+
+/* --- Typo Effects --- */
+.text-gold-gradient {
+  background: linear-gradient(to bottom, #fff8e1, #f4af25);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-num { font-size: 120px; line-height: 1; }
+.text-glow { filter: drop-shadow(0 0 25px rgba(244, 175, 37, 0.6)); }
+
+/* --- Astrolabe Rings --- */
+.astrolabe-container { width: 250px; height: 250px; }
+.astrolabe-ring {
+  position: absolute; top: 50%; left: 50%; border-radius: 50%; border: 1px solid;
+}
+.ring-outer { width: 100%; height: 100%; border-color: rgba(244, 175, 37, 0.2); }
+.ring-middle { width: 80%; height: 80%; border-color: rgba(244, 175, 37, 0.4); }
+.ring-inner { 
+  width: 60%; height: 60%; border-color: rgba(244, 175, 37, 0.6); 
+  border-style: dashed; 
+}
+
+/* --- Animations --- */
+@keyframes spin { 
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.animate-spin-slow { animation: spin 30s linear infinite; }
+.animate-spin-reverse-slow { animation: spin 45s linear reverse infinite; }
+.animate-spin-slow-dashed { animation: spin 20s linear infinite; }
+
+/* --- UI Elements --- */
+.line-accent { width: 32px; height: 1px; background: rgba(244, 175, 37, 0.5); }
+.mystic-badge {
+  border: 1px solid rgba(244, 175, 37, 0.3);
+  background: rgba(244, 175, 37, 0.1);
+  color: #f4af25;
+}
+.avatar-border { border: 1px solid rgba(244, 175, 37, 0.4); background: rgba(244, 175, 37, 0.1); }
+
+.download-btn {
+  box-shadow: 0 0 40px -10px rgba(244, 175, 37, 0.4);
+  transition: all 0.3s ease;
+  &:hover { transform: translateY(-3px); }
+}
+
+.white-5 { background: rgba(255, 255, 255, 0.05); }
+
+/* --- Responsive Helpers --- */
+@media (min-width: 1024px) {
+  .text-right-md { text-align: right; }
+  .items-end-md { align-items: flex-end; }
+  .reverse-md { flex-direction: row-reverse; }
+}

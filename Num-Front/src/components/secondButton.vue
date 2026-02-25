@@ -22,6 +22,7 @@ defineProps({
   font-weight: 700;
   border: 1px solid rgba(184, 134, 11, 0.5);
   transition: all 0.3s ease;
+  border-radius: 20px;
 }
 
 .numerology-btn-gold:hover {
