@@ -1,0 +1,85 @@
+/* --- Backgrounds & Capas --- */
+.cosmic-bg {
+  background: radial-gradient(circle at 50% 0%, #4c1d95 0%, #1e1b4b 40%, #111 80%);
+}
+.sacred-geo-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f4af25' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.nebula {
+  position: fixed; border-radius: 50%; filter: blur(120px); mix-blend-mode: screen; pointer-events: none;
+}
+.nebula-top-left { top: -20%; left: -10%; width: 50vw; height: 50vw; background: rgba(79, 70, 229, 0.2); }
+.nebula-bottom-right { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: rgba(139, 92, 246, 0.2); }
+
+/* --- Estilos de Glassmorphism --- */
+.glass-panel {
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(244, 175, 37, 0.3) !important;
+  box-shadow: 0 0 50px -12px rgba(244, 175, 37, 0.15);
+}
+
+/* --- Elementos de UI --- */
+.accent-line { width: 32px; height: 1px; background: #f4af25; }
+.text-white-70 { color: rgba(255, 255, 255, 0.7); }
+.text-white-60 { color: rgba(255, 255, 255, 0.6); }
+.text-white-40 { color: rgba(255, 255, 255, 0.4); }
+.text-white-50 { color: rgba(255, 255, 255, 0.5); }
+.border-bottom-white-5 { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.border-bottom-primary-20 { border-bottom: 1px solid rgba(244, 175, 37, 0.2); }
+.border-top-primary-20 { border-top: 1px solid rgba(244, 175, 37, 0.2); }
+
+.manage-sub-btn {
+  background: rgba(244, 175, 37, 0.1);
+  border: 1px solid rgba(244, 175, 37, 0.5);
+  color: #f4af25;
+  transition: 0.3s;
+  &:hover {
+    background: rgba(244, 175, 37, 0.2);
+    box-shadow: 0 0 30px -5px rgba(244, 175, 37, 0.5);
+    border-color: #f4af25;
+  }
+}
+
+/* --- Tabla --- */
+.cosmic-table {
+  tr:hover { background: rgba(244, 175, 37, 0.05); }
+  th { border: none !important; font-weight: 300; }
+  td { border-bottom: 1px solid rgba(244, 175, 37, 0.1) !important; }
+}
+
+.plan-icon-box {
+  width: 40px; height: 40px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);
+}
+
+.status-badge {
+  font-size: 10px; font-weight: bold; text-transform: uppercase;
+  &.bg-emerald-900-40 { background: rgba(6, 78, 59, 0.4); border: 1px solid rgba(16, 185, 129, 0.3); }
+  &.bg-amber-900-20 { background: rgba(120, 53, 15, 0.2); border: 1px solid rgba(245, 158, 11, 0.2); }
+}
+
+.dot-pulse {
+  width: 6px; height: 6px; border-radius: 50%;
+  &.bg-emerald-400 { background: #34d399; animation: pulse-emerald 2s infinite; }
+}
+
+@keyframes pulse-emerald {
+  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+
+.nav-btn {
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  &:hover:not([disabled]) { border-color: #f4af25; color: #f4af25; }
+}
+
+/* --- Helpers de Color --- */
+.bg-indigo-900-50 { background: rgba(49, 46, 129, 0.5); }
+.bg-violet-900-50 { background: rgba(76, 29, 149, 0.5); }
+.bg-amber-900-30 { background: rgba(120, 53, 15, 0.3); }
+.bg-slate-800-50 { background: rgba(30, 41, 59, 0.5); }
+.text-emerald-300 { color: #6ee7b7; }
+.text-amber-500 { color: #f59e0b; }
+.bg-black-20 { background: rgba(0, 0, 0, 0.2); }

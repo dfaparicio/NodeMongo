@@ -157,7 +157,5 @@ const onRegister = () => {
 </script>
 
 <style scoped>
-
 @import url('../styles/register.css');
-
 </style>

@@ -74,13 +74,13 @@
             <label
               class="block text-caption text-uppercase tracking-widest text-primary text-weight-bold q-ml-xs q-mb-xs">Contraseña</label>
             <q-input v-model="password" dark outlined color="primary" placeholder="••••••••"
-              :type="showPassword ? 'text' : 'password'" :rules="[val => !!val || 'La contraseña es requerida']">
+              :type="showpassword ? 'text' : 'password'" :rules="[val => !!val || 'La contraseña es requerida']">
               <template v-slot:prepend>
                 <q-icon name="lock_outline" />
               </template>
               <template v-slot:append>
-                <q-icon :name="showPassword ? 'visibility' : 'visibility_off'" class="cursor-pointer"
-                  @click="showPassword = !showPassword" />
+                <q-icon :name="showpassword ? 'visibility' : 'visibility_off'" class="cursor-pointer"
+                  @click="showpassword = !showpassword" />
               </template>
             </q-input>
             <div class="text-right">
@@ -91,7 +91,7 @@
 
           <br>
 
-          <PrimaryButton label="INGRESAR" to="/dashboard" icon="login" />
+          <PrimaryButton label="INGRESAR" to="/perfil" icon="login" :loading="loading" />
         </q-form>
 
         <div class="q-mt-xl text-center">
@@ -118,15 +118,16 @@ import { postData } from '../services/services.js';
 import { useAuthStore } from '../store/auth.js';
 import { useQuasar } from 'quasar';
 import PrimaryButton from '../components/primaryButton.vue';
+import { useNotifications } from '../composables/notify.js';
+
+const { success, error: notifyerror } = useNotifications();
 
 const email = ref("");
 const password = ref("");
-const showPassword = ref(false);
-const isLoading = ref(false);
-
+const showpassword = ref(false);
+const loading = ref(false);
 const useAuth = useAuthStore();
 const router = useRouter();
-const $q = useQuasar();
 
 const avatars = [
   'https://lh3.googleusercontent.com/aida-public/AB6AXuB4QqQfw2dZYRgRRoAmE00Hzt4rVb9gt6aynSwvSXBQ5e8xBk--yLd2XXS5iDDmo8SNtK10-uUGILlC77Ww-fqL3N6EtvBvZ6lS33LQdxC3SpaS8NVfmncJJqierNLOmkJALgL6ZmRqon9fh9WX_9CIX7cFxH9aD9xSkgeEZFIOymTqLNXKZ8VkKo7iTmSoQVFwb0Id65GwWO93LAJLjvhvURIn2lLocMYkIDin0OGDiL-K1kUnNg5O15ek04LK7gNJzMireaf2MkI',
@@ -136,23 +137,32 @@ const avatars = [
 
 const login = async () => {
 
+  if (!email.value || !password.value) return;
+
+  loading.value = true;
+
   try {
     const res = await postData("auth/login", { email: email.value, password: password.value });
 
     useAuth.token = res.data.token;
     console.log("Token guardado:", useAuth.token);
 
-    router.push('/dashboard');
+    success("Conexión cósmica esatblecida", "Bienvenido de vuelta a tu camino")
+
+    router.push('/perfil');
 
   } catch (error) {
     console.error(error.response);
 
+    const errormsg = error.response?.data?.message || "Revisa tus credenciales e intenta de nuevo";
+    notifyerror("Energía desalineada", errormsg)
+
+  } finally {
+    loading.value = false;
   }
 };
 </script>
 
 <style scoped>
-
 @import url('../styles/login.css');
-
 </style>

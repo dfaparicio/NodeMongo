@@ -11,14 +11,6 @@
     color: #020202;
 }
 
-.font-display {
-    font-family: 'Space Grotesk', sans-serif;
-}
-
-.font-serif {
-    font-family: 'Playfair Display', serif;
-}
-
 .mix-blend-screen {
     mix-blend-mode: screen;
 }

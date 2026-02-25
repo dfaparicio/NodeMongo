@@ -1,0 +1,32 @@
+# ⚡ Quasar CSS Cheat Sheet
+
+### 📏 Tamaños (Para todo)
+`none` | `xs` | `sm` | `md` | `lg` | `xl`
+
+---
+
+### 📦 1. Espaciado (Margin y Padding)
+**Fórmula:** `q-[m/p][dirección]-[tamaño]`
+
+* **Tipo:** `m` (Margin) | `p` (Padding)
+* **Dirección:** * `a` (All - todo)
+  * `t` (Top - arriba) | `b` (Bottom - abajo)
+  * `l` (Left - izq) | `r` (Right - der)
+  * `x` (Horizontal - izq/der) | `y` (Vertical - arriba/abajo)
+
+* **Ejemplos:** `q-pa-md` | `q-mt-xl` | `q-mx-auto` (centrar)
+
+---
+
+### 🧩 2. Flexbox (Contenedores y Alineación)
+* **Dirección:** `row` (fila) | `column` (columna)
+* **Justify (Eje Principal):** * `justify-start` | `center` | `end` | `between` | `around` | `evenly`
+* **Items (Eje Cruzado):** * `items-start` | `center` | `end` | `stretch` | `baseline`
+* **Self (Hijos individuales):** * `self-start` | `center` | `end` | `stretch`
+
+---
+
+### ↔️ 3. Gutter (Gap / Separación)
+* **Flex normal:** `q-gutter-[tamaño]` (ej. `q-gutter-sm`)
+* **Solo un eje:** `q-gutter-x-[tamaño]` | `q-gutter-y-[tamaño]`
+* **Sistema de grillas (con cols):** `q-col-gutter-[tamaño]`

@@ -1,0 +1,309 @@
+.cosmic-bg {
+  background-color: #0d0b07;
+}
+.text-slate-300 {
+  color: #cbd5e1;
+}
+.text-slate-400 {
+  color: #94a3b8;
+}
+.text-slate-600 {
+  color: #475569;
+}
+.text-emerald {
+  color: #34d399;
+}
+.z-behind {
+  z-index: -1;
+}
+.z-top {
+  z-index: 10;
+}
+.h-full {
+  height: 100%;
+}
+.object-cover {
+  object-fit: cover;
+}
+.mix-blend-luminosity {
+  mix-blend-mode: luminosity;
+}
+.border-right-cosmic {
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+}
+.border-bottom-primary {
+  border-bottom: 1px solid rgba(244, 175, 37, 0.2);
+}
+
+/* --- EFECTOS DE FONDO (NEBULOSAS) --- */
+.nebula-glow {
+  width: 24rem;
+  height: 24rem;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+.nebula-1 {
+  top: 25%;
+  left: -25%;
+  background-color: #4f46e5;
+}
+.nebula-2 {
+  bottom: 25%;
+  right: -25%;
+  background-color: #581c87;
+}
+
+/* --- AVATAR Y GEOMETRÍA --- */
+.avatar-wrapper {
+  width: 320px;
+  height: 320px;
+}
+@media (max-width: 1024px) {
+  .avatar-wrapper {
+    width: 256px;
+    height: 256px;
+  }
+}
+.svg-primary-opacity {
+  color: #f4af25;
+  opacity: 0.3;
+}
+.avatar-aura {
+  width: 75%;
+  height: 75%;
+  background: linear-gradient(to top, rgba(244, 175, 37, 0.4), transparent);
+  border: 1px solid rgba(244, 175, 37, 0.2);
+  box-shadow: 0 0 50px rgba(244, 175, 37, 0.3);
+  border-radius: 50%;
+}
+.pulse-indicator {
+  top: 2.5rem;
+  right: 2.5rem;
+  width: 1rem;
+  height: 1rem;
+  background-color: #f4af25;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #f4af25;
+}
+
+/* --- TIPOGRAFÍA Y BADGES --- */
+.text-gradient-title {
+  background: linear-gradient(to right, #f4af25, #fef08a, #f4af25);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-subtitle-cosmic {
+  color: rgba(244, 175, 37, 0.6);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  font-weight: 300;
+}
+.badge-frecuencia {
+  border: 1px solid rgba(244, 175, 37, 0.4);
+  background-color: rgba(244, 175, 37, 0.05);
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f4af25;
+}
+.text-status-title {
+  font-size: 10px;
+  color: #f4af25;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+}
+.text-card-subtitle {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.text-card-title {
+  color: #f4af25;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+}
+
+/* --- COMPONENTES UI (GLASS, BOTONES, ICONOS) --- */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(244, 175, 37, 0.1);
+}
+.rounded-xl {
+  border-radius: 1.5rem;
+}
+.badge-status {
+  background-color: rgba(244, 175, 37, 0.1);
+  border: 1px solid rgba(244, 175, 37, 0.3);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+}
+.dot-active {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: #f4af25;
+}
+.dot-emerald {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: #34d399;
+}
+.icon-box {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bg-emerald-box {
+  background-color: rgba(52, 211, 153, 0.2);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+.bg-primary-box {
+  background-color: rgba(244, 175, 37, 0.2);
+  border: 1px solid rgba(244, 175, 37, 0.3);
+}
+.btn-transparent {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.group:hover .icon-slide {
+  transform: translateX(4px);
+  transition: transform 0.3s;
+}
+.hover-white:hover {
+  color: white !important;
+  transition: color 0.3s;
+}
+
+/* --- TABS Y TABLA --- */
+.tab-btn {
+  padding: 1.25rem 2rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+.tab-btn.active {
+  border-color: #f4af25;
+  color: #f4af25;
+  background-color: rgba(244, 175, 37, 0.05);
+}
+.tab-btn.inactive {
+  color: #64748b;
+}
+.tab-btn.inactive:hover {
+  color: #cbd5e1;
+}
+
+.cosmic-table th {
+  color: #64748b;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 1rem 2rem;
+  font-weight: 600;
+}
+.cosmic-table td {
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid rgba(244, 175, 37, 0.1);
+}
+.table-row-hover:hover {
+  background-color: rgba(244, 175, 37, 0.05);
+  transition: background-color 0.3s;
+}
+
+.badge-table-emerald {
+  background-color: rgba(52, 211, 153, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.badge-table-primary {
+  background-color: rgba(244, 175, 37, 0.1);
+  color: #f4af25;
+  border: 1px solid rgba(244, 175, 37, 0.2);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0b07;
+}
+::-webkit-scrollbar-thumb {
+  background: #f4af25;
+  border-radius: 10px;
+}
+
+/* --- ESTILOS DEL ENCABEZADO --- */
+.glass-header {
+  background: rgba(20, 15, 10, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(244, 175, 37, 0.15);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.h-20 { height: 80px; }
+.rounded-xl { border-radius: 1.5rem; }
+.tracking-widest { letter-spacing: 0.1em; }
+.text-slate-400 { color: #94a3b8; }
+.hover-white:hover { color: #ffffff !important; transition: color 0.3s; }
+
+/* Enlaces */
+.nav-link {
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+
+.nav-text {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  transition: color 0.3s ease;
+}
+
+/* Efecto dorado al pasar el mouse o estar en la ruta actual */
+.nav-link:hover .nav-text, 
+.router-link-active .nav-text { 
+  color: #f4af25; 
+  text-shadow: 0 0 10px rgba(244, 175, 37, 0.3);
+}
+
+.avatar-border { 
+  border: 2px solid rgba(244, 175, 37, 0.5); 
+}

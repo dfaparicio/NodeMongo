@@ -1,0 +1,105 @@
+/* --- Theme Config --- */
+.bg-background-dark { background-color: #110e08; }
+.bg-obsidian-80 { background: rgba(10, 10, 12, 0.8); }
+.text-primary { color: #f4af25; }
+.text-primary-dim { color: #b57d0d; }
+.text-cyan-accent { color: #00f0ff; }
+.bg-primary-10 { background: rgba(244, 175, 37, 0.1); }
+.bg-cyan-5 { background: rgba(0, 240, 255, 0.05); }
+
+/* --- Layout Utils --- */
+.h-20 { height: 80px; }
+.h-1 { height: 4px; border-radius: 4px; }
+.text-7 { font-size: 10px; }
+.border-right-white-5 { border-right: 1px solid rgba(255,255,255,0.05); }
+.border-bottom-white-5 { border-bottom: 1px solid rgba(255,255,255,0.05); }
+.border-top-white-5 { border-top: 1px solid rgba(255,255,255,0.05); }
+.bg-white-10 { background: rgba(255,255,255,0.1); }
+
+/* --- Effects --- */
+.bg-grid-pattern {
+  background-image: radial-gradient(rgba(244, 175, 37, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.glow-text { text-shadow: 0 0 10px rgba(244, 175, 37, 0.5); }
+.cyan-glow { text-shadow: 0 0 10px rgba(0, 240, 255, 0.4); }
+.glow-orb {
+  position: absolute; width: 500px; height: 500px; border-radius: 50%; filter: blur(100px);
+  pointer-events: none; z-index: 0;
+}
+.top-right { top: -100px; right: -100px; }
+.bottom-left { bottom: -100px; left: -100px; }
+
+/* --- Components Styling --- */
+.nav-active {
+  background: rgba(244, 175, 37, 0.1) !important;
+  color: #f4af25 !important;
+  border: 1px solid rgba(244, 175, 37, 0.2);
+  .active-indicator {
+    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 4px; height: 24px; background: #f4af25; border-radius: 0 4px 4px 0;
+    box-shadow: 0 0 8px #f4af25;
+  }
+}
+
+.hud-card {
+  background: rgba(18, 21, 31, 0.6) !important;
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s;
+  &:hover { 
+    border-color: rgba(244, 175, 37, 0.3); 
+    transform: translateY(-4px); 
+  }
+}
+
+.export-btn {
+  background: rgba(244, 175, 37, 0.15);
+  color: #f4af25;
+  border: 1px solid rgba(244, 175, 37, 0.3);
+  font-weight: bold;
+  border-radius: 50px;
+  &:hover { box-shadow: 0 0 15px rgba(244, 175, 37, 0.3); }
+}
+
+.influx-badge {
+  background: rgba(52, 211, 153, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.chart-container {
+  background: linear-gradient(to top, #12151f, transparent);
+  border-radius: 8px;
+}
+.chart-path { filter: drop-shadow(0 0 8px #f4af25); }
+.point-marker {
+  width: 10px; height: 10px; background: #110e08; border: 2px solid #f4af25;
+  border-radius: 50%; box-shadow: 0 0 10px #f4af25; cursor: pointer;
+  &:hover { transform: scale(1.5); transition: 0.3s; }
+}
+
+.status-badge {
+  padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: bold;
+  &.paid { background: rgba(52, 211, 153, 0.1); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.2); }
+  .dot-status { width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; display: inline-block; }
+}
+
+.search-input { width: 280px; .q-field__control { border-radius: 50px; background: rgba(0,0,0,0.2); } }
+.page-btn {
+  min-width: 32px; height: 32px; border-radius: 4px; background: rgba(255,255,255,0.05);
+  &.active { background: rgba(244, 175, 37, 0.2); color: #f4af25; border: 1px solid rgba(244, 175, 37, 0.2); }
+}
+
+/* --- Table Customization --- */
+.architect-table {
+  background: transparent !important;
+  tr:hover { background: rgba(255,255,255,0.02); }
+  th { border-bottom: none !important; }
+  td { border-bottom: 1px solid rgba(255,255,255,0.05) !important; }
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; &:hover { background: #f4af25; } }

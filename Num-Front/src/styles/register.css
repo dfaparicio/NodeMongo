@@ -11,15 +11,6 @@
   color: #f4af25 !important;
 }
 
-/* Tipografía */
-.font-display {
-  font-family: 'Manrope', sans-serif;
-}
-
-.font-serif {
-  font-family: 'Playfair Display', serif;
-}
-
 .tracking-widest {
   letter-spacing: 0.1em;
 }

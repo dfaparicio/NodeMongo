@@ -177,7 +177,5 @@ import SecondButton from "../components/secondButton.vue"
 </script>
 
 <style scoped>
-
 @import url('../styles/home.css');
-
 </style>
