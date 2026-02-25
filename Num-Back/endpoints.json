@@ -28,6 +28,10 @@
     {
       "key": "token",
       "value": ""
+    },
+    {
+      "key": "resetToken",
+      "value": ""
     }
   ],
   "item": [
@@ -70,6 +74,77 @@
               "path": [
                 "auth",
                 "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Verificar email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/confirmar/{{resetToken}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "confirmar",
+                "{{resetToken}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Recuperar contraseña",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan@email.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/recuperar-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "recuperar-password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Establecer nueva contraseña",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"nuevaContraseña123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/nuevo-password/{{resetToken}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "nuevo-password",
+                "{{resetToken}}"
               ]
             }
           }
