@@ -30,7 +30,7 @@
         </div>
 
         <h1 class="text-h4 text-weight-bolder text-gradient-title text-center q-mb-xs tracking-tighter">
-          CASSANDRA LUNARIS
+          {{ user?.nombre || 'Buscador Cósmico' }}
         </h1>
         <p class="text-subtitle-cosmic q-mb-xl">The Star Weaver</p>
 
@@ -56,9 +56,25 @@
             Perfil Cósmico
           </h2>
           <div class="flex q-gutter-x-xl">
-            <span class="flex items-center"><q-icon name="email" class="q-mr-xs" /> c.lunaris@galaxy.io</span>
-            <span class="flex items-center"><q-icon name="cake" class="q-mr-xs" /> 28 Años</span>
-            <span class="flex items-center"><q-icon name="event" class="q-mr-xs" /> 14 Nov 1995</span>
+            <span class="flex items-center">
+              <q-icon name="email" class="q-mr-xs" />
+              {{ user?.email || 'Sin correo' }}
+            </span>
+
+            <span class="flex items-center">
+              <q-icon name="person" class="q-mr-xs" />
+              {{ user?.nombre || 'Sin nombre' }}
+            </span>
+
+            <span class="flex items-center">
+              <q-icon name="calendar_today" class="q-mr-xs" />
+              {{ user?.edad || 'Sin edad' }}
+            </span>
+
+            <span class="flex items-center">
+              <q-icon name="cake" class="q-mr-xs" />
+              {{ fechanacimiento }}
+            </span>
           </div>
         </div>
 
@@ -182,6 +198,24 @@
 
 <script setup>
 import secondButton from "../components/secondButton.vue";
+import { useAuthStore } from "../store/auth.js";
+import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+const { user, fechanacimiento } = storeToRefs(authStore);
+
+console.log(fechanacimiento);
+
+
+// Protección: Si no hay usuario guardado, lo devolvemos al login
+if (!authStore.user) {
+  router.push('/');
+}
+
+
 </script>
 
 <style scoped>

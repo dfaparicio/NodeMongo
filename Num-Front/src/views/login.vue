@@ -91,7 +91,7 @@
 
           <br>
 
-          <PrimaryButton label="INGRESAR" to="/perfil" icon="login" :loading="loading" />
+          <PrimaryButton label="INGRESAR" type="submit" icon="login" :loading="loading" />
         </q-form>
 
         <div class="q-mt-xl text-center">
@@ -116,7 +116,6 @@ import { ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { postData } from '../services/services.js';
 import { useAuthStore } from '../store/auth.js';
-import { useQuasar } from 'quasar';
 import PrimaryButton from '../components/primaryButton.vue';
 import { useNotifications } from '../composables/notify.js';
 
@@ -126,7 +125,7 @@ const email = ref("");
 const password = ref("");
 const showpassword = ref(false);
 const loading = ref(false);
-const useAuth = useAuthStore();
+const authStore = useAuthStore();
 const router = useRouter();
 
 const avatars = [
@@ -144,23 +143,35 @@ const login = async () => {
   try {
     const res = await postData("auth/login", { email: email.value, password: password.value });
 
-    useAuth.token = res.data.token;
-    console.log("Token guardado:", useAuth.token);
+    authStore.token = res.token;
+    authStore.user = res.usuario;
 
-    success("Conexión cósmica esatblecida", "Bienvenido de vuelta a tu camino")
+    console.log("Datos cósmicos guardados en Pinia con éxito");
+
+    success("Conexión cósmica establecida", "Bienvenido de vuelta a tu camino");
 
     router.push('/perfil');
 
   } catch (error) {
     console.error(error.response);
 
-    const errormsg = error.response?.data?.message || "Revisa tus credenciales e intenta de nuevo";
+    const errormsg = error.response?.data?.error || "Revisa tus credenciales e intenta de nuevo";
     notifyerror("Energía desalineada", errormsg)
 
   } finally {
     loading.value = false;
   }
 };
+
+// onMounted(() => {
+//   login();
+// });
+
+// const logout = () => {
+//   authStore.logout(); 
+//   router.push('/');   
+// };
+
 </script>
 
 <style scoped>
