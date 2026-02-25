@@ -1,4 +1,6 @@
 import Usuario from "../models/usuario.js";
+import { enviarEmail } from "./nodemailer.js";
+import crypto from "crypto";
 
 // Validar si existe el usuario por ID
 export const validarExisteUsuario = async (id) => {
