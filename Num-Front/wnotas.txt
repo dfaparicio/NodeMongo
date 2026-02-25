@@ -30,3 +30,7 @@
 * **Flex normal:** `q-gutter-[tamaño]` (ej. `q-gutter-sm`)
 * **Solo un eje:** `q-gutter-x-[tamaño]` | `q-gutter-y-[tamaño]`
 * **Sistema de grillas (con cols):** `q-col-gutter-[tamaño]`
+
+
+
+zbfsottuuwrcwlfo
