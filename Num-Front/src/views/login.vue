@@ -83,64 +83,16 @@
                   @click="showPassword = !showPassword" />
               </template>
             </q-input>
-            <div class="text-right q-mt-sm">
+            <div class="text-right">
               <a href="#" class="text-caption text-grey-5 hover-text-primary custom-link">¿Olvidaste tu llave
                 cósmica?</a>
             </div>
           </div>
 
+          <br>
+
           <PrimaryButton label="INGRESAR" to="/dashboard" icon="login" />
         </q-form>
-
-        <div class="relative-position q-my-lg">
-          <q-separator dark class="opacity-20" />
-          <div class="absolute-center bg-background-dark q-px-sm">
-            <span class="text-caption text-grey-5 glass-panel-small q-px-md q-py-xs border-radius-full">O continúa
-              con</span>
-          </div>
-        </div>
-
-        <div class="row q-col-gutter-sm">
-          <div class="col-6">
-            <q-btn outline dark class="full-width social-btn" no-caps>
-              <template v-slot:default>
-                <div class="row items-center q-gutter-x-sm">
-                  <svg class="w-5 h-5" style="width: 20px; height: 20px;" fill="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      fill="#4285F4"></path>
-                    <path
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      fill="#34A853"></path>
-                    <path
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                      fill="#FBBC05"></path>
-                    <path
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      fill="#EA4335"></path>
-                  </svg>
-                  <span class="text-caption text-weight-medium">Google</span>
-                </div>
-              </template>
-            </q-btn>
-          </div>
-          <div class="col-6">
-            <q-btn outline dark class="full-width social-btn" no-caps>
-              <template v-slot:default>
-                <div class="row items-center q-gutter-x-sm">
-                  <svg class="w-5 h-5 text-white" style="width: 20px; height: 20px;" fill="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      d="M17.05 20.28c-.98.95-2.05.88-3.08.35-1.09-.56-2.09-.48-3.08.35-1.04.86-2.17.58-3.04-.32-4.03-4.16-3.06-10.22 1.68-10.22 1.34 0 2.22.68 2.92.68.73 0 1.94-.74 3.28-.6 1.4.15 2.5.76 3.22 1.83-2.91 1.76-2.38 5.76.66 7.15-.59 1.68-1.55 3.12-2.56 4.13zM12.03 7.25c-.15-2.28 1.66-4.32 4-4.25.32 2.69-2.6 4.74-4 4.25z">
-                    </path>
-                  </svg>
-                  <span class="text-caption text-weight-medium">Apple</span>
-                </div>
-              </template>
-            </q-btn>
-          </div>
-        </div>
 
         <div class="q-mt-xl text-center">
           <p class="text-caption text-grey-5">
@@ -200,167 +152,7 @@ const login = async () => {
 </script>
 
 <style scoped>
-/* Importación de fuentes de Google */
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
-/* Variables de Color (Reemplazando Tailwind) */
-.bg-void {
-  background-color: #0f0c08;
-}
+@import url('../styles/login.css');
 
-.bg-background-dark {
-  background-color: #221c10;
-}
-
-.text-primary {
-  color: #f4af25 !important;
-}
-
-/* Tipografía */
-.font-display {
-  font-family: 'Manrope', sans-serif;
-}
-
-.font-serif {
-  font-family: 'Playfair Display', serif;
-}
-
-.tracking-widest {
-  letter-spacing: 0.1em;
-}
-
-.tracking-wider {
-  letter-spacing: 0.05em;
-}
-
-/* Efectos visuales de fondo */
-.cosmic-overlay {
-  background: linear-gradient(to bottom right, rgba(49, 46, 129, 0.4), rgba(88, 28, 135, 0.3), rgba(34, 28, 16, 0.9));
-}
-
-.bg-stardust {
-  background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
-}
-
-.ambient-glow-top {
-  position: absolute;
-  top: -5rem;
-  right: -5rem;
-  width: 24rem;
-  height: 24rem;
-  background-color: rgba(244, 175, 37, 0.05);
-  border-radius: 50%;
-  filter: blur(100px);
-}
-
-.ambient-glow-bottom {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 16rem;
-  height: 16rem;
-  background-color: rgba(49, 46, 129, 0.1);
-  border-radius: 50%;
-  filter: blur(80px);
-}
-
-/* Efecto Glassmorphism */
-.glass-panel {
-  background: rgba(34, 28, 16, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(244, 175, 37, 0.1);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-}
-
-.glass-panel-small {
-  background: rgba(34, 28, 16, 0.8);
-  border: 1px solid rgba(244, 175, 37, 0.1);
-}
-
-/* Textos y Botones especiales */
-.cosmic-text-gradient {
-  background: linear-gradient(to right, #f6c35e, #f4af25, #d97706);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.cosmic-btn {
-  background: linear-gradient(to right, #f4af25, #eab308, #d97706);
-  color: #221c10 !important;
-  font-weight: bold;
-  box-shadow: 0 0 20px rgba(244, 175, 37, 0.3);
-  transition: all 0.3s ease;
-}
-
-.cosmic-btn:hover {
-  box-shadow: 0 0 30px rgba(244, 175, 37, 0.5);
-  transform: scale(1.01);
-}
-
-/* Utilidades extra */
-.avatar-group {
-  margin-left: 10px;
-}
-
-.avatar-border {
-  border: 2px solid rgba(244, 175, 37, 0.5);
-  margin-left: -10px;
-}
-
-.border-radius-full {
-  border-radius: 9999px;
-}
-
-.custom-link {
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.hover-text-primary:hover {
-  color: #f4af25 !important;
-}
-
-.hover-underline:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-.social-btn {
-  border-color: rgba(255, 255, 255, 0.1);
-  transition: background 0.2s;
-}
-
-.social-btn:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-}
-
-/* Custom scrollbar para tema oscuro */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #221c10;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #3d3424;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #f4af25;
-}
-
-/* Corrección de autofill en inputs oscuros */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #1a160e inset !important;
-  -webkit-text-fill-color: #e5e5e5 !important;
-  transition: background-color 5000s ease-in-out 0s;
-}
 </style>

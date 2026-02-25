@@ -1,0 +1,175 @@
+/* Variables de Color (Reemplazando Tailwind) */
+.bg-void {
+  background-color: #0f0c08;
+}
+
+.bg-background-dark {
+  background-color: #221c10;
+}
+
+.text-primary {
+  color: #f4af25 !important;
+}
+
+/* Tipografía */
+.font-display {
+  font-family: 'Manrope', sans-serif;
+}
+
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+.tracking-widest {
+  letter-spacing: 0.1em;
+}
+
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+.tracking-tighter {
+  letter-spacing: -0.05em;
+}
+
+/* Efectos visuales de fondo */
+.cosmic-overlay {
+  background: linear-gradient(to bottom right, rgba(49, 46, 129, 0.4), rgba(88, 28, 135, 0.3), rgba(34, 28, 16, 0.9));
+}
+
+.bg-stardust {
+  background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+}
+
+.ambient-glow-top {
+  position: absolute;
+  top: -5rem;
+  right: -5rem;
+  width: 24rem;
+  height: 24rem;
+  background-color: rgba(244, 175, 37, 0.05);
+  border-radius: 50%;
+  filter: blur(100px);
+}
+
+.ambient-glow-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 16rem;
+  height: 16rem;
+  background-color: rgba(49, 46, 129, 0.1);
+  border-radius: 50%;
+  filter: blur(80px);
+}
+
+/* Efecto Glassmorphism */
+.glass-panel {
+  background: rgba(34, 28, 16, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(244, 175, 37, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.glass-panel-small {
+  background: rgba(34, 28, 16, 0.8);
+  border: 1px solid rgba(244, 175, 37, 0.1);
+}
+
+/* Textos y Botones especiales */
+.cosmic-text-gradient {
+  background: linear-gradient(to right, #f6c35e, #f4af25, #d97706);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.cosmic-btn {
+  background: linear-gradient(to right, #f4af25, #eab308, #d97706);
+  color: #221c10 !important;
+  font-weight: bold;
+  box-shadow: 0 0 20px rgba(244, 175, 37, 0.3);
+  transition: all 0.3s ease;
+}
+
+.cosmic-btn:hover {
+  box-shadow: 0 0 30px rgba(244, 175, 37, 0.5);
+  transform: scale(1.01);
+}
+
+/* Utilidades extra */
+.avatar-group {
+  margin-left: 10px;
+}
+
+.avatar-border {
+  border: 2px solid rgba(244, 175, 37, 0.5);
+  margin-left: -10px;
+}
+
+.border-radius-full {
+  border-radius: 9999px;
+}
+
+.custom-link {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.hover-text-primary:hover {
+  color: #f4af25 !important;
+}
+
+.hover-underline:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.social-btn {
+  border-color: rgba(255, 255, 255, 0.1);
+  transition: background 0.2s;
+}
+
+.social-btn:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Custom scrollbar para tema oscuro */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #221c10;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3d3424;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f4af25;
+}
+
+/* Corrección de autofill en inputs oscuros */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #1a160e inset !important;
+  -webkit-text-fill-color: #e5e5e5 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Evitar que el input date muestre el icono nativo de calendario */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.5;
+  cursor: pointer;
+}
