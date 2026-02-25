@@ -1,143 +1,389 @@
 <template>
-    <div
-        class="bg-background-light dark:bg-void font-display h-screen w-full overflow-hidden text-slate-800 dark:text-slate-100 selection:bg-primary selection:text-white">
-        <div class="flex h-full w-full relative">
-            <div class="hidden lg:flex lg:w-[60%] h-full relative overflow-hidden bg-void border-r border-white/5">
-                <div class="absolute inset-0 w-full h-full">
-                    <img alt="Nebulosa profunda en tonos violeta e índigo"
-                        class="object-cover w-full h-full opacity-80 mix-blend-overlay"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOYC3SQk2mjOD_3Oz2LYFJi3QaADHLEXIGGNKuXHT08lXzlJaolS88F-zszgIY6Qmst4pnYXuYAWivn1GXXlX7wJXHId17ctPlFAE5Ivt-DFYsYd78Nx7xM8kFqp5boA68hMw9OXdkLe6KVHqqjLumwk575WqlyoFsl5SJ_ajsogHnqcdN9H1CNxTWoawJD38vYPo8EVNa9fID2JskLszZRmaGkOmTaI21vFJxQ6l4ssRIBOl1anYpGmLs_ivOY8o3TBN7xQrxRmE" />
-                </div>
-                <div
-                    class="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-purple-900/30 to-background-dark/90">
-                </div>
-                <div class="absolute inset-0 flex items-center justify-center opacity-60">
-                    <img alt="Geometría sagrada dorada brillando en la oscuridad"
-                        class="object-cover w-full h-full mix-blend-screen opacity-50"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0XMIupUmXUu4OKxJegFu5lFdMLRVaacsP3VfUR5NH5CZ1Be5cRqA1kKXtQddiZCuBuiUzibqqBH6sG6nAFywNV4_pTfGJXIMKPy43H3xD0qJacj-B4BDHgvCxrahs386FqOa-mYYTfD12nztWvXu1jp6NYUSfX51Fqmp5gDcynM-vHxlWDtfrT8y52MBM3TwSE_Dov-xNfQvpeKkC2ij_dWh0T_hSXDY5PPmOydLPrzCyqGbeeULURTKRy55W_jMlaAMTQQnTR0M" />
-                </div>
-                <div class="relative z-10 w-full h-full flex flex-col justify-between p-12 text-white">
-                    <div class="flex items-center gap-2 opacity-80">
-                        <span class="material-icons text-primary text-3xl">auto_awesome</span>
-                        <span class="text-xl font-bold tracking-widest uppercase text-primary/80">Guía
-                            Numerológica</span>
-                    </div>
-                    <div class="max-w-xl space-y-6 mb-12">
-                        <h2
-                            class="font-serif text-5xl italic leading-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-light via-primary to-amber-600 drop-shadow-sm">
-                            "No estás aquí por accidente. Tu fecha de nacimiento es un código esperando ser descifrado."
-                        </h2>
-                        <p class="text-lg text-gray-300 font-light leading-relaxed">
-                            Genera tu carta numerológica exacta y profunda. Descubre tu Número de Destino, comprende los
-                            talentos ocultos de tu alma y asume el control del camino que las estrellas escribieron para
-                            ti.
-                        </p>
-                        <div class="flex items-center gap-4 pt-4">
-                            <div class="flex -space-x-3">
-                                <img alt="Usuario 1" class="w-10 h-10 rounded-full border-2 border-primary/50"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4QqQfw2dZYRgRRoAmE00Hzt4rVb9gt6aynSwvSXBQ5e8xBk--yLd2XXS5iDDmo8SNtK10-uUGILlC77Ww-fqL3N6EtvBvZ6lS33LQdxC3SpaS8NVfmncJJqierNLOmkJALgL6ZmRqon9fh9WX_9CIX7cFxH9aD9xSkgeEZFIOymTqLNXKZ8VkKo7iTmSoQVFwb0Id65GwWO93LAJLjvhvURIn2lLocMYkIDin0OGDiL-K1kUnNg5O15ek04LK7gNJzMireaf2MkI" />
-                                <img alt="Usuario 2" class="w-10 h-10 rounded-full border-2 border-primary/50"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj36BvfOdcs71S5yqw-sLtzgxAIHjXiyY8In3Wr8AEln9Z093nvEeBBHj_MEIkvhcBVjTv-JJ5Hj9g9wBM_6RfQW3d7KqdfID9kuIxxb_gjfzF6dPBf24sXPqsdDmDhBmPpZ2ZdfgJTDtpYAjtR7dVuCBOAbiajo7kVwFYpdIUUy0YdzOAr64K-QOt5CRJMaeIgKJd4bfYsyV6J5a0uVP4H0qqHhV2cQFuv0YdpQylBsBkmGqMeMk9d-bO4M98VjHXKVzvdyxf4SE" />
-                                <img alt="Usuario 3" class="w-10 h-10 rounded-full border-2 border-primary/50"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLCwZXUhNVM0zwzzY8HmEGHTL1qo4mdjf59Yr-rXSCB2OTgVmXAJXKthexHpFhMzdeVYcKgd-59CXjv-17V5ZZiRLrC0r8YTd0DjGYe4FNYO-83VlwDgkY995fjm5YBTth4VMzCj3Xed7QY1fSge4kqlXdpMY8Hh94fLWomtdscHisVpJPO_sQRt6eG1j51F_1pZBYuUXhaHjaCQWsz4K-QrSKs8FGUCoeXXnBI61ywZsC-yxbtBvG-kHSR4n2cMIfVFCDFAvDMZc" />
-                            </div>
-                            <span class="text-sm text-primary/80 font-medium">Más de 12,000 personas han descubierto su
-                                camino</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div
-                class="w-full lg:w-[40%] h-full relative flex items-center justify-center p-6 lg:p-12 bg-background-dark overflow-y-auto">
-                <div class="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div
-                        class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20">
-                    </div>
-                    <div class="absolute -top-20 -right-20 w-96 h-96 bg-primary/5 rounded-full blur-[100px]"></div>
-                    <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-900/10 rounded-full blur-[80px]"></div>
-                </div>
-                <div
-                    class="glass-panel w-full max-w-md p-8 md:p-10 rounded-2xl relative z-10 shadow-2xl border-t border-white/10 my-8">
-                    <div class="text-center mb-8">
-                        <h1 class="font-serif text-3xl md:text-4xl text-white mb-2 tracking-wide">Comienza Tu Viaje
-                            Numerológico</h1>
-                        <p class="text-gray-400 text-xs font-medium tracking-widest uppercase">Descubre tu propósito</p>
-                    </div>
-                    <form class="space-y-4">
-                        <div class="space-y-2 group">
-                            <label class="block text-[10px] uppercase tracking-widest text-primary font-bold ml-1"
-                                for="fullname">Nombre Completo</label>
-                            <div class="relative">
-                                <span
-                                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                                </span>
-                                <input
-                                    class="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-primary/20 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300"
-                                    id="fullname" name="fullname" placeholder="Ej: Juan Pérez" type="text" />
-                            </div>
-                        </div>
+  <q-page class="row window-height text-white font-display bg-void overflow-hidden">
 
-                        <div class="space-y-2 group">
-                            <label class="block text-[10px] uppercase tracking-widest text-primary font-bold ml-1"
-                                for="dob">Fecha de Nacimiento</label>
-                            <div class="relative">
-                                <span
-                                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                                </span>
-                                <input
-                                    class="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300 appearance-none"
-                                    id="dob" name="dob" type="date" />
-                            </div>
-                        </div>
+    <div class="col-md-7 gt-sm relative-position overflow-hidden bg-void"
+      style="border-right: 1px solid rgba(255,255,255,0.05);">
+      <q-img
+        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOYC3SQk2mjOD_3Oz2LYFJi3QaADHLEXIGGNKuXHT08lXzlJaolS88F-zszgIY6Qmst4pnYXuYAWivn1GXXlX7wJXHId17ctPlFAE5Ivt-DFYsYd78Nx7xM8kFqp5boA68hMw9OXdkLe6KVHqqjLumwk575WqlyoFsl5SJ_ajsogHnqcdN9H1CNxTWoawJD38vYPo8EVNa9fID2JskLszZRmaGkOmTaI21vFJxQ6l4ssRIBOl1anYpGmLs_ivOY8o3TBN7xQrxRmE"
+        class="absolute-full opacity-80" style="mix-blend-mode: overlay;" />
+      <div class="absolute-full cosmic-overlay"></div>
 
-                        <div class="space-y-2 group">
-                            <label class="block text-[10px] uppercase tracking-widest text-primary font-bold ml-1"
-                                for="email">Correo Electrónico</label>
-                            <div class="relative">
-                                <span
-                                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                                </span>
-                                <input
-                                    class="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-primary/20 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300"
-                                    id="email" name="email" placeholder="tuemail@ejemplo.com" type="email" />
-                            </div>
-                        </div>
+      <div class="absolute-full flex flex-center opacity-60">
+        <q-img
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0XMIupUmXUu4OKxJegFu5lFdMLRVaacsP3VfUR5NH5CZ1Be5cRqA1kKXtQddiZCuBuiUzibqqBH6sG6nAFywNV4_pTfGJXIMKPy43H3xD0qJacj-B4BDHgvCxrahs386FqOa-mYYTfD12nztWvXu1jp6NYUSfX51Fqmp5gDcynM-vHxlWDtfrT8y52MBM3TwSE_Dov-xNfQvpeKkC2ij_dWh0T_hSXDY5PPmOydLPrzCyqGbeeULURTKRy55W_jMlaAMTQQnTR0M"
+          class="absolute-full opacity-50" style="mix-blend-mode: screen;" />
+      </div>
 
-                        <div class="space-y-2 group">
-                            <label class="block text-[10px] uppercase tracking-widest text-primary font-bold ml-1"
-                                for="password">Contraseña</label>
-                            <div class="relative">
-                                <span
-                                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                                </span>
-                                <input
-                                    class="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-primary/20 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-300"
-                                    id="password" name="password" placeholder="••••••••" type="password" />
-                            </div>
-                        </div>
-
-                        <primaryButton primaryButton label="Registrarme" icon="east" :to="''"><span
-                                class="material-icons text-sm">auto_awesome</span></primaryButton>
-
-                    </form>
-
-                    <div class="mt-8 text-center">
-                        <p class="text-sm text-gray-400">
-                            ¿Ya tienes una cuenta?, Inicia sesión
-                        </p>
-                        <br>
-                        <primaryButton label="Login" icon="east" :to="'/'" />
-                    </div>
-                </div>
-
-                <div class="absolute bottom-4 text-[10px] text-gray-600 tracking-widest uppercase">
-                    © 2026 Guía Numerológica. Todos los derechos reservados.
-                </div>
-            </div>
+      <div class="relative-position fit column justify-between q-pa-xl z-top">
+        <div class="row items-center q-gutter-sm opacity-80">
+          <q-icon name="auto_awesome" color="primary" size="md" />
+          <span class="text-h6 text-weight-bold text-uppercase tracking-widest text-primary">NUMERIS</span>
         </div>
+
+        <div class="q-mb-xl" style="max-width: 600px;">
+          <h2 class="font-serif text-h3 text-italic q-mb-md cosmic-text-gradient">
+            "Tu nacimiento no fue una coincidencia, fue un inicio."
+          </h2>
+          <p class="text-subtitle1 text-grey-4 text-weight-light" style="line-height: 1.6;">
+            Introduce tu vibración original y permite que el cosmos te revele el mapa completo de tu destino, talentos y
+            aprendizajes.
+          </p>
+
+          <div class="row items-center q-mt-lg q-gutter-x-md">
+            <div class="row items-center avatar-group">
+              <q-avatar size="40px" class="avatar-border">
+                <img
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4QqQfw2dZYRgRRoAmE00Hzt4rVb9gt6aynSwvSXBQ5e8xBk--yLd2XXS5iDDmo8SNtK10-uUGILlC77Ww-fqL3N6EtvBvZ6lS33LQdxC3SpaS8NVfmncJJqierNLOmkJALgL6ZmRqon9fh9WX_9CIX7cFxH9aD9xSkgeEZFIOymTqLNXKZ8VkKo7iTmSoQVFwb0Id65GwWO93LAJLjvhvURIn2lLocMYkIDin0OGDiL-K1kUnNg5O15ek04LK7gNJzMireaf2MkI" />
+              </q-avatar>
+              <q-avatar size="40px" class="avatar-border">
+                <img
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj36BvfOdcs71S5yqw-sLtzgxAIHjXiyY8In3Wr8AEln9Z093nvEeBBHj_MEIkvhcBVjTv-JJ5Hj9g9wBM_6RfQW3d7KqdfID9kuIxxb_gjfzF6dPBf24sXPqsdDmDhBmPpZ2ZdfgJTDtpYAjtR7dVuCBOAbiajo7kVwFYpdIUUy0YdzOAr64K-QOt5CRJMaeIgKJd4bfYsyV6J5a0uVP4H0qqHhV2cQFuv0YdpQylBsBkmGqMeMk9d-bO4M98VjHXKVzvdyxf4SE" />
+              </q-avatar>
+              <q-avatar size="40px" class="avatar-border">
+                <img
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLCwZXUhNVM0zwzzY8HmEGHTL1qo4mdjf59Yr-rXSCB2OTgVmXAJXKthexHpFhMzdeVYcKgd-59CXjv-17V5ZZiRLrC0r8YTd0DjGYe4FNYO-83VlwDgkY995fjm5YBTth4VMzCj3Xed7QY1fSge4kqlXdpMY8Hh94fLWomtdscHisVpJPO_sQRt6eG1j51F_1pZBYuUXhaHjaCQWsz4K-QrSKs8FGUCoeXXnBI61ywZsC-yxbtBvG-kHSR4n2cMIfVFCDFAvDMZc" />
+              </q-avatar>
+            </div>
+            <span class="text-caption text-primary text-weight-medium">Únete a +12,000 Almas Despiertas</span>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div class="col-12 col-md-5 relative-position flex flex-center q-pa-md bg-background-dark scroll">
+      <div class="absolute-full overflow-hidden" style="pointer-events: none;">
+        <div class="absolute-full bg-stardust opacity-20"></div>
+        <div class="ambient-glow-top"></div>
+        <div class="ambient-glow-bottom"></div>
+      </div>
+
+      <q-card class="glass-panel w-full max-w-md q-pa-xl z-top no-shadow q-my-xl"
+        style="border-radius: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+
+        <div class="text-center q-mb-lg">
+          <h1 class="font-serif text-h4 text-white q-mb-sm tracking-wide">Inicia tu Viaje Cósmico</h1>
+          <p class="text-grey-5 text-caption text-weight-medium text-uppercase tracking-wider">Tu mapa estelar te espera
+          </p>
+        </div>
+
+        <q-form @submit.prevent="onRegister" class="q-gutter-y-md">
+
+          <div>
+            <label
+              class="block text-caption text-uppercase tracking-widest text-primary text-weight-bold q-ml-xs q-mb-xs"
+              style="font-size: 10px;">Nombre Completo (Tu Vibración Base)</label>
+            <q-input v-model="fullName" dark outlined color="primary" placeholder="Ej. Orión Celeste" type="text"
+              :rules="[val => !!val || 'Requerimos tu nombre para iniciar']">
+              <template v-slot:prepend>
+                <q-icon name="person" class="material-symbols-outlined" />
+              </template>
+            </q-input>
+          </div>
+
+          <div>
+            <label
+              class="block text-caption text-uppercase tracking-widest text-primary text-weight-bold q-ml-xs q-mb-xs"
+              style="font-size: 10px;">Fecha de Nacimiento (Tu Código Sagrado)</label>
+            <q-input v-model="dob" dark outlined color="primary" type="date"
+              :rules="[val => !!val || 'Esta fecha es la llave de tu mapa']">
+              <template v-slot:prepend>
+                <q-icon name="auto_fix_high" class="material-symbols-outlined" />
+              </template>
+            </q-input>
+          </div>
+
+          <div>
+            <label
+              class="block text-caption text-uppercase tracking-widest text-primary text-weight-bold q-ml-xs q-mb-xs"
+              style="font-size: 10px;">Correo Electrónico</label>
+            <q-input v-model="email" dark outlined color="primary" placeholder="buscador@cosmos.com" type="email"
+              :rules="[val => !!val || 'El correo es vital para conectar']">
+              <template v-slot:prepend>
+                <q-icon name="alternate_email" class="material-symbols-outlined" />
+              </template>
+            </q-input>
+          </div>
+
+          <div>
+            <label
+              class="block text-caption text-uppercase tracking-widest text-primary text-weight-bold q-ml-xs q-mb-xs"
+              style="font-size: 10px;">Contraseña Segura</label>
+            <q-input v-model="password" dark outlined color="primary" placeholder="••••••••"
+              :type="showPassword ? 'text' : 'password'" :rules="[val => !!val || 'Protege tu energía con una clave']">
+              <template v-slot:prepend>
+                <q-icon name="lock_open" class="material-symbols-outlined" />
+              </template>
+              <template v-slot:append>
+                <q-icon :name="showPassword ? 'visibility' : 'visibility_off'" class="cursor-pointer"
+                  @click="showPassword = !showPassword" />
+              </template>
+            </q-input>
+          </div>
+
+          <PrimaryButton label="REVELAR MI DESTINO" to="/dashboard" icon="person_add" />
+        </q-form>
+
+        <div class="relative-position q-my-lg">
+          <q-separator dark class="opacity-20" />
+          <div class="absolute-center bg-background-dark q-px-sm">
+            <span
+              class="text-grey-5 glass-panel-small q-px-md q-py-xs border-radius-full text-weight-bold text-uppercase tracking-tighter"
+              style="font-size: 10px;">O sincroniza con</span>
+          </div>
+        </div>
+
+        <div class="row q-col-gutter-sm">
+          <div class="col-6">
+            <q-btn outline dark class="full-width social-btn" no-caps size="sm">
+              <template v-slot:default>
+                <div class="row items-center q-gutter-x-sm">
+                  <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      fill="#4285F4"></path>
+                    <path
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      fill="#34A853"></path>
+                    <path
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                      fill="#FBBC05"></path>
+                    <path
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                      fill="#EA4335"></path>
+                  </svg>
+                  <span class="text-caption text-weight-medium text-grey-4">Google</span>
+                </div>
+              </template>
+            </q-btn>
+          </div>
+          <div class="col-6">
+            <q-btn outline dark class="full-width social-btn" no-caps size="sm">
+              <template v-slot:default>
+                <div class="row items-center q-gutter-x-sm">
+                  <svg class="w-4 h-4 text-white" style="width: 16px; height: 16px;" fill="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      d="M17.05 20.28c-.98.95-2.05.88-3.08.35-1.09-.56-2.09-.48-3.08.35-1.04.86-2.17.58-3.04-.32-4.03-4.16-3.06-10.22 1.68-10.22 1.34 0 2.22.68 2.92.68.73 0 1.94-.74 3.28-.6 1.4.15 2.5.76 3.22 1.83-2.91 1.76-2.38 5.76.66 7.15-.59 1.68-1.55 3.12-2.56 4.13zM12.03 7.25c-.15-2.28 1.66-4.32 4-4.25.32 2.69-2.6 4.74-4 4.25z">
+                    </path>
+                  </svg>
+                  <span class="text-caption text-weight-medium text-grey-4">Apple</span>
+                </div>
+              </template>
+            </q-btn>
+          </div>
+        </div>
+
+        <div class="q-mt-xl text-center">
+          <p class="text-caption text-grey-5">
+            ¿Ya has iniciado tu camino?
+            <RouterLink to="/login" class="text-primary text-weight-bold custom-link hover-underline">
+              Conéctate aquí
+            </RouterLink>
+          </p>
+        </div>
+      </q-card>
+
+      <div class="absolute-bottom text-center q-pb-md text-grey-6 text-uppercase tracking-widest"
+        style="font-size: 10px;">
+        © 2026 Numeris. Todas las estrellas alineadas.
+      </div>
+    </div>
+  </q-page>
 </template>
 
 <script setup>
-import primaryButton from '../components/primaryButton.vue'; 
+import { ref } from 'vue'
+import PrimaryButton from "../components/primaryButton.vue"
+
+const fullName = ref('')
+const dob = ref('')
+const email = ref('')
+const password = ref('')
+const showPassword = ref(false)
+
+const onRegister = () => {
+
+}
 </script>
+
+<style scoped>
+/* Importación de fuentes de Google */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+/* Variables de Color (Reemplazando Tailwind) */
+.bg-void {
+  background-color: #0f0c08;
+}
+
+.bg-background-dark {
+  background-color: #221c10;
+}
+
+.text-primary {
+  color: #f4af25 !important;
+}
+
+/* Tipografía */
+.font-display {
+  font-family: 'Manrope', sans-serif;
+}
+
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+.tracking-widest {
+  letter-spacing: 0.1em;
+}
+
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+.tracking-tighter {
+  letter-spacing: -0.05em;
+}
+
+/* Efectos visuales de fondo */
+.cosmic-overlay {
+  background: linear-gradient(to bottom right, rgba(49, 46, 129, 0.4), rgba(88, 28, 135, 0.3), rgba(34, 28, 16, 0.9));
+}
+
+.bg-stardust {
+  background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+}
+
+.ambient-glow-top {
+  position: absolute;
+  top: -5rem;
+  right: -5rem;
+  width: 24rem;
+  height: 24rem;
+  background-color: rgba(244, 175, 37, 0.05);
+  border-radius: 50%;
+  filter: blur(100px);
+}
+
+.ambient-glow-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 16rem;
+  height: 16rem;
+  background-color: rgba(49, 46, 129, 0.1);
+  border-radius: 50%;
+  filter: blur(80px);
+}
+
+/* Efecto Glassmorphism */
+.glass-panel {
+  background: rgba(34, 28, 16, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(244, 175, 37, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.glass-panel-small {
+  background: rgba(34, 28, 16, 0.8);
+  border: 1px solid rgba(244, 175, 37, 0.1);
+}
+
+/* Textos y Botones especiales */
+.cosmic-text-gradient {
+  background: linear-gradient(to right, #f6c35e, #f4af25, #d97706);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.cosmic-btn {
+  background: linear-gradient(to right, #f4af25, #eab308, #d97706);
+  color: #221c10 !important;
+  font-weight: bold;
+  box-shadow: 0 0 20px rgba(244, 175, 37, 0.3);
+  transition: all 0.3s ease;
+}
+
+.cosmic-btn:hover {
+  box-shadow: 0 0 30px rgba(244, 175, 37, 0.5);
+  transform: scale(1.01);
+}
+
+/* Utilidades extra */
+.avatar-group {
+  margin-left: 10px;
+}
+
+.avatar-border {
+  border: 2px solid rgba(244, 175, 37, 0.5);
+  margin-left: -10px;
+}
+
+.border-radius-full {
+  border-radius: 9999px;
+}
+
+.custom-link {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.hover-text-primary:hover {
+  color: #f4af25 !important;
+}
+
+.hover-underline:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.social-btn {
+  border-color: rgba(255, 255, 255, 0.1);
+  transition: background 0.2s;
+}
+
+.social-btn:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Custom scrollbar para tema oscuro */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #221c10;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3d3424;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f4af25;
+}
+
+/* Corrección de autofill en inputs oscuros */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #1a160e inset !important;
+  -webkit-text-fill-color: #e5e5e5 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Evitar que el input date muestre el icono nativo de calendario */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.5;
+  cursor: pointer;
+}
+</style>
