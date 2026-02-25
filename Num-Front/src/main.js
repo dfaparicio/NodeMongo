@@ -1,27 +1,47 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-import App from './App.vue'
-import './style.css'
-// import { Quasar, Notify, Loading, Dialog } from 'quasar'
-import router from './router/router.js'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import App from "./App.vue";
+import router from "./router/router.js";
 
-// Import icon libraries
-import '@quasar/extras/material-icons/material-icons.css'
-import '@quasar/extras/fontawesome-v6/fontawesome-v6.css'
+// Quasar y sus plugins
+import { Quasar, Notify, Loading, Dialog } from "quasar";
 
-// Import Quasar css
-// import 'quasar/src/css/index.sass'
+// Iconos de Quasar
+import "@quasar/extras/material-icons/material-icons.css";
+import "@quasar/extras/fontawesome-v6/fontawesome-v6.css";
 
-// Import language (default export)
-// import es from 'quasar/lang/es.js'
+// Quasar CSS (Necesario importar src/css/index.sass para que tomen efecto tus variables SASS)
+import "quasar/src/css/index.sass";
 
-const app = createApp(App)
-const pinia = createPinia()
+// Idioma español y Set de Iconos por defecto
+import quasarLang from "quasar/lang/es";
+import quasarIconSet from "quasar/icon-set/material-icons";
 
-app.use(router)
-app.use(pinia)
+const app = createApp(App);
 
-pinia.use(piniaPluginPersistedstate)
+// Configuración de Pinia
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
-app.mount('#app')
+// Uso de plugins
+app.use(pinia);
+app.use(router);
+
+// Inicialización de Quasar
+app.use(Quasar, {
+  plugins: {
+    Notify,
+    Loading,
+    Dialog,
+  },
+  lang: quasarLang,
+  iconSet: quasarIconSet, 
+  config: {
+    notify: {
+      position: "top-right",
+    },
+  },
+});
+
+app.mount("#app");

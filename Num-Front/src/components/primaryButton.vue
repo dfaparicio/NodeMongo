@@ -1,42 +1,40 @@
 <template>
-  <RouterLink v-if="to" :to="to"
-    class="w-full py-3.5 bg-gradient-to-r from-primary via-yellow-500 to-amber-600 text-background-dark font-bold rounded-lg shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
-    <span>{{ label }}</span>
-    <span v-if="icon" class="material-icons text-sm">
-      {{ icon }}
-    </span>
-  </RouterLink>
-  
-  <button v-else :type="type" @click="$emit('click')"
-    class="w-full py-3.5 bg-gradient-to-r from-primary via-yellow-500 to-amber-600 text-background-dark font-bold rounded-lg shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
-    <span>{{ label }}</span>
-    <span v-if="icon" class="material-icons text-sm">
-      {{ icon }}
-    </span>
-  </button>
+  <q-btn :to="to" :label="label" :icon-right="icon" class="cosmic-gold-btn full-width" @click="$emit('click')">
+  </q-btn>
 </template>
 
 <script setup>
-import { RouterLink } from "vue-router"
-
 defineProps({
-  label: {
-    type: String,
-    default: "Revelar mi Camino"
-  },
-  icon: {
-    type: String,
-    default: "east"
-  },
-  type: {
-    type: String,
-    default: "button"
-  },
-  to: {
-    type: [String, Object],
-    default: null
-  }
-})
+  label: { type: String, default: "Reveal My Path" },
+  icon: { type: String, default: "east" },
+  to: { type: [String, Object], default: null },
+});
 
-defineEmits(["click"])
+defineEmits(["click"]);
 </script>
+
+<style scoped>
+.cosmic-gold-btn {
+  background: linear-gradient(45deg, #d4af37 0%, #f9f295 45%, #e6be8a 70%, #b8860b 100%);
+  color: #1a1a1a;
+  font-weight: 800;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cosmic-gold-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+  filter: saturate(1.2);
+}
+
+.cosmic-gold-btn:active {
+  transform: translateY(1px);
+}
+
+.full-width {
+  width: 100%;
+}
+</style>
