@@ -6,12 +6,15 @@
         class="fit object-cover" />
     </div>
 
-    <div class="col-12 col-md-4 relative-position flex flex-center column q-pa-xl z-top border-right-cosmic">
-      <div class="absolute nebula-glow nebula-1"></div>
-      <div class="absolute nebula-glow nebula-2"></div>
+    <div class="col-12 col-md-4 fixed flex flex-center column q-pa-xl border-right-cosmic"
+      style="top: 0; left: 0; height: 100vh; width: 33.3333%; z-index: 100;">
 
-      <div class="relative-position flex flex-center column z-top">
-        <div class="avatar-wrapper q-mb-lg relative-position">
+      <div class="absolute nebula-glow nebula-1" style="z-index: 1;"></div>
+      <div class="absolute nebula-glow nebula-2" style="z-index: 1;"></div>
+
+      <div class="relative-position flex flex-center column" style="z-index: 10;">
+
+        <div class="avatar-wrapper q-mb-lg relative-position" style="width: 200px; height: 200px;">
           <div class="absolute-full animate-pulse flex flex-center">
             <svg class="w-full h-full svg-primary-opacity" viewBox="0 0 200 200">
               <circle cx="100" cy="100" fill="none" r="90" stroke="currentColor" stroke-width="0.5"></circle>
@@ -19,13 +22,6 @@
               <polygon fill="none" points="100,190 190,40 10,40" stroke="currentColor" stroke-width="0.5"></polygon>
             </svg>
           </div>
-
-          <div class="avatar-aura rounded-circle flex flex-end justify-center overflow-hidden relative-position z-top">
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEmVepiBUNq978to_P4cY7_mBbmhakdJZSTiVWRvA160TfATdNsYgBA4KGPV_pYTVbjAP4VZzhOb964bf5CTNXwfsuoGV_qiSJDo4lvQ5tKMtfaB6M2vxQsVMm44_RvupSEAeYwvGp8aiuoDitkcDndIrKl3tU8NVG1FVAXgFod0DeLXPAih9Ckb1VbEyj14q8TdvMZtqEy-Jw7ecXXyYaU8GX2m99mEf74mATrMqcDlVTsdGYMQ77k57Hg5lRNnAnugTF7xfsGBX9"
-              class="fit object-cover mix-blend-luminosity opacity-80" />
-          </div>
-
           <div class="pulse-indicator absolute"></div>
         </div>
 
@@ -35,20 +31,45 @@
         <p class="text-subtitle-cosmic q-mb-xl">The Star Weaver</p>
 
         <div class="badge-frecuencia flex items-center q-gutter-x-sm">
-          <q-icon name="auto_awesome" color="primary" size="xs" />
-          <span>Frecuencia Vibracional Alta</span>
+          <q-icon name="auto_awesome" color="primary" size="sm" />
+          <span class="text-white">Frecuencia Vibracional Alta</span>
         </div>
       </div>
     </div>
+    <div class="col-12 col-md-4 gt-sm"></div>
 
     <div class="col-12 col-md-8 relative-position q-pa-xl z-top scroll-y">
-      <div class="glass-panel rounded-xl q-pa-lg q-mb-xl">
-        <div class="flex justify-center items-center q-gutter-x-xl">
-          <secondButton to="/lectura_principal" label="Lectura Principal" class="nav-gold-item" />
-          <secondButton to="/lectura_diaria" label="Lectura Diaria" class="nav-gold-item" />
-          <secondButton to="/planes" label="Planes" class="nav-gold-item" />
-        </div>
+
+
+
+
+<div class="fixed-top z-top" style="left: 33.3333%; right: 0;">
+  <div class="flex justify-center">
+    <div class="glass-panel2 rounded-xl q-pa-md full-width">
+      <div class="flex justify-center items-center q-gutter-x-md sm:q-gutter-x-xl q-pt-xl q-pb-xl">
+        <secondButton to="/lectura_principal" label="Lectura Principal" class="nav-gold-item" />
+        <secondButton to="/lectura_diaria" label="Lectura Diaria" class="nav-gold-item" />
+        <secondButton to="/planes" label="Planes" class="nav-gold-item" />
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4 gt-sm"></div>
+
+  <div class="col-12 col-md-8">
+    <div class="q-px-xl" style="padding-top: 140px;">
+      
+      <div class="q-pb-xl">
+         </div>
+
+    </div>
+  </div>
+</div>
+
+
+
 
       <div class="glass-panel rounded-xl q-pa-lg q-mb-xl flex items-center justify-between">
         <div>
@@ -58,33 +79,52 @@
           <div class="flex q-gutter-x-xl">
             <span class="flex items-center">
               <q-icon name="email" class="q-mr-xs" />
-              {{ user?.email || 'Sin correo' }}
+              {{ user?.email }}
             </span>
 
             <span class="flex items-center">
               <q-icon name="person" class="q-mr-xs" />
-              {{ user?.nombre || 'Sin nombre' }}
+              {{ user?.nombre }}
             </span>
 
             <span class="flex items-center">
               <q-icon name="calendar_today" class="q-mr-xs" />
-              {{ user?.edad || 'Sin edad' }}
+              {{ user?.edad }}
             </span>
 
             <span class="flex items-center">
               <q-icon name="cake" class="q-mr-xs" />
-              {{ fechanacimiento }}
+              {{ converFecha(user?.fechanacimiento) }}
             </span>
           </div>
         </div>
 
-        <div class="badge-status text-center">
-          <span class="text-status-title">Estado del Alma</span>
-          <span class="text-h6 text-weight-bold flex items-center">
-            ACTIVO <span class="dot-active q-ml-sm"></span>
-          </span>
-        </div>
+
+
+<div class="badge-status text-center q-pa-md">
+  <div class="text-status-title text-uppercase tracking-widest opacity-70 q-mb-xs" style="font-size: 0.7rem;">
+    Estado del Alma
+  </div>
+
+  <div v-if="user?.estado === 1" class="flex flex-center q-gutter-x-sm">
+    <span class="text-h6 text-weight-bold text-white-4">
+      ACTIVO
+    </span>
+    <span class="dot-status dot-active"></span>
+  </div>
+
+  <div v-else class="flex flex-center q-gutter-x-sm">
+    <span class="text-h6 text-weight-bold text-grey-5">
+      INACTIVO
+    </span>
+    <span class="dot-status dot-inactive"></span>
+  </div>
+</div>
+
+
       </div>
+
+
 
       <div class="row q-col-gutter-lg q-mb-xl">
         <div class="col-12 col-md-6">
@@ -201,13 +241,14 @@ import secondButton from "../components/secondButton.vue";
 import { useAuthStore } from "../store/auth.js";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
+import { converFecha } from "../utils/functions.js";
 
 const authStore = useAuthStore();
 const router = useRouter();
 
-const { user, fechanacimiento } = storeToRefs(authStore);
+const { user } = storeToRefs(authStore);
 
-console.log(fechanacimiento);
+console.log(user);
 
 
 // Protección: Si no hay usuario guardado, lo devolvemos al login
