@@ -1,4 +1,4 @@
-export const esAdminRole = (req, res, next) => {
+ export const esAdminRole = (req, res, next) => {
     if (!req.usuario) {
         return res.status(500).json({
             error: "Se requiere validar el token primero"

@@ -1,7 +1,53 @@
 import Usuario from "../models/usuario.js"
 import bcrypt from "bcryptjs"
+import crypto from "crypto"
 import generarJWT from "../helpers/generar-jwt.js"
 import { enviarEmail } from "../helpers/nodemailer.js"
+
+// REGISTRO DE USUARIO PÚBLICO
+export const registro = async (req, res) => {
+    const { nombre, edad, fechanacimiento, email, password } = req.body
+    try {
+        // Crear usuario con rol USER_ROLE por defecto (seguridad)
+        const usuario = new Usuario({
+            nombre, edad, fechanacimiento, email, password,
+            rol: "USER_ROLE"
+        })
+
+        // Encriptar la contraseña
+        const salt = bcrypt.genSaltSync()
+        usuario.password = bcrypt.hashSync(password, salt)
+
+        await usuario.save()
+
+        // Generar token de verificación de email
+        const tokenVerificacion = crypto.randomBytes(32).toString("hex")
+        usuario.resetToken = tokenVerificacion
+        await usuario.save()
+
+        // Enviar email de verificación
+        await enviarEmail(
+            email,
+            "Verifica tu cuenta",
+            `<h2>Bienvenido ${nombre}</h2>
+             <p>Haz clic en el enlace para verificar tu email:</p>
+             <a href="http://localhost:5040/api/auth/confirmar/${tokenVerificacion}">Verificar mi email</a>`
+        )
+
+        // Generar JWT para que pueda usar la app inmediatamente
+        const token = await generarJWT(usuario.id)
+
+        res.status(201).json({
+            usuario,
+            token,
+            msg: "Usuario registrado exitosamente. Revisa tu email para verificar tu cuenta"
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({ error: "Error al registrar usuario" })
+    }
+}
 
 export const login = async (req, res) => {
     const { email, password } = req.body

@@ -40,6 +40,9 @@ router.get(
 router.post(
   "/",
   [
+    validarJWT,
+    esAdminRole,
+
     check("nombre", "El nombre es obligatorio")
       .not()
       .isEmpty()
@@ -74,7 +77,7 @@ router.put(
     check("nombre", "El nombre es obligatorio").not().isEmpty(),
 
     validarCampos,
-    validarUsuarioActivoMiddleware,  
+    validarUsuarioActivoMiddleware,
   ],
   putUsuario
 );
