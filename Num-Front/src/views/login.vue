@@ -163,15 +163,6 @@ const login = async () => {
   }
 };
 
-// onMounted(() => {
-//   login();
-// });
-
-// const logout = () => {
-//   authStore.logout(); 
-//   router.push('/');   
-// };
-
 </script>
 
 <style scoped>
