@@ -43,30 +43,30 @@
 
 
 
-<div class="fixed-top z-top" style="left: 33.3333%; right: 0;">
-  <div class="flex justify-center">
-    <div class="glass-panel2 rounded-xl q-pa-md full-width">
-      <div class="flex justify-center items-center q-gutter-x-md sm:q-gutter-x-xl q-pt-xl q-pb-xl">
-        <secondButton to="/lectura_principal" label="Lectura Principal" class="nav-gold-item" />
-        <secondButton to="/lectura_diaria" label="Lectura Diaria" class="nav-gold-item" />
-        <secondButton to="/planes" label="Planes" class="nav-gold-item" />
+      <div class="fixed-top z-top" style="left: 33.3333%; right: 0;">
+        <div class="flex justify-center">
+          <div class="glass-panel2 rounded-xl q-pa-md full-width">
+            <div class="flex justify-center items-center q-gutter-x-md sm:q-gutter-x-xl q-pt-xl q-pb-xl">
+              <secondButton to="/lectura_principal" label="Lectura Principal" class="nav-gold-item" />
+              <secondButton to="/lectura_diaria" label="Lectura Diaria" class="nav-gold-item" />
+              <secondButton to="/planes" label="Planes" class="nav-gold-item" />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<div class="row">
-  <div class="col-md-4 gt-sm"></div>
+      <div class="row">
+        <div class="col-md-4 gt-sm"></div>
 
-  <div class="col-12 col-md-8">
-    <div class="q-px-xl" style="padding-top: 140px;">
-      
-      <div class="q-pb-xl">
-         </div>
+        <div class="col-12 col-md-8">
+          <div class="q-px-xl" style="padding-top: 140px;">
 
-    </div>
-  </div>
-</div>
+            <div class="q-pb-xl">
+            </div>
+
+          </div>
+        </div>
+      </div>
 
 
 
@@ -101,25 +101,26 @@
 
 
 
-<div class="badge-status text-center q-pa-md">
-  <div class="text-status-title text-uppercase tracking-widest opacity-70 q-mb-xs" style="font-size: 0.7rem;">
-    Estado del Alma
-  </div>
+        <div class="badge-status text-center q-pa-md">
+          <div class="text-status-title text-uppercase tracking-widest opacity-70 q-mb-xs" style="font-size: 0.7rem;">
+            Estado del Alma
+          </div>
 
-  <div v-if="user?.estado === 1" class="flex flex-center q-gutter-x-sm">
-    <span class="text-h6 text-weight-bold text-white-4">
-      ACTIVO
-    </span>
-    <span class="dot-status dot-active"></span>
-  </div>
+          <div v-if="user?.estado === 1" class="flex flex-center q-gutter-x-sm">
+            <span class="text-h6 text-weight-bold text-white-4">
+              Alineado
+            </span>
+            <span class="dot-status dot-active"></span>
+          </div>
 
-  <div v-else class="flex flex-center q-gutter-x-sm">
-    <span class="text-h6 text-weight-bold text-grey-5">
-      INACTIVO
-    </span>
-    <span class="dot-status dot-inactive"></span>
-  </div>
-</div>
+          <div v-else class="flex flex-center q-gutter-x-sm">
+            <span class="text-h6 text-weight-bold text-grey-5">
+              Desalineado
+            </span>
+            <span class="dot-status dot-inactive"></span>
+          </div>
+
+        </div>
 
 
       </div>
@@ -128,18 +129,33 @@
 
       <div class="row q-col-gutter-lg q-mb-xl">
         <div class="col-12 col-md-6">
-          <div class="glass-panel rounded-xl q-pa-md flex items-center justify-between">
+
+          <div v-if="user.estado === 1" class="glass-panel rounded-xl q-pa-md flex items-center justify-between">
             <div class="flex items-center">
               <div class="icon-box bg-emerald-box q-mr-md">
                 <q-icon name="account_balance_wallet" class="text-emerald" size="sm" />
               </div>
               <div>
                 <span class="text-card-subtitle">Estado Financiero</span>
-                <span class="block text-subtitle1 text-weight-bold">Al Día</span>
+                <span class="block text-subtitle1 text-weight-bold">En Flujo</span>
               </div>
             </div>
             <q-icon name="check_circle" class="text-emerald" size="lg" />
           </div>
+
+          <div v-else class="glass-panel rounded-xl q-pa-md flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="icon-box bg-red-2 q-mr-md">
+                <q-icon name="account_balance_wallet" class="text-red" size="sm" />
+              </div>
+              <div>
+                <span class="text-card-subtitle">Estado Financiero</span>
+                <span class="block text-subtitle1 text-weight-bold text-red">Flujo Interrumpido</span>
+              </div>
+            </div>
+            <q-icon name="cancel" class="text-red" size="lg" />
+          </div>
+
         </div>
 
         <div class="col-12 col-md-6">
@@ -157,6 +173,7 @@
           </div>
         </div>
       </div>
+
 
       <div class="q-col-gutter-lg q-mb-xl">
         <div class="col-12 col-md-6">
@@ -242,6 +259,8 @@ import { useAuthStore } from "../store/auth.js";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { converFecha } from "../utils/functions.js";
+import { getData } from "../services/services.js";
+import { ref, onMounted } from 'vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -255,6 +274,38 @@ console.log(user);
 if (!authStore.user) {
   router.push('/');
 }
+
+
+
+const mislecturas = ref([]);
+
+const lecturas = async () => {
+  const authStore = useAuthStore();
+
+  if (!authStore.user?._id) return;
+
+  try {
+    const res = await getData(`/lectura/usuario/${authStore.user._id}`);
+
+    const datosRaw = res.lecturas || res.data?.lecturas || [];
+
+  
+    mislecturas.value = datosRaw.map(item => ({
+      ...item,
+      contenido: JSON.parse(item.contenido) 
+    }));
+
+    console.log("Lecturas procesadas:", mislecturas.value);
+
+  } catch (error) {
+    console.error("Error al obtener lecturas:", error);
+    mislecturas.value = [];
+  }
+};
+
+onMounted(lecturas);
+
+
 
 
 </script>
