@@ -21,8 +21,13 @@ async function respuestaIA(prompt) {
 
     return response.text;
   } catch (error) {
-    console.error("❌ Error detectado:", error.message);
-    return null;
+    console.error("❌ Error de Gemini:", JSON.stringify(error.message || error));
+
+    // Lanzar un error descriptivo para que el controlador lo maneje
+    if (error.message?.includes("429") || error.message?.includes("RESOURCE_EXHAUSTED")) {
+      throw new Error("CUOTA_AGOTADA: La cuota de la API de Gemini se ha agotado. Genera una nueva API key en https://aistudio.google.com/apikey");
+    }
+    throw new Error("GEMINI_ERROR: " + (error.message || "Error desconocido al conectar con Gemini"));
   }
 }
 
@@ -103,7 +108,14 @@ export const generarlecturaprincipal = async (req, res) => {
     Nombre del usuario: ${resultado.usuario.nombre}.
     Devuelve SOLO este formato JSON: {"numero": ${numeroCamino}, "descripcion": "...", "talentos": "...", "mensaje": "..."}`;
 
-    const contenidoIA = await respuestaIA(prompt);
+    let contenidoIA;
+    try {
+      contenidoIA = await respuestaIA(prompt);
+    } catch (iaError) {
+      console.error("❌ Fallo de IA:", iaError.message);
+      return res.status(503).json({ error: iaError.message });
+    }
+
     const contenidoJSON = extraerJSON(contenidoIA);
 
     if (!contenidoJSON) {
@@ -124,8 +136,8 @@ export const generarlecturaprincipal = async (req, res) => {
       contenido: contenidoJSON,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Error interno" });
+    console.error("❌ Error en lectura principal:", error.message);
+    res.status(500).json({ msg: "Error interno", error: error.message });
   }
 };
 
@@ -156,7 +168,14 @@ export const generarlecturadiaria = async (req, res) => {
     const prompt = `Genera una lectura diaria basada en este perfil: ${principal.contenido}. 
     Devuelve SOLO un JSON: {"fecha": "${new Date().toLocaleDateString()}", "mensaje": "...", "energia": "..."}`;
 
-    const contenidoIA = await respuestaIA(prompt);
+    let contenidoIA;
+    try {
+      contenidoIA = await respuestaIA(prompt);
+    } catch (iaError) {
+      console.error("❌ Fallo de IA diaria:", iaError.message);
+      return res.status(503).json({ error: iaError.message });
+    }
+
     const contenidoJSON = extraerJSON(contenidoIA);
 
     const idLectura = await resultado.crear(
@@ -170,8 +189,8 @@ export const generarlecturadiaria = async (req, res) => {
       contenido: contenidoJSON,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Error interno" });
+    console.error("❌ Error en lectura diaria:", error.message);
+    res.status(500).json({ msg: "Error interno", error: error.message });
   }
 };
 

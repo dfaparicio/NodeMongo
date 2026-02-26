@@ -10,6 +10,7 @@ import lectura_principal from "../views/mainreading.vue";
 import lectura_diaria from "../views/dailyreading.vue";
 import historial_lecturas from "../views/readinghistory.vue";
 import admin_finance from "../views/financedashboard.vue";
+import admin from "../views/admin.vue";
 
 import { createRouter, createWebHashHistory } from "vue-router";
 
@@ -26,6 +27,7 @@ const routes = [
   { path: "/lectura_diaria", component: lectura_diaria },
   { path: "/historial_lecturas", component: historial_lecturas },
   { path: "/admin_finance", component: admin_finance },
+  { path: "/admin", component: admin },
 ];
 
 export default createRouter({
