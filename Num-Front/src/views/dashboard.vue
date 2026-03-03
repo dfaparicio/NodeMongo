@@ -1,6 +1,8 @@
 <template>
   <q-page class="cosmic-bg font-display min-h-screen row text-white overflow-hidden">
+
     <div class="fixed-full z-behind opacity-20 pointer-events-none">
+
       <img
         src="https://lh3.googleusercontent.com/aida-public/AB6AXuDURC83wQPs436yjmwbq85kbDNxgA5yFl3ZccQmAnhmP1L1d7Cdy3QDi7PYKn3e9t5sczTCQMUSi6-Lo3IKEt-Tka66pve3m3VoE7oPoo2F2cF1pA0gCAuF8263SJwHkP6nIqlJRV8TRQ0V0I2awEHdf7rZBTMTRivLL-zyR80jG5DUdosAFnIwfN5aZubQqF26PbAY64tRdve7DRaRKfIfICvs1PQIRGm9sBwqRomUIsFKGeDbfnfARX9B9xlCraeE8VgDRcRbvKEV"
         class="fit object-cover" />
@@ -25,20 +27,23 @@
           <div class="pulse-indicator absolute"></div>
         </div>
 
-        <h1 class="text-h4 text-weight-bolder text-gradient-title text-center q-mb-xs tracking-tighter">
+        <h1 class="text-h4 text-weight-bolder text-gradient-title text-center q-mb-xs q-pb-xl tracking-tighter">
           {{ user?.nombre || 'Buscador Cósmico' }}
         </h1>
-        <p class="text-subtitle-cosmic q-mb-xl">The Star Weaver</p>
 
-        <div class="badge-frecuencia flex items-center q-gutter-x-sm">
-          <q-icon name="auto_awesome" color="primary" size="sm" />
-          <span class="text-white">Frecuencia Vibracional Alta</span>
+        <div class="badge-frecuencia flex column items-center q-gutter-x-sm">
+          <span class="text-white"> <q-icon name="auto_awesome" color="primary" size="sm" /> Numero de Camino de
+            Vida</span>
+          <br>
+          <span class="text-white text-h5">{{ lecturaPrincipal?.contenido?.numero }}</span>
         </div>
       </div>
     </div>
     <div class="col-12 col-md-4 gt-sm"></div>
 
     <div class="col-12 col-md-8 relative-position q-pa-xl z-top scroll-y">
+
+      <router-view />
 
 
 
@@ -182,20 +187,14 @@
 
             <div>
               <h3 class="text-card-title q-mt-none q-mb-md">
-                Última Lectura Principal
+                Lectura Principal
               </h3>
-              <p class="text-slate-300 text-italic font-light" style="line-height: 1.6">
-                "Las estrellas se alinean en el sector de la abundancia. Tu
-                número maestro 11 vibra con la energía de Plutón, sugiriendo un
-                renacimiento financiero inminente..."
-              </p>
+              <p class="text-slate-800 text-italic font-light" style="line-height: 2">{{
+                lecturaPrincipal?.contenido?.descripcion }}</p>
             </div>
 
-            <button
-              class="btn-transparent text-primary text-weight-bold text-caption flex items-center q-mt-md custom-transition">
-              VER TRANSCRIPCIÓN COMPLETA
-              <q-icon name="arrow_forward" size="xs" class="q-ml-sm icon-slide" />
-            </button>
+            <secondButton to="/lectura_principal" label="VER TRANSCRIPCIÓN COMPLETA" class="nav-gold-item" />
+
           </div>
         </div>
       </div>
@@ -267,47 +266,43 @@ const router = useRouter();
 
 const { user } = storeToRefs(authStore);
 
-console.log(user);
-
-
-// Protección: Si no hay usuario guardado, lo devolvemos al login
-if (!authStore.user) {
-  router.push('/');
-}
-
-
+onMounted(() => {
+  if (!user.value) {
+    router.push('/login')
+  }
+})
 
 const mislecturas = ref([]);
+const lecturaPrincipal = ref(null);
 
 const lecturas = async () => {
-  const authStore = useAuthStore();
-
   if (!authStore.user?._id) return;
 
   try {
     const res = await getData(`/lectura/usuario/${authStore.user._id}`);
+    const datoslecturas = res.lecturas || res.data?.lecturas || [];
 
-    const datosRaw = res.lecturas || res.data?.lecturas || [];
-
-  
-    mislecturas.value = datosRaw.map(item => ({
+    mislecturas.value = datoslecturas.map(item => ({
       ...item,
-      contenido: JSON.parse(item.contenido) 
+      contenido: typeof item.contenido === 'string' ? JSON.parse(item.contenido) : item.contenido
     }));
 
-    console.log("Lecturas procesadas:", mislecturas.value);
+    lecturaPrincipal.value = mislecturas.value.find(item => item.tipo === 'principal') || null;
+    authStore.lecturasguardadas = mislecturas.value;
+
+    console.log(lecturaPrincipal);
+    console.log(mislecturas);
+    
+    
 
   } catch (error) {
     console.error("Error al obtener lecturas:", error);
     mislecturas.value = [];
+    lecturaPrincipal.value = null;
   }
 };
 
 onMounted(lecturas);
-
-
-
-
 </script>
 
 <style scoped>

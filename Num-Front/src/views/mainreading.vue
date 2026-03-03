@@ -10,14 +10,11 @@
     <nav class="relative-position z-top full-width q-px-xl q-py-lg flex justify-between items-center">
       <div class="flex items-center gap-sm">
         <q-icon name="auto_awesome" color="primary" size="32px" />
-        <span class="font-serif-display text-h6 text-bold tracking-widest text-white-90">NUMERIS</span>
+        <span class="font-serif-display text-h6 text-bold tracking-widest text-white-90">NUMEROLOGIA</span>
       </div>
       <div class="flex items-center q-gutter-x-lg">
-        <q-btn flat no-caps label="Dashboard" class="text-caption tracking-wider opacity-70 hover-primary" />
-        <q-btn flat no-caps label="Readings" class="text-caption tracking-wider opacity-70 hover-primary" />
-        <q-avatar size="40px" class="avatar-border">
-          <img src="https://cdn.quasar.dev/img/avatar2.jpg">
-        </q-avatar>
+        <secondButton to="/perfil" label="Perfil" class="nav-gold-item" />
+        <secondButton to="/lectura_diaria" label="Lectura Diaria" class="nav-gold-item" />
       </div>
     </nav>
 
@@ -29,31 +26,21 @@
         <header class="text-center q-mb-xl relative-position z-top">
           <h1
             class="font-serif-display text-h3 lg:text-h2 text-bold text-gold-gradient q-mb-xs tracking-wide drop-shadow-lg">
-            Your Cosmic Blueprint
+            LECTURA PRINCIPAL
           </h1>
           <p class="text-white-50 text-uppercase tracking-widest text-caption font-medium">
-            Principal Soul Reading • Oct 24, 2023
+            {{ converFecha(lecturaPrincipal?.fechaLectura) }}
           </p>
         </header>
 
         <div class="row q-col-gutter-xl items-start relative-position z-top">
-          <div class="col-12 col-md-4 q-gutter-y-xl">
+          <div class=" flex justify-center items-center col-md-4 q-gutter-y-xl">
             <div class="reading-section">
               <h3 class="text-primary text-caption text-bold text-uppercase tracking-widest q-mb-md flex items-center">
-                <div class="line-accent q-mr-sm"></div> Core Essence
+                <div class="line-accent q-mr-sm"></div> DESCRIPCIÓN
               </h3>
               <p class="font-light text-body1 line-height-relaxed text-white-80">
-                At your core, you are a seeker of truth. The vibration of the 7 resonates with deep introspection and a
-                hunger for knowledge.
-              </p>
-            </div>
-            <div class="reading-section">
-              <h3 class="text-primary text-caption text-bold text-uppercase tracking-widest q-mb-md flex items-center">
-                <div class="line-accent q-mr-sm"></div> Soul Urge
-              </h3>
-              <p class="font-light text-body2 line-height-relaxed text-white-60">
-                Your inner desire is for solitude and contemplation. You find your power in the quiet moments between
-                thoughts.
+                {{ lecturaPrincipal?.contenido?.descripcion }}
               </p>
             </div>
           </div>
@@ -65,7 +52,8 @@
               <div class="astrolabe-ring ring-inner animate-spin-slow-dashed"></div>
 
               <div class="absolute-center">
-                <span class="font-serif-display text-num text-primary text-glow animate-pulse">7</span>
+                <span class="font-serif-display text-num text-primary text-glow animate-pulse">{{
+                  lecturaPrincipal?.contenido?.numero }}</span>
               </div>
             </div>
             <div class="q-mt-xl">
@@ -79,45 +67,32 @@
             <div class="reading-section column items-end-md">
               <h3
                 class="text-primary text-caption text-bold text-uppercase tracking-widest q-mb-md flex items-center reverse-md">
-                Life Purpose <div class="line-accent q-ml-sm-md"></div>
+                MENSAJE <div class="line-accent q-ml-sm-md"></div>
               </h3>
               <p class="font-light text-body1 line-height-relaxed text-white-80">
-                Your destiny is one of analysis and spiritual teaching. You are here to bridge the gap between science
-                and spirituality.
+                {{ lecturaPrincipal?.contenido?.mensaje }}
               </p>
             </div>
             <div class="reading-section column items-end-md">
               <h3
                 class="text-primary text-caption text-bold text-uppercase tracking-widest q-mb-md flex items-center reverse-md">
-                Karmic Lesson <div class="line-accent q-ml-sm-md"></div>
+                TALENTOS<div class="line-accent q-ml-sm-md"></div>
               </h3>
               <p class="font-light text-body2 line-height-relaxed text-white-60">
-                Learn to trust your intuition without needing empirical proof. Vulnerability is the gateway to
-                connection.
+                {{ lecturaPrincipal?.contenido?.talentos }}
               </p>
             </div>
           </div>
         </div>
 
-        <div class="q-mt-xl q-pt-lg border-top-white-10 row justify-between items-center q-gutter-y-md">
-          <q-btn flat no-caps color="white" class="opacity-60 hover-100 group">
-            <q-avatar size="32px" color="white-5" class="q-mr-sm group-hover-primary">
-              <q-icon name="share" size="14px" />
-            </q-avatar>
-            <span class="text-caption tracking-wider">Share Wisdom</span>
-          </q-btn>
+        <div class="flex justify-center items-center q-gutter-xl q-pt-xl">
 
-          <q-btn unelevated color="primary" text-color="dark" class="download-btn q-px-xl q-py-sm" rounded>
-            <q-icon name="file_download" class="q-mr-sm" />
-            <span class="text-bold">Download Certificate</span>
-          </q-btn>
-
-          <q-btn flat no-caps color="white" class="opacity-60 hover-100 group">
-            <span class="text-caption tracking-wider q-mr-sm">Daily Transit</span>
-            <q-avatar size="32px" color="white-5" class="group-hover-primary">
-              <q-icon name="explore" size="14px" />
-            </q-avatar>
-          </q-btn>
+          <div>
+            <secondButton label="Generar Lectura Principal" type="submit" :loading="loading" />
+          </div>
+          <div>
+            <secondButton label="Descargar Lectura" type="submit" :loading="loading" />
+          </div>
         </div>
       </div>
     </main>
@@ -125,6 +100,23 @@
 </template>
 
 <script setup>
+import { useAuthStore } from "../store/auth.js";
+import { storeToRefs } from "pinia";
+import { ref } from "vue";
+
+import { converFecha } from "../utils/functions.js";
+
+import secondButton from '../components/secondButton.vue';
+
+const authStore = useAuthStore();
+const { lecturasguardadas } = storeToRefs(authStore);
+
+const lecturaPrincipal = ref(null);
+
+lecturaPrincipal.value = lecturasguardadas.value.find(item => item.tipo === 'principal') || null;
+
+console.log(lecturaPrincipal.value);
+
 </script>
 
 <style scoped>

@@ -86,15 +86,14 @@
   font-weight: 300;
 }
 .badge-frecuencia {
-  border: 1px solid rgba(244, 175, 37, 0.4);
+  border: 1px solid rgba(244, 175, 37, 0.1);
   background-color: rgba(244, 175, 37, 0.05);
-  padding: 0.5rem 1.5rem;
-  border-radius: 9999px;
+  padding: 1.5rem 1.5rem;
+  border-radius: 20px;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 1000;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #f4af25;
 }
 .text-status-title {
   font-size: 10px;
