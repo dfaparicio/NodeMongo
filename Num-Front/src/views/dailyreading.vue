@@ -6,106 +6,135 @@
       <div class="warm-glow-orb absolute-bottom-left"></div>
     </div>
 
-    <div class="absolute-top row justify-between items-start q-pa-lg z-top w-full">
+    <div class="absolute-top row justify-between items-start q-pa-lg q-pl-xl z-top w-full ">
 
-      <div class="glass-panel border-white-5 row items-center q-px-sm q-py-xs" style="border-radius: 4px;">
-        <q-icon name="wb_sunny" class="text-blue-accent q-mr-sm" size="xs" />
-        <div class="column justify-center">
-          <span class="text-uppercase text-grey-6 text-weight-bold"
-            style="font-size: 9px; letter-spacing: 1px;">HOY</span>
-          <span class="text-white text-weight-medium" style="font-size: 13px; line-height: 1;">24 Octubre, 2023</span>
-        </div>
-      </div>
-
-      <div class="glass-panel border-white-5 row items-center q-px-md q-py-sm q-gutter-x-lg hidden md-flex"
+      <div class="glass-panel border-white-5 row items-center q-px-md q-py-sm q-gutter-x-lg hidden md-flex "
         style="border-radius: 4px;">
-        <q-icon name="chevron_left" class="text-grey-6 cursor-pointer hover-white" size="xs" />
+        <q-icon name="chevron_left" class="text-grey-6 cursor-pointer hover-white" size="xs"
+          @click="moverCarrusel(-1)" />
 
-        <div class="row q-gutter-x-lg items-end">
-          <div v-for="day in ['OCT 22', 'OCT 23']" :key="day"
-            class="column items-center cursor-pointer text-grey-6 hover-white">
-            <span style="font-size: 9px; font-weight: bold; letter-spacing: 1px;">{{ day }}</span>
-            <div class="timeline-dot q-mt-xs bg-grey-8"></div>
-          </div>
+        <div class="row q-gutter-x-lg items-end ">
+          <div v-for="day in fechasVisibles" :key="day.str" @click="seleccionarFecha(day)"
+            :class="['column items-center cursor-pointer', day.str === fechaSeleccionada.str ? 'text-blue-accent relative-position' : 'text-grey-6 hover-white']">
 
-          <div class="column items-center cursor-pointer text-blue-accent relative-position">
             <span
-              style="font-size: 10px; font-weight: bold; letter-spacing: 1px; transform: translateY(-2px);">HOY</span>
-            <div class="timeline-dot-active bg-blue-accent relative-position">
+              :style="day.str === fechaSeleccionada.str ? 'font-size: 10px; font-weight: bold; letter-spacing: 1px; transform: translateY(-2px);' : 'font-size: 9px; font-weight: bold; letter-spacing: 1px;'">
+              {{ day.isHoy && day.str === fechaSeleccionada.str ? 'HOY' : day.labelCarrusel }}
+            </span>
+
+            <div v-if="day.str === fechaSeleccionada.str" class="timeline-dot-active bg-blue-accent relative-position">
               <div class="absolute-center bg-blue-accent glow-dot"></div>
             </div>
-          </div>
-
-          <div v-for="day in ['OCT 25', 'OCT 26']" :key="day"
-            class="column items-center cursor-pointer text-grey-6 hover-white">
-            <span style="font-size: 9px; font-weight: bold; letter-spacing: 1px;">{{ day }}</span>
-            <div class="timeline-dot q-mt-xs bg-grey-8"></div>
+            <div v-else class="timeline-dot q-mt-xs bg-grey-8"></div>
           </div>
         </div>
 
-        <q-icon name="chevron_right" class="text-grey-6 cursor-pointer hover-white" size="xs" />
+        <q-icon name="chevron_right" class="text-grey-6 cursor-pointer hover-white" size="xs"
+          @click="moverCarrusel(1)" />
       </div>
+
+      <div class="glass-panel border-white-5 row items-center q-px-md q-py-sm" style="border-radius: 4px;">
+        <q-icon name="wb_sunny" class="text-blue-accent q-mr-sm" size="xs" />
+        <div class="column justify-center q-pl-sm">
+          <span class="text-uppercase text-grey-6 text-weight-bold"
+            style="font-size: 9px; letter-spacing: 3px;">HOY</span>
+          <span class="text-white text-weight-medium" style="font-size: 15px; line-height: 1;">{{ stringHoy }}</span>
+        </div>
+      </div>
+
+      <div class="q-gutter-xl">
+        <secondButton to="/perfil" label="Perfil" class="nav-gold-item" />
+        <secondButton to="lectura_principal" label="Lectura Diaria" class="nav-gold-item" />
+      </div>
+
     </div>
 
     <div class="absolute-full flex flex-center z-content">
-      <div class="row items-center justify-center q-col-gutter-xl w-full" style="max-width: 1000px;">
+      <div class="row items-center justify-center w-full " style="max-width: 1500px; gap: 200px;">
 
-        <div class="col-12 col-md-6 flex flex-center column">
+        <div class="flex flex-center column q-pa-none">
           <div class="relative-position flex flex-center q-mb-md">
-            <div class="giant-number text-gold">5</div>
+            <div class="giant-number text-gold full-width full-height flex flex-center">
+              {{ lecturaPrincipal?.contenido?.numero || '-' }}
+            </div>
           </div>
-
-          <div class="badge-gold q-mt-lg">NÚMERO DIARIO</div>
+          <div class="badge-gold q-mt-lg">NÚMERO CAMINO DE VIDA</div>
         </div>
 
-        <div class="col-12 col-md-6 flex flex-center">
-          <div class="info-card glass-panel border-white-5 column q-pa-xl">
+        <div class="col-md-6 q-pa-none">
+          <div class="info-card glass-panel border-white-5 column q-pa-md">
 
-            <h2 class="text-h4 text-white q-ma-none text-weight-regular" style="font-family: Arial, sans-serif;">Vientos
-              de Cambio</h2>
+            <h2 class="text-h4 text-white q-ma-none text-weight-regular" style="font-family: Arial, sans-serif;">LECTURA
+              DIARIA</h2>
             <div class="text-blue-accent text-uppercase text-weight-bold q-mt-sm"
-              style="font-size: 10px; letter-spacing: 0.15em;">PRONÓSTICO CÓSMICO DE HOY</div>
+              style="font-size: 10px; letter-spacing: 0.15em;">
+              PRONÓSTICO CÓSMICO DE {{ fechaSeleccionada.str === stringHoy ? 'HOY' : fechaSeleccionada.str.toUpperCase()
+              }}
+            </div>
             <div class="text-grey-7 q-my-md text-weight-bold" style="letter-spacing: 2px;">•••</div>
 
-            <p class="text-grey-4 line-height-relaxed" style="font-size: 14px; margin-bottom: 30px;">
-              Hoy trae una ola de energía dinámica. La interacción entre el universal <span
-                class="text-blue-accent text-weight-bold">5</span> y tu número principal sugiere un día para decisiones
-              audaces y giros inesperados. Abraza el caos de lo nuevo. La estructura puede sentirse limitante hoy;
-              permite que tu intuición te guíe a través del polvo estelar de la oportunidad.
-            </p>
+            <template v-if="estadoLectura === 'encontrada'">
+              <p class="text-grey-4 line-height-relaxed" style="font-size: 14px; margin-bottom: 30px;">
+                {{ lecturaActual.contenido?.mensaje }}
+              </p>
+              <br>
+              <p class="text-grey-4 line-height-relaxed" style="font-size: 14px; margin-bottom: 30px;">
+                {{ lecturaActual.contenido?.estado }}
+              </p>
 
-            <div class="row border-top-light q-pt-lg">
-              <div class="col-6 column q-gutter-y-xs">
-                <span class="text-grey-6 text-uppercase" style="font-size: 10px; letter-spacing: 1px;">COLOR DE LA
-                  SUERTE</span>
-                <div class="row items-center q-gutter-x-sm">
-                  <div class="color-dot bg-green"></div>
-                  <span class="text-white text-weight-medium" style="font-size: 13px;">Verde Nebulosa</span>
+              <div class="row border-top-light q-pt-lg">
+                <div class="col-6 column q-gutter-y-xs">
+                  <span class="text-grey-6 text-uppercase" style="font-size: 15px; letter-spacing: 1px;">ENERGIAS</span>
+                  <div class="row items-center q-gutter-x-sm">
+                    <span class="text-white text-weight-medium" style="font-size: 13px;">{{
+                      lecturaActual.contenido?.energia }}</span>
+                  </div>
+                </div>
+
+                <div class="col-6 column q-gutter-y-xs">
+                  <span class="text-grey-6 text-uppercase"
+                    style="font-size: 15px; letter-spacing: 1px;">MOTIVACIÓN</span>
+                  <span class="text-white text-weight-medium" style="font-size: 13px;">{{
+                    lecturaActual.contenido?.motivacion }}</span>
                 </div>
               </div>
 
-              <div class="col-6 column q-gutter-y-xs">
-                <span class="text-grey-6 text-uppercase" style="font-size: 10px; letter-spacing: 1px;">PALABRA DE
-                  PODER</span>
-                <span class="text-white text-weight-medium" style="font-size: 13px;">Liberación</span>
-              </div>
-            </div>
+              <div class="row q-mt-lg items-end">
+                <div class="col-6 column q-gutter-y-sm">
+                  <span class="text-grey-6 text-uppercase" style="font-size: 15px; letter-spacing: 1px;">
+                    🌟 Frecuencia Energética
+                  </span>
 
-            <div class="row q-mt-lg items-end">
-              <div class="col-6 column q-gutter-y-sm">
-                <span class="text-grey-6 text-uppercase" style="font-size: 10px; letter-spacing: 1px;">RESONANCIA</span>
-                <q-linear-progress :value="0.85" color="info" track-color="grey-9" size="3px" class="resonance-bar"
-                  style="width: 80%;" />
+                  <q-linear-progress :value="Math.random() * 0.4 + 0.6" color="info" track-color="grey-9" size="3px"
+                    class="resonance-bar" style="width: 80%;" />
+                </div>
               </div>
 
-              <div class="col-6 flex justify-end">
-                <a href="#"
-                  class="text-blue-accent text-decoration-none row items-center hover-glow transition text-weight-bold"
-                  style="font-size: 12px;">
-                  Leer Reporte Completo <q-icon name="arrow_forward" size="xs" class="q-ml-xs" />
-                </a>
+
+            </template>
+
+            <template v-else-if="estadoLectura === 'pasada_sin_generar'">
+              <div class="column flex-center q-py-xl text-center">
+                <q-icon name="history" size="xl" class="text-grey-7 q-mb-md" />
+                <span class="text-grey-4 text-h6">No generada "por pruebas"</span>
+                <span class="text-grey-6 text-caption">La lectura para este día no se encuentra disponible.</span>
               </div>
-            </div>
+            </template>
+
+            <template v-else-if="estadoLectura === 'futura'">
+              <div class="column flex-center q-py-xl text-center">
+                <q-icon name="auto_awesome" size="xl" class="text-grey-7 q-mb-md" />
+                <span class="text-grey-4 text-h6">Pronto a generar</span>
+                <span class="text-grey-6 text-caption">Vuelve en esta fecha para descubrir tu pronóstico cósmico.</span>
+              </div>
+            </template>
+
+            <template v-else>
+              <div class="column flex-center q-py-xl text-center">
+                <q-icon name="hourglass_empty" size="xl" class="text-grey-7 q-mb-md" />
+                <span class="text-grey-4 text-h6">Aún no se ha generado la lectura de hoy</span>
+              </div>
+            </template>
 
           </div>
         </div>
@@ -117,6 +146,71 @@
 </template>
 
 <script setup>
+import { ref, computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "../store/auth.js";
+import { converFecha } from "../utils/functions.js";
+import secondButton from "../components/secondButton.vue"
+
+const authStore = useAuthStore();
+const { lecturasguardadas } = storeToRefs(authStore);
+
+const lecturasDiarias = computed(() => lecturasguardadas.value.filter(item => item.tipo === 'diaria') || []);
+const lecturaPrincipal = computed(() => lecturasguardadas.value.find(item => item.tipo === 'principal') || null);
+
+console.log(lecturasDiarias.value);
+
+
+const fechaActualObj = new Date();
+fechaActualObj.setHours(0, 0, 0, 0);
+const stringHoy = converFecha(fechaActualObj);
+
+const fechaCentroCarrusel = ref(new Date(fechaActualObj));
+const fechaSeleccionada = ref({ str: stringHoy, date: new Date(fechaActualObj) });
+
+const fechasVisibles = computed(() => {
+  const fechas = [];
+  for (let i = -2; i <= 2; i++) {
+    const d = new Date(fechaCentroCarrusel.value);
+    d.setDate(d.getDate() + i);
+    d.setHours(0, 0, 0, 0);
+
+    const strFecha = converFecha(d);
+    const partes = strFecha.split(' ');
+
+    fechas.push({
+      date: d,
+      str: strFecha,
+      labelCarrusel: partes.length >= 2 ? `${partes[1].toUpperCase()} ${partes[0]}` : strFecha,
+      isHoy: strFecha === stringHoy
+    });
+  }
+  return fechas;
+});
+
+const moverCarrusel = (dias) => {
+  const nuevaFecha = new Date(fechaCentroCarrusel.value);
+  nuevaFecha.setDate(nuevaFecha.getDate() + dias);
+  fechaCentroCarrusel.value = nuevaFecha;
+};
+
+const seleccionarFecha = (dayObj) => {
+  fechaSeleccionada.value = { str: dayObj.str, date: dayObj.date };
+};
+
+const lecturaActual = computed(() => {
+  return lecturasDiarias.value.find(item => converFecha(new Date(item.fechaLectura)) === fechaSeleccionada.value.str);
+});
+
+const estadoLectura = computed(() => {
+  if (lecturaActual.value) return 'encontrada';
+  const timeSeleccionado = fechaSeleccionada.value.date.getTime();
+  const timeHoy = fechaActualObj.getTime();
+
+  if (timeSeleccionado < timeHoy) return 'pasada_sin_generar';
+  if (timeSeleccionado > timeHoy) return 'futura';
+  return 'hoy_sin_generar';
+});
 </script>
 
 <style scoped>

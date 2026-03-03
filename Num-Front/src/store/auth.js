@@ -6,10 +6,12 @@ export const useAuthStore = defineStore(
   () => {
     let token = ref("");
     const user = ref(null);
+    const lecturasguardadas = ref([]);
 
     return {
       token,
       user,
+      lecturasguardadas,
     };
   },
 

@@ -3,6 +3,9 @@ import cors from "cors";
 import "dotenv/config";
 import conectarMongo from "./database/cnx-mongo.js";
 
+// Importar la función de automatización desde tu controlador
+import { generarlecturadiaria } from "./controllers/lecturas.js"; 
+
 // Rutas
 import usuarioRoute from "./routes/usuario.js";
 import lecturaRoute from "./routes/lecturas.js"; 
@@ -24,9 +27,12 @@ app.use("/api/lectura", lecturaRoute);
 app.use("/api/pago", pagosRoute);
 app.use("/api/auth", authRoute);
 
-// Puerto
+// 🔥 INICIAR AUTOMATIZACIÓN (Esto activa el cron job al arrancar el servidor)
+generarlecturadiaria();
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`🔥 Servidor escuchando en el puerto ${PORT}`);
+  console.log(`⏰ Cron Job de lecturas programado para las 8:55 AM (Bogotá)`);
 });

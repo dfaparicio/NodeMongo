@@ -4,36 +4,42 @@ import {
   lecturasdeUnUsuario,
   lecturaPorId,
 } from "../models/lecturas.js";
+import Usuario from "../models/usuario.js";
 
+import cron from "node-cron";
+import { enviarCorreoNotificacion } from "../helpers/mailer.js";
+
+// Importamos la librería y variables de entorno
 import { GoogleGenAI } from "@google/genai";
 import "dotenv/config";
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
+// Tal como dice la doc: El cliente obtiene la API key de la variable de entorno `GEMINI_API_KEY`
+const ai = new GoogleGenAI({});
 
 async function respuestaIA(prompt) {
   try {
+    // Estructura exacta de la documentación
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
     });
 
+    if (!response.text) throw new Error("La IA no devolvió texto.");
     return response.text;
+
   } catch (error) {
     console.error("❌ Error de Gemini:", JSON.stringify(error.message || error));
-
-    // Lanzar un error descriptivo para que el controlador lo maneje
-    if (error.message?.includes("429") || error.message?.includes("RESOURCE_EXHAUSTED")) {
-      throw new Error("CUOTA_AGOTADA: La cuota de la API de Gemini se ha agotado. Genera una nueva API key en https://aistudio.google.com/apikey");
+    
+    // Si vuelve a salir el error 503, lo capturamos para no romper el servidor
+    if (error.message?.includes("503") || error.message?.includes("UNAVAILABLE")) {
+      throw new Error("IA_SATURADA: El modelo preview está en alta demanda. Intenta más tarde.");
     }
-    throw new Error("GEMINI_ERROR: " + (error.message || "Error desconocido al conectar con Gemini"));
+
+    throw new Error("GEMINI_ERROR: " + (error.message || "Error desconocido"));
   }
 }
 
 export default respuestaIA;
-
-
 
 function extraerJSON(texto) {
   try {
@@ -49,7 +55,6 @@ function extraerJSON(texto) {
   }
 }
 
-//LÓGICA DE APOYO
 function calcularCaminoDeVida(fecha_nacimiento) {
   const fecha = new Date(fecha_nacimiento);
   const dia = fecha.getUTCDate(); // Usar UTC para evitar errores de zona horaria
@@ -141,57 +146,63 @@ export const generarlecturaprincipal = async (req, res) => {
   }
 };
 
-export const generarlecturadiaria = async (req, res) => {
-  try {
-    const { usuarioId } = req.params;
-    const resultado = await lecturaDiaria(usuarioId);
+export const generarlecturadiaria = () => {
+  // Configurado a las 8:30 AM hora Colombia
+  cron.schedule(
+    "48 13 * * *",
+    async () => {
+      console.log("⏰ [Cron] Ejecutando generación diaria...");
 
-    if (!resultado.usuario || resultado.usuario.estado !== 1) {
-      return res.status(404).json({ msg: "Usuario no encontrado o inactivo" });
-    }
+      try {
+        const usuariosActivos = await Usuario.find({ estado: 1 });
 
-    const principal = await resultado.obtenerLecturaPrincipal(usuarioId);
-    if (!principal) {
-      return res
-        .status(400)
-        .json({ msg: "Primero debes generar la lectura principal." });
-    }
+        for (const usuario of usuariosActivos) {
+          try {
+            const resultado = await lecturaDiaria(usuario._id);
+            const principal = await resultado.obtenerLecturaPrincipal(
+              usuario._id,
+            );
 
-    const lecturaHoy = await resultado.obtenerLecturaDiariaHoy(usuarioId);
-    if (lecturaHoy) {
-      return res.status(200).json({
-        msg: "Lectura diaria ya generada hoy",
-        contenido: JSON.parse(lecturaHoy.contenido),
-      });
-    }
+            if (!principal) continue;
 
-    const prompt = `Genera una lectura diaria basada en este perfil: ${principal.contenido}. 
-    Devuelve SOLO un JSON: {"fecha": "${new Date().toLocaleDateString()}", "mensaje": "...", "energia": "..."}`;
+            const lecturaHoy = await resultado.obtenerLecturaDiariaHoy(
+              usuario._id,
+            );
+            if (lecturaHoy) continue;
 
-    let contenidoIA;
-    try {
-      contenidoIA = await respuestaIA(prompt);
-    } catch (iaError) {
-      console.error("❌ Fallo de IA diaria:", iaError.message);
-      return res.status(503).json({ error: iaError.message });
-    }
+            const prompt = `Genera una lectura diaria basada en este perfil: ${principal.contenido}. 
+          Devuelve SOLO un JSON: {"fecha": "${new Date().toLocaleDateString()}", "mensaje": "...", "energia": "...", "motivacion": "..."}`;
 
-    const contenidoJSON = extraerJSON(contenidoIA);
+            const contenidoIA = await respuestaIA(prompt);
+            const contenidoJSON = extraerJSON(contenidoIA);
 
-    const idLectura = await resultado.crear(
-      usuarioId,
-      "diaria",
-      JSON.stringify(contenidoJSON),
-    );
+            if (contenidoJSON) {
+              contenidoJSON.estado = "activo"; // Forzar estado activo para dashboard
 
-    res.status(201).json({
-      msg: "Lectura diaria generada",
-      contenido: contenidoJSON,
-    });
-  } catch (error) {
-    console.error("❌ Error en lectura diaria:", error.message);
-    res.status(500).json({ msg: "Error interno", error: error.message });
-  }
+              await resultado.crear(
+                usuario._id,
+                "diaria",
+                JSON.stringify(contenidoJSON),
+              );
+
+              if (usuario.email) {
+                await enviarCorreoNotificacion(usuario.email, usuario.nombre);
+              }
+              console.log(`✅ Lectura enviada a: ${usuario.email}`);
+            }
+          } catch (err) {
+            console.error(`❌ Error con usuario ${usuario._id}:`, err.message);
+          }
+        }
+      } catch (error) {
+        console.error("❌ Error global en Cron:", error.message);
+      }
+    },
+    {
+      scheduled: true,
+      timezone: "America/Bogota",
+    },
+  );
 };
 
 export const obtenerlecturasdeunusuario = async (req, res) => {
@@ -217,11 +228,9 @@ export const obtenerlecturaporid = async (req, res) => {
       },
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        msg: "Error al obtener la lectura por ID",
-        error: error.message,
-      });
+    res.status(500).json({
+      msg: "Error al obtener la lectura por ID",
+      error: error.message,
+    });
   }
 };
