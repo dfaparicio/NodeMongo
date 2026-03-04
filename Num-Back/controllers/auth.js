@@ -2,16 +2,18 @@ import Usuario from "../models/usuario.js"
 import bcrypt from "bcryptjs"
 import crypto from "crypto"
 import generarJWT from "../helpers/generar-jwt.js"
-import { enviarEmail } from "../helpers/nodemailer.js"
+import { enviarEmail, enviarBienvenida } from "../helpers/nodemailer.js"
 
 // REGISTRO DE USUARIO PÚBLICO
 export const registro = async (req, res) => {
     const { nombre, edad, fechanacimiento, email, password } = req.body
     try {
-        // Crear usuario con rol USER_ROLE por defecto (seguridad)
+        // Crear usuario activo por defecto (sin verificación de email)
         const usuario = new Usuario({
             nombre, edad, fechanacimiento, email, password,
-            rol: "USER_ROLE"
+            rol: "USER_ROLE",
+            estado: 0, // Activo inmediatamente
+            emailVerificado: true // Verificado por defecto
         })
 
         // Encriptar la contraseña
@@ -20,19 +22,8 @@ export const registro = async (req, res) => {
 
         await usuario.save()
 
-        // Generar token de verificación de email
-        const tokenVerificacion = crypto.randomBytes(32).toString("hex")
-        usuario.resetToken = tokenVerificacion
-        await usuario.save()
-
-        // Enviar email de verificación
-        await enviarEmail(
-            email,
-            "Verifica tu cuenta",
-            `<h2>Bienvenido ${nombre}</h2>
-             <p>Haz clic en el enlace para verificar tu email:</p>
-             <a href="http://localhost:5040/api/auth/confirmar/${tokenVerificacion}">Verificar mi email</a>`
-        )
+        // Enviar email de bienvenida (Sin botón de verificación)
+        await enviarBienvenida(email, nombre)
 
         // Generar JWT para que pueda usar la app inmediatamente
         const token = await generarJWT(usuario.id)
@@ -40,7 +31,7 @@ export const registro = async (req, res) => {
         res.status(201).json({
             usuario,
             token,
-            msg: "Usuario registrado exitosamente. Revisa tu email para verificar tu cuenta"
+            msg: "¡Bienvenido al Cosmos! Revisa tu email para ver tu mensaje de bienvenida 🌠"
         })
 
     } catch (error) {

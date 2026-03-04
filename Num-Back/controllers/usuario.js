@@ -1,7 +1,6 @@
 import Usuario from "../models/usuario.js"
 import bcrypt from "bcryptjs"
-import { enviarEmail } from "../helpers/nodemailer.js"
-import crypto from "crypto"
+import { enviarBienvenida } from "../helpers/nodemailer.js"
 
 export const getUsuario = async (req, res) => {
     try {
@@ -26,8 +25,12 @@ export const postUsuario = async (req, res) => {
     try {
         const { nombre, edad, fechanacimiento, email, password, rol } = req.body
 
+        // Crear usuario activo por defecto
         const usuario = new Usuario({
-            nombre, edad, fechanacimiento, email, password, rol
+            nombre, edad, fechanacimiento, email, password,
+            rol: rol || 'USER_ROLE',
+            estado: 0, // Activo inmediatamente
+            emailVerificado: true // Verificado por defecto
         })
 
         // Encriptar la contraseña
@@ -36,20 +39,10 @@ export const postUsuario = async (req, res) => {
 
         await usuario.save()
 
-        // Generar token y enviar email de verificación
-        const tokenVerificacion = crypto.randomBytes(32).toString("hex")
-        usuario.resetToken = tokenVerificacion
-        await usuario.save()
+        // Enviar email de bienvenida (Nuevo diseño)
+        await enviarBienvenida(email, nombre)
 
-        await enviarEmail(
-            email,
-            "Verifica tu cuenta",
-            `<h2>Bienvenido ${nombre}</h2>
-             <p>Haz clic en el enlace para verificar tu email:</p>
-             <a href="http://localhost:5040/api/auth/confirmar/${tokenVerificacion}">Verificar mi email</a>`
-        )
-
-        res.json({ usuario, msg: "Usuario creado. Revisa tu email para verificar tu cuenta" })
+        res.json({ usuario, msg: "Usuario creado exitosamente 🌠" })
 
     } catch (error) {
         res.status(400).json({ error })
