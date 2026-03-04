@@ -150,7 +150,7 @@ export const generarlecturaprincipal = async (req, res) => {
 export const generarlecturadiaria = () => {
   // Configurado a las 8:30 AM hora Colombia
   cron.schedule(
-    "48 13 * * *",
+    "59 21 * * *",
     async () => {
       console.log("⏰ [Cron] Ejecutando generación diaria...");
 
