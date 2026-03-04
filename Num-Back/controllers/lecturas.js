@@ -1,3 +1,4 @@
+import Lectura from "../models/lecturas.js";
 import {
   lecturaPrincipal,
   lecturaDiaria,
@@ -29,7 +30,7 @@ async function respuestaIA(prompt) {
 
   } catch (error) {
     console.error("❌ Error de Gemini:", JSON.stringify(error.message || error));
-    
+
     // Si vuelve a salir el error 503, lo capturamos para no romper el servidor
     if (error.message?.includes("503") || error.message?.includes("UNAVAILABLE")) {
       throw new Error("IA_SATURADA: El modelo preview está en alta demanda. Intenta más tarde.");
@@ -232,5 +233,14 @@ export const obtenerlecturaporid = async (req, res) => {
       msg: "Error al obtener la lectura por ID",
       error: error.message,
     });
+  }
+};
+
+export const obtenerTodasLasLecturas = async (req, res) => {
+  try {
+    const lecturas = await Lectura.find().sort({ fechaLectura: -1 });
+    res.status(200).json({ lecturas });
+  } catch (error) {
+    res.status(500).json({ msg: "Error al obtener todas las lecturas", error: error.message });
   }
 };
