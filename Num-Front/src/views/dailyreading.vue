@@ -44,7 +44,7 @@
 
       <div class="q-gutter-xl">
         <secondButton to="/perfil" label="Perfil" class="nav-gold-item" />
-        <secondButton to="lectura_principal" label="Lectura Diaria" class="nav-gold-item" />
+        <secondButton to="/lectura_principal" label="Lectura Principal" class="nav-gold-item" />
       </div>
 
     </div>
@@ -147,13 +147,37 @@ import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "../store/auth.js";
 import { converFecha, generarRangoFechas, obtenerEstadoLectura, resetearHoras } from "../utils/functions.js";
+import { getData } from "../services/services.js";
 import secondButton from "../components/secondButton.vue"
 
 const authStore = useAuthStore();
-const { lecturasguardadas } = storeToRefs(authStore);
+const { user, lecturasguardadas } = storeToRefs(authStore);
 
-const lecturasDiarias = computed(() => lecturasguardadas.value.filter(item => item.tipo === 'diaria') || []);
-const lecturaPrincipal = computed(() => lecturasguardadas.value.find(item => item.tipo === 'principal') || null);
+const fetchLecturas = async () => {
+  if (!user.value?._id) return;
+  try {
+    const res = await getData(`/lectura/usuario/${user.value._id}`);
+    const rawLecturas = res.lecturas || res.data?.lecturas || [];
+    
+    authStore.lecturasguardadas = rawLecturas.map(item => ({
+      ...item,
+      contenido: typeof item.contenido === 'string' ? JSON.parse(item.contenido) : item.contenido
+    }));
+  } catch (error) {
+    console.error("Error al obtener lecturas:", error);
+  }
+};
+
+// Ejecución directa al cargar el script
+fetchLecturas();
+
+const lecturasDiarias = computed(() => {
+  return (lecturasguardadas.value || []).filter(item => item.tipo === 'diaria');
+});
+
+const lecturaPrincipal = computed(() => {
+  return (lecturasguardadas.value || []).find(item => item.tipo === 'principal') || null;
+});
 
 const fechaActualObj = resetearHoras(new Date());
 const stringHoy = converFecha(fechaActualObj);
@@ -178,7 +202,7 @@ const lecturaDeHoy = computed(() => {
 });
 
 watch(lecturaDeHoy, (nuevoValor) => {
-  authStore.setLectura(nuevoValor);
+  if (nuevoValor) authStore.setLectura(nuevoValor);
 }, { immediate: true });
 
 const estadoLectura = computed(() => 

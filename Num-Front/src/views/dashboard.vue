@@ -41,23 +41,22 @@
     </div>
     <div class="col-12 col-md-4 gt-sm"></div>
 
-    <div class="col-12 col-md-8 relative-position q-pa-xl z-top scroll-y">
+    <div class="col-12 col-md-8 relative-position q-pa-xl scroll-y" style="z-index: 1;">
 
       <router-view />
 
 
 
 
-      <div class="fixed-top z-top" style="left: 33.3333%; right: 0;">
+      <div class="fixed-top" style="left: 33.3333%; right: 0; z-index: 999;">
         <div class="flex justify-center">
           <div class="glass-panel2 rounded-xl q-pa-md full-width">
-            <div class="flex justify-center items-center q-gutter-x-md sm:q-gutter-x-xl q-pt-xl q-pb-xl">
+            <div class="flex no-wrap justify-center items-center q-gutter-x-sm sm:q-gutter-x-md q-pt-xl q-pb-xl overflow-auto scroll-none">
               <secondButton to="/lectura_principal" label="Lectura Principal" class="nav-gold-item" />
               <secondButton to="/lectura_diaria" label="Lectura Diaria" class="nav-gold-item" />
               <secondButton to="/planes" label="Planes" class="nav-gold-item" />
-              <div v-if="user?.rol === 'ADMIN_ROLE'">
-                <secondButton to="/admin" label="Centro de Control" class="nav-gold-item" />
-              </div>
+              <secondButton v-if="user?.rol === 'ADMIN_ROLE'" to="/admin" label="Centro de Control" class="nav-gold-item" />
+              <secondButton label="Cerrar Sesión" class="nav-gold-item text-red-4" @click="logout" />
             </div>
           </div>
         </div>
@@ -276,10 +275,31 @@ import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { converFecha, resetearHoras } from "../utils/functions.js";
 import { getData } from "../services/services.js";
+import { useQuasar } from 'quasar';
 import { ref, onMounted, computed } from 'vue';
 
+const $q = useQuasar();
 const authStore = useAuthStore();
 const router = useRouter();
+
+const logout = () => {
+  $q.dialog({
+    title: 'Cerrar Sesión',
+    message: '¿Estás seguro de que deseas salir del sistema?',
+    cancel: true,
+    persistent: true,
+    dark: true,
+    ok: {
+      flat: true,
+      color: 'red-4',
+      label: 'Sí, Salir'
+    }
+  }).onOk(() => {
+    authStore.token = "";
+    authStore.user = null;
+    router.push('/login');
+  });
+};
 
 const { user, lecturaActual } = storeToRefs(authStore);
 
