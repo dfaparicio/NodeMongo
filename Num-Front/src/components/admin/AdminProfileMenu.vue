@@ -15,7 +15,6 @@
       </q-item-section>
     </q-item>
 
-    <!-- Menú desplegable -->
     <q-menu 
       anchor="top right" 
       self="bottom right" 
