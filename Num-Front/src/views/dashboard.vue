@@ -55,6 +55,9 @@
               <secondButton to="/lectura_principal" label="Lectura Principal" class="nav-gold-item" />
               <secondButton to="/lectura_diaria" label="Lectura Diaria" class="nav-gold-item" />
               <secondButton to="/planes" label="Planes" class="nav-gold-item" />
+              <div v-if="user?.rol === 'ADMIN_ROLE'">
+                <secondButton to="/admin" label="Centro de Control" class="nav-gold-item" />
+              </div>
             </div>
           </div>
         </div>
@@ -133,8 +136,8 @@
 
 
       <div class="row q-col-gutter-lg q-mb-xl">
-        <div class="col-12 col-md-6">
 
+        <div class="col-12 col-md-6">
           <div v-if="user.estado === 1" class="glass-panel rounded-xl q-pa-md flex items-center justify-between">
             <div class="flex items-center">
               <div class="icon-box bg-emerald-box q-mr-md">
@@ -160,23 +163,37 @@
             </div>
             <q-icon name="cancel" class="text-red" size="lg" />
           </div>
-
         </div>
 
+
         <div class="col-12 col-md-6">
-          <div class="glass-panel rounded-xl q-pa-md flex items-center justify-between">
+          <div v-if="lecturaHoy" class="glass-panel rounded-xl q-pa-md flex items-center justify-between">
             <div class="flex items-center">
-              <div class="icon-box bg-primary-box q-mr-md">
-                <q-icon name="menu_book" color="primary" size="sm" />
+              <div class="icon-box bg-emerald-box q-mr-md">
+                <q-icon name="account_balance_wallet" class="text-emerald" size="sm" />
               </div>
               <div>
-                <span class="text-card-subtitle">Lectura de Hoy</span>
-                <span class="block text-subtitle1 text-weight-bold">Completada</span>
+                <span class="text-card-subtitle">Lectura Diaria Generada</span>
+                <span class="block text-subtitle1 text-weight-bold">Activa</span>
               </div>
             </div>
             <q-icon name="verified" color="primary" size="lg" />
           </div>
+
+          <div v-else class="glass-panel rounded-xl q-pa-md flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="icon-box bg-red-2 q-mr-md">
+                <q-icon name="account_balance_wallet" class="text-red" size="sm" />
+              </div>
+              <div>
+                <span class="text-card-subtitle">Lectura Diaria Generada</span>
+                <span class="block text-subtitle1 text-weight-bold text-red">Inactiva</span>
+              </div>
+            </div>
+            <q-icon name="cancel" color="negative" size="lg" />
+          </div>
         </div>
+
       </div>
 
 
@@ -257,23 +274,27 @@ import secondButton from "../components/secondButton.vue";
 import { useAuthStore } from "../store/auth.js";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
-import { converFecha } from "../utils/functions.js";
+import { converFecha, resetearHoras } from "../utils/functions.js";
 import { getData } from "../services/services.js";
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
 
-const { user } = storeToRefs(authStore);
+const { user, lecturaActual } = storeToRefs(authStore);
+
+const lecturaHoy = computed(() => !!lecturaActual.value);
+
+const stringHoy = converFecha(resetearHoras(new Date()));
+
+const mislecturas = ref([]);
+const lecturaPrincipal = ref(null);
 
 onMounted(() => {
   if (!user.value) {
     router.push('/login')
   }
-})
-
-const mislecturas = ref([]);
-const lecturaPrincipal = ref(null);
+});
 
 const lecturas = async () => {
   if (!authStore.user?._id) return;
@@ -287,13 +308,16 @@ const lecturas = async () => {
       contenido: typeof item.contenido === 'string' ? JSON.parse(item.contenido) : item.contenido
     }));
 
-    lecturaPrincipal.value = mislecturas.value.find(item => item.tipo === 'principal') || null;
     authStore.lecturasguardadas = mislecturas.value;
+    lecturaPrincipal.value = mislecturas.value.find(item => item.tipo === 'principal') || null;
 
-    console.log(lecturaPrincipal);
-    console.log(mislecturas);
-    
-    
+    const encontradaHoy = mislecturas.value.find(item =>
+      item.tipo === 'diaria' && converFecha(new Date(item.fechaLectura)) === stringHoy
+    );
+
+    if (encontradaHoy) {
+      authStore.setLectura(encontradaHoy);
+    }
 
   } catch (error) {
     console.error("Error al obtener lecturas:", error);

@@ -52,8 +52,8 @@
               <div class="astrolabe-ring ring-inner animate-spin-slow-dashed"></div>
 
               <div class="absolute-center">
-                <span class="font-serif-display text-num text-primary text-glow animate-pulse">{{
-                  lecturaPrincipal?.contenido?.numero }}</span>
+                <span class="font-serif-display text-num text-primary text-glow animate-pulse">
+                  {{ lecturaPrincipal?.contenido?.numero }}</span>
               </div>
             </div>
             <div class="q-mt-xl">
@@ -67,7 +67,7 @@
             <div class="reading-section column items-end-md">
               <h3
                 class="text-primary text-caption text-bold text-uppercase tracking-widest q-mb-md flex items-center reverse-md">
-                MENSAJE <div class="line-accent q-ml-sm-md"></div>
+                MENSAJE <div class="line-accent q-mr-sm"></div>
               </h3>
               <p class="font-light text-body1 line-height-relaxed text-white-80">
                 {{ lecturaPrincipal?.contenido?.mensaje }}
@@ -76,7 +76,7 @@
             <div class="reading-section column items-end-md">
               <h3
                 class="text-primary text-caption text-bold text-uppercase tracking-widest q-mb-md flex items-center reverse-md">
-                TALENTOS<div class="line-accent q-ml-sm-md"></div>
+                TALENTOS<div class="line-accent q-mr-sm"></div>
               </h3>
               <p class="font-light text-body2 line-height-relaxed text-white-60">
                 {{ lecturaPrincipal?.contenido?.talentos }}
@@ -114,8 +114,6 @@ const { lecturasguardadas } = storeToRefs(authStore);
 const lecturaPrincipal = ref(null);
 
 lecturaPrincipal.value = lecturasguardadas.value.find(item => item.tipo === 'principal') || null;
-
-console.log(lecturaPrincipal.value);
 
 </script>
 

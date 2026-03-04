@@ -78,9 +78,6 @@
                 {{ lecturaActual.contenido?.mensaje }}
               </p>
               <br>
-              <p class="text-grey-4 line-height-relaxed" style="font-size: 14px; margin-bottom: 30px;">
-                {{ lecturaActual.contenido?.estado }}
-              </p>
 
               <div class="row border-top-light q-pt-lg">
                 <div class="col-6 column q-gutter-y-xs">
@@ -146,10 +143,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "../store/auth.js";
-import { converFecha } from "../utils/functions.js";
+import { converFecha, generarRangoFechas, obtenerEstadoLectura, resetearHoras } from "../utils/functions.js";
 import secondButton from "../components/secondButton.vue"
 
 const authStore = useAuthStore();
@@ -158,35 +155,35 @@ const { lecturasguardadas } = storeToRefs(authStore);
 const lecturasDiarias = computed(() => lecturasguardadas.value.filter(item => item.tipo === 'diaria') || []);
 const lecturaPrincipal = computed(() => lecturasguardadas.value.find(item => item.tipo === 'principal') || null);
 
-console.log(lecturasDiarias.value);
-
-
-const fechaActualObj = new Date();
-fechaActualObj.setHours(0, 0, 0, 0);
+const fechaActualObj = resetearHoras(new Date());
 const stringHoy = converFecha(fechaActualObj);
 
 const fechaCentroCarrusel = ref(new Date(fechaActualObj));
 const fechaSeleccionada = ref({ str: stringHoy, date: new Date(fechaActualObj) });
 
-const fechasVisibles = computed(() => {
-  const fechas = [];
-  for (let i = -2; i <= 2; i++) {
-    const d = new Date(fechaCentroCarrusel.value);
-    d.setDate(d.getDate() + i);
-    d.setHours(0, 0, 0, 0);
+const fechasVisibles = computed(() => 
+  generarRangoFechas(fechaCentroCarrusel.value, 2, stringHoy)
+);
 
-    const strFecha = converFecha(d);
-    const partes = strFecha.split(' ');
-
-    fechas.push({
-      date: d,
-      str: strFecha,
-      labelCarrusel: partes.length >= 2 ? `${partes[1].toUpperCase()} ${partes[0]}` : strFecha,
-      isHoy: strFecha === stringHoy
-    });
-  }
-  return fechas;
+const lecturaActual = computed(() => {
+  return lecturasDiarias.value.find(item => 
+    converFecha(new Date(item.fechaLectura)) === fechaSeleccionada.value.str
+  );
 });
+
+const lecturaDeHoy = computed(() => {
+  return lecturasDiarias.value.find(item => 
+    converFecha(new Date(item.fechaLectura)) === stringHoy
+  );
+});
+
+watch(lecturaDeHoy, (nuevoValor) => {
+  authStore.setLectura(nuevoValor);
+}, { immediate: true });
+
+const estadoLectura = computed(() => 
+  obtenerEstadoLectura(lecturaActual.value, fechaSeleccionada.value.date, fechaActualObj)
+);
 
 const moverCarrusel = (dias) => {
   const nuevaFecha = new Date(fechaCentroCarrusel.value);
@@ -198,19 +195,8 @@ const seleccionarFecha = (dayObj) => {
   fechaSeleccionada.value = { str: dayObj.str, date: dayObj.date };
 };
 
-const lecturaActual = computed(() => {
-  return lecturasDiarias.value.find(item => converFecha(new Date(item.fechaLectura)) === fechaSeleccionada.value.str);
-});
 
-const estadoLectura = computed(() => {
-  if (lecturaActual.value) return 'encontrada';
-  const timeSeleccionado = fechaSeleccionada.value.date.getTime();
-  const timeHoy = fechaActualObj.getTime();
 
-  if (timeSeleccionado < timeHoy) return 'pasada_sin_generar';
-  if (timeSeleccionado > timeHoy) return 'futura';
-  return 'hoy_sin_generar';
-});
 </script>
 
 <style scoped>
