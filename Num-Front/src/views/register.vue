@@ -120,7 +120,7 @@
             </q-input>
           </div>
 
-          <PrimaryButton label="REVELAR MI DESTINO" to="/dashboard" icon="person_add" />
+          <PrimaryButton label="REVELAR MI DESTINO" type="submit" icon="person_add" :loading="loading" />
         </q-form>
 
         <div class="q-mt-xl text-center">
@@ -142,18 +142,67 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import PrimaryButton from "../components/primaryButton.vue"
+import { ref } from 'vue';
+import { useRouter, RouterLink } from 'vue-router';
+import { postData } from '../services/services.js';
+import { useAuthStore } from '../store/auth.js';
+import { useNotifications } from '../composables/notify.js';
+import PrimaryButton from "../components/primaryButton.vue";
 
-const fullName = ref('')
-const dob = ref('')
-const email = ref('')
-const password = ref('')
-const showPassword = ref(false)
+const router = useRouter();
+const authStore = useAuthStore();
+const { success, error: notifyError } = useNotifications();
 
-const onRegister = () => {
+const fullName = ref('');
+const dob = ref('');
+const email = ref('');
+const password = ref('');
+const showPassword = ref(false);
+const loading = ref(false);
 
-}
+const calculateAge = (birthDate) => {
+  const today = new Date();
+  const birth = new Date(birthDate);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+};
+
+const onRegister = async () => {
+  if (!fullName.value || !dob.value || !email.value || !password.value) return;
+
+  loading.value = true;
+  try {
+    const age = calculateAge(dob.value);
+    
+    const res = await postData("auth/registro", {
+      nombre: fullName.value,
+      fechanacimiento: dob.value,
+      edad: age,
+      email: email.value,
+      password: password.value
+    });
+
+    // Login automático tras registro
+    authStore.token = res.token;
+    authStore.user = res.usuario;
+
+    success("¡Bienvenido al Cosmos!", res.msg || "Tu mapa estelar ha sido revelado");
+    
+    // Redirigir al o perfil
+    router.push('/perfil');
+
+  } catch (error) {
+    console.error(error);
+    const errormsg = error.response?.data?.error || "La energía no pudo alinearse. Revisa los datos.";
+    notifyError("Error en el registro", errormsg);
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
 
 <style scoped>
