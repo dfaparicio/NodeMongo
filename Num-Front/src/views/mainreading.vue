@@ -33,7 +33,7 @@
           </p>
         </header>
 
-        <div class="row q-col-gutter-xl items-start relative-position z-top">
+        <div v-if="lecturaPrincipal" class="row q-col-gutter-xl items-start relative-position z-top">
           <div class=" flex justify-center items-center col-md-4 q-gutter-y-xl">
             <div class="reading-section">
               <h3 class="text-primary text-caption text-bold text-uppercase tracking-widest q-mb-md flex items-center">
@@ -85,13 +85,20 @@
           </div>
         </div>
 
-        <div class="flex justify-center items-center q-gutter-xl q-pt-xl">
+        <div v-else class="column flex-center q-py-xl text-center relative-position z-top">
+          <q-icon name="auto_awesome" size="100px" class="text-primary q-mb-lg animate-pulse" />
+          <h2 class="text-h4 text-weight-light q-mb-md tracking-widest">TU DESTINO TE ESPERA</h2>
+          <p class="text-white-60 text-body1 max-w-sm mx-auto">
+            Las estrellas aún no han trazado tu mapa principal. Pulsa el botón inferior para invocar la sabiduría de los números y descubrir tu camino de vida.
+          </p>
+        </div>
 
-          <div>
-            <secondButton label="Generar Lectura Principal" type="submit" :loading="loading" />
+        <div class="flex justify-center items-center q-gutter-xl q-pt-xl">
+          <div v-if="!lecturaPrincipal">
+            <secondButton label="Generar Lectura Principal" :loading="loading" @click="onGeneratePrincipal" />
           </div>
-          <div>
-            <secondButton label="Descargar Lectura" type="submit" :loading="loading" />
+          <div v-else>
+            <secondButton label="Descargar Lectura" :loading="loading" />
           </div>
         </div>
       </div>
@@ -102,18 +109,57 @@
 <script setup>
 import { useAuthStore } from "../store/auth.js";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
-
+import { ref, computed } from "vue";
+import { useQuasar } from "quasar";
+import { postData } from "../services/services.js";
 import { converFecha } from "../utils/functions.js";
-
 import secondButton from '../components/secondButton.vue';
 
+const $q = useQuasar();
 const authStore = useAuthStore();
-const { lecturasguardadas } = storeToRefs(authStore);
+const { user, lecturasguardadas } = storeToRefs(authStore);
 
-const lecturaPrincipal = ref(null);
+const loading = ref(false);
 
-lecturaPrincipal.value = lecturasguardadas.value.find(item => item.tipo === 'principal') || null;
+const lecturaPrincipal = computed(() => 
+  lecturasguardadas.value.find(item => item.tipo === 'principal') || null
+);
+
+const onGeneratePrincipal = async () => {
+  if (!user.value?._id) return;
+  
+  loading.value = true;
+  try {
+    const res = await postData(`/lectura/principal/${user.value._id}`);
+    
+    // El backend devuelve { msg, id, contenido }
+    // Lo guardamos en el store manteniendo el formato de los objetos de lectura
+    const nuevaLectura = {
+      _id: res.id,
+      usuario: user.value._id,
+      tipo: 'principal',
+      contenido: res.contenido,
+      fechaLectura: new Date().toISOString()
+    };
+
+    authStore.lecturasguardadas.push(nuevaLectura);
+    
+    $q.notify({
+      color: "positive",
+      message: "¡Lectura Principal generada exitosamente! 🌌",
+      icon: "done",
+    });
+  } catch (error) {
+    console.error(error);
+    $q.notify({
+      color: "negative",
+      message: error.response?.data?.error || "Error al conectar con el cosmos",
+      icon: "error",
+    });
+  } finally {
+    loading.value = false;
+  }
+};
 
 </script>
 
