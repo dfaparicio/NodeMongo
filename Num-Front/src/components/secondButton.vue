@@ -1,11 +1,11 @@
 <template>
-  <q-btn :label="label" :to="to" class="cosmic-option-btn q-px-xl" flat no-caps />
+  <q-btn :label="label" :to="to" class="cosmic-option-btn q-px-md" flat no-caps />
 </template>
 
 <script setup>
 defineProps({
   label: { type: String, required: true },
-  to: { type: [String, Object], required: true }
+  to: { type: [String, Object], default: '' }
 });
 </script>
 

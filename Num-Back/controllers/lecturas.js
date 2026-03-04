@@ -148,48 +148,45 @@ export const generarlecturaprincipal = async (req, res) => {
 };
 
 export const generarlecturadiaria = () => {
-  // Configurado a las 8:30 AM hora Colombia
   cron.schedule(
-    "48 13 * * *",
+    "34 22 * * *",
     async () => {
-      console.log("⏰ [Cron] Ejecutando generación diaria...");
+      console.log("⏰ [Cron] Generando lecturas diarias para usuarios activos...");
 
       try {
         const usuariosActivos = await Usuario.find({ estado: 1 });
+        console.log(`👥 Usuarios activos detectados: ${usuariosActivos.length}`);
 
         for (const usuario of usuariosActivos) {
           try {
-            const resultado = await lecturaDiaria(usuario._id);
-            const principal = await resultado.obtenerLecturaPrincipal(
-              usuario._id,
-            );
+            const repo = await lecturaDiaria(usuario._id);
 
-            if (!principal) continue;
-
-            const lecturaHoy = await resultado.obtenerLecturaDiariaHoy(
-              usuario._id,
-            );
+            // 1. Saltarlos si ya tienen lectura hoy
+            const lecturaHoy = await repo.obtenerLecturaDiariaHoy(usuario._id);
             if (lecturaHoy) continue;
 
-            const prompt = `Genera una lectura diaria basada en este perfil: ${principal.contenido}. 
-          Devuelve SOLO un JSON: {"fecha": "${new Date().toLocaleDateString()}", "mensaje": "...", "energia": "...", "motivacion": "..."}`;
+            // 2. Solo generar si ya tienen una Lectura Principal
+            const principal = await repo.obtenerLecturaPrincipal(usuario._id);
+            if (!principal) {
+              console.log(`⏩ Salteando ${usuario.email}: Falta lectura principal.`);
+              continue;
+            }
+
+            // 3. Generar Lectura Diaria
+            const prompt = `Genera una lectura diaria basada en este perfil numerológico: ${principal.contenido}. 
+            Devuelve SOLO un JSON: {"fecha": "${new Date().toLocaleDateString()}", "mensaje": "...", "energia": "...", "motivacion": "..."}`;
 
             const contenidoIA = await respuestaIA(prompt);
             const contenidoJSON = extraerJSON(contenidoIA);
 
             if (contenidoJSON) {
-              contenidoJSON.estado = "activo"; // Forzar estado activo para dashboard
-
-              await resultado.crear(
-                usuario._id,
-                "diaria",
-                JSON.stringify(contenidoJSON),
-              );
+              contenidoJSON.estado = "activo";
+              await repo.crear(usuario._id, "diaria", JSON.stringify(contenidoJSON));
 
               if (usuario.email) {
                 await enviarCorreoNotificacion(usuario.email, usuario.nombre);
               }
-              console.log(`✅ Lectura enviada a: ${usuario.email}`);
+              console.log(`✅ Lectura diaria enviada a: ${usuario.email}`);
             }
           } catch (err) {
             console.error(`❌ Error con usuario ${usuario._id}:`, err.message);
