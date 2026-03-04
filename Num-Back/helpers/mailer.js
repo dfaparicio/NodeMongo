@@ -5,13 +5,13 @@ export const enviarCorreoNotificacion = async (emailDestino, nombreUsuario) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.EMAIL_USER2,
+        pass: process.env.EMAIL_PASS2,
       },
     });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_USER2,
       to: emailDestino,
       subject: '¡Tu lectura diaria está lista! ✨',
       text: `Hola ${nombreUsuario}, tu lectura diaria ya fue generada con éxito y está activada en tu dashboard. ¡Ve a revisarla!`,
