@@ -137,60 +137,65 @@ const avatars = [
 ];
 
 const login = async () => {
-
   if (!email.value || !password.value) return;
-
   loading.value = true;
 
   try {
+    // 1. LOGIN: Enviamos credenciales
+    const res = await postData("auth/login", { 
+      email: email.value, 
+      password: password.value 
+    });
 
-    // USUARIO
-    const res = await postData("auth/login", { email: email.value, password: password.value });
+    // Validamos que el login fue exitoso antes de seguir
+    if (!res || !res.token || !res.usuario) {
+       throw new Error("Respuesta del servidor incompleta");
+    }
 
     authStore.token = res.token;
     authStore.user = res.usuario;
 
-    // LECTURAS
-    const resLecturas = await getData(`/lectura/usuario/${res.usuario._id}`);
-    const rawLecturas = resLecturas.lecturas || resLecturas.data?.lecturas || [];
+    // 2. LECTURAS: Usamos bloques individuales para que si falla uno, el login no se caiga
+    try {
+      const resLecturas = await getData(`lectura/usuario/${res.usuario._id}`);
+      // Blindamos la extracción de datos
+      const rawLecturas = resLecturas?.lecturas || resLecturas?.data?.lecturas || [];
 
-    authStore.lecturasguardadas = rawLecturas.map(item => ({
-      ...item,
-      contenido: typeof item.contenido === 'string' ? JSON.parse(item.contenido) : item.contenido
-    }));
+      authStore.lecturasguardadas = rawLecturas.map(item => ({
+        ...item,
+        contenido: typeof item.contenido === 'string' ? JSON.parse(item.contenido) : item.contenido
+      }));
 
-    const stringHoy = converFecha(resetearHoras(new Date()));
-    const lecturaDeHoy = authStore.lecturasguardadas.find(item =>
-      item.tipo === 'diaria' && converFecha(new Date(item.fechalectura)) === stringHoy
-    );
+      const stringHoy = converFecha(resetearHoras(new Date()));
+      const lecturaDeHoy = authStore.lecturasguardadas.find(item =>
+        item.tipo === 'diaria' && converFecha(new Date(item.fechalectura)) === stringHoy
+      );
 
-    authStore.setLectura(lecturaDeHoy || null);
+      authStore.setLectura(lecturaDeHoy || null);
+    } catch (e) {
+      console.warn("No se pudieron cargar las lecturas:", e);
+      authStore.lecturasguardadas = [];
+    }
 
+    // 3. PAGOS
+    try {
+      const resPagos = await getData(`pago/${res.usuario._id}`);
+      authStore.setPagosUsuario(Array.isArray(resPagos) ? resPagos : []);
+    } catch (e) {
+      console.warn("No se pudieron cargar los pagos:", e);
+      authStore.setPagosUsuario([]);
+    }
 
-
-    // PAGOS
-    const resPagos = await getData(`/pago/${res.usuario._id}`);
-    const pagos = Array.isArray(resPagos) ? resPagos : [];
-
-    authStore.setPagosUsuario(pagos);
-
-
-
-
-    // el "semáforo" que detiene el tráfico del código un instante para que Vue termine de "pintar" o actualizar sus variables 
     await nextTick();
-
-    console.log("Datos cósmicos guardados en Pinia con éxito");
-    success("Conexión cósmica establecida", "Bienvenido de vuelta a tu camino");
-
-    router.push('/perfil')
-
+    success("Conexión establecida", "Bienvenido de vuelta");
+    router.push('/perfil');
 
   } catch (error) {
-    console.error(error.response);
-
-    const errormsg = error.response?.data?.error || "Revisa tus credenciales e intenta de nuevo";
-    notifyerror("Energía desalineada", errormsg)
+    console.error("Detalle del error:", error.response?.data || error.message);
+    
+    // Capturamos el mensaje exacto que envía tu backend (ej: "Usuario no encontrado")
+    const errormsg = error.response?.data?.msg || error.response?.data?.error || "Credenciales incorrectas";
+    notifyerror("Error de acceso", errormsg);
 
   } finally {
     loading.value = false;

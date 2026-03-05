@@ -18,7 +18,10 @@ const app = express();
 conectarMongo();
 
 // Middlewares globales
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  allowedHeaders: ['Content-Type', 'token'] 
+}));
 app.use(express.json());
 
 // Rutas
