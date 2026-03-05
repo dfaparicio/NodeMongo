@@ -1,16 +1,16 @@
 <template>
   <div>
     <!-- Loading -->
-    <div v-if="adminStore.loading.usuarios" class="flex flex-center q-py-xl">
+    <div v-if="loading" class="flex flex-center q-py-xl">
       <q-spinner-orbit color="amber" size="48px" />
       <span class="text-grey-6 q-ml-md">Cargando usuarios...</span>
     </div>
 
     <!-- Error -->
-    <div v-else-if="adminStore.errors.usuarios" class="text-center q-py-xl">
+    <div v-else-if="error" class="text-center q-py-xl">
       <q-icon name="error_outline" size="48px" color="red-4" class="q-mb-sm" />
-      <p class="text-red-4">{{ adminStore.errors.usuarios }}</p>
-      <q-btn flat color="amber" label="Reintentar" @click="adminStore.fetchUsuarios" />
+      <p class="text-red-4">{{ error }}</p>
+      <q-btn flat color="amber" label="Reintentar" @click="fetchData" />
     </div>
 
     <template v-else>
@@ -57,11 +57,27 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import AdminTable from './AdminTable.vue';
 import { useAdminStore } from '../../store/admin.js';
 
 const adminStore = useAdminStore();
+const loading = ref(false);
+const error = ref(null);
+
+const fetchData = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    await adminStore.fetchUsuarios();
+  } catch (err) {
+    error.value = "Error al conectar con el oráculo de usuarios";
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(fetchData);
 
 const columns = [
   { key: 'nombre', label: 'Nombre', class: 'text-white text-weight-bold' },

@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div v-if="adminStore.loading.pagos" class="flex flex-center q-py-xl">
+    <div v-if="loading" class="flex flex-center q-py-xl">
       <q-spinner-orbit color="cyan" size="48px" />
       <span class="text-grey-6 q-ml-md">Cargando pagos...</span>
     </div>
 
-    <div v-else-if="adminStore.errors.pagos" class="text-center q-py-xl">
+    <div v-else-if="error" class="text-center q-py-xl">
       <q-icon name="error_outline" size="48px" color="red-4" class="q-mb-sm" />
-      <p class="text-red-4">{{ adminStore.errors.pagos }}</p>
-      <q-btn flat color="cyan" label="Reintentar" @click="adminStore.fetchPagos" />
+      <p class="text-red-4">{{ error }}</p>
+      <q-btn flat color="cyan" label="Reintentar" @click="fetchData" />
     </div>
 
     <template v-else>
@@ -50,11 +50,27 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import AdminTable from './AdminTable.vue';
 import { useAdminStore } from '../../store/admin.js';
 
 const adminStore = useAdminStore();
+const loading = ref(false);
+const error = ref(null);
+
+const fetchData = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    await adminStore.fetchPagos();
+  } catch (err) {
+    error.value = "Error al recuperar los registros de tesorería";
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(fetchData);
 
 const columns = [
   { key: 'id', label: 'ID', class: 'font-mono text-cyan text-caption' },
