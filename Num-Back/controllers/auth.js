@@ -2,7 +2,7 @@ import Usuario from "../models/usuario.js"
 import bcrypt from "bcryptjs"
 import crypto from "crypto"
 import generarJWT from "../helpers/generar-jwt.js"
-import { enviarEmail, enviarBienvenida } from "../helpers/nodemailer.js"
+import { enviarEmail, enviarBienvenida, enviarRecuperacion } from "../helpers/nodemailer.js"
 
 // REGISTRO DE USUARIO PÚBLICO
 export const registro = async (req, res) => {
@@ -97,14 +97,8 @@ export const recuperarPassword = async (req, res) => {
         usuario.resetToken = token
         usuario.resetTokenExpira = new Date(Date.now() + 3600000) // 1 hora
         await usuario.save()
-        await enviarEmail(
-            email,
-            "Recuperar contraseña",
-            `<h2>Recuperación de contraseña</h2>
-             <p>Tu token para restablecer contraseña:</p>
-             <p><strong>${token}</strong></p>
-             <p>Expira en 1 hora.</p>`
-        )
+
+        await enviarRecuperacion(email, token)
         res.json({ msg: "Se envió un email con las instrucciones" })
     } catch (error) {
         console.log(error)

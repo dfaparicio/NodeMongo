@@ -15,11 +15,14 @@ import admin from "../views/admin.vue";
 import { createRouter, createWebHashHistory } from "vue-router";
 import { useAuthStore } from "../store/auth.js";
 
+import reset_password from "../views/resetpassword.vue";
+
 const routes = [
   { path: "/", component: home },
   { path: "/login", component: login },
   { path: "/register", component: register },
   { path: "/recuperar", component: recuperar },
+  { path: "/reset-password/:token", component: reset_password },
 
   // Rutas Protegidas
   { path: "/perfil", component: perfil, meta: { requiresAuth: true } },

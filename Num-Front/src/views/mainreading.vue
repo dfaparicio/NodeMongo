@@ -95,7 +95,11 @@
 
         <div class="flex justify-center items-center q-gutter-xl q-pt-xl">
           <div v-if="!lecturaPrincipal">
+<<<<<<< HEAD
             <secondButton label="Generar Lectura Principal" :loading="loading" @click="onGeneratePrincipal" />
+=======
+            <secondButton label="Generar Lectura Principal" :loading="loading" @click="generarPrincipal" />
+>>>>>>> 9d0dd2c3b1ec428582b6ef154b6a2414cb4c1968
           </div>
           <div v-else>
             <secondButton label="Descargar Lectura" :loading="loading" />
@@ -125,15 +129,22 @@ const lecturaPrincipal = computed(() =>
   lecturasguardadas.value.find(item => item.tipo === 'principal') || null
 );
 
+<<<<<<< HEAD
 const onGeneratePrincipal = async () => {
+=======
+const generarPrincipal = async () => {
+>>>>>>> 9d0dd2c3b1ec428582b6ef154b6a2414cb4c1968
   if (!user.value?._id) return;
   
   loading.value = true;
   try {
     const res = await postData(`/lectura/principal/${user.value._id}`);
     
+<<<<<<< HEAD
     // El backend devuelve { msg, id, contenido }
     // Lo guardamos en el store manteniendo el formato de los objetos de lectura
+=======
+>>>>>>> 9d0dd2c3b1ec428582b6ef154b6a2414cb4c1968
     const nuevaLectura = {
       _id: res.id,
       usuario: user.value._id,

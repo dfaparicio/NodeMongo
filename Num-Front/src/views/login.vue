@@ -84,8 +84,9 @@
               </template>
             </q-input>
             <div class="text-right">
-              <a href="#" class="text-caption text-grey-5 hover-text-primary custom-link">¿Olvidaste tu llave
-                cósmica?</a>
+              <RouterLink to="/recuperar" class="text-caption text-grey-5 hover-text-primary custom-link">
+                ¿Olvidaste tu llave cósmica?
+              </RouterLink>
             </div>
           </div>
 

@@ -50,14 +50,14 @@
             </p>
           </div>
 
-          <q-form class="q-gutter-y-xl">
+          <q-form @submit.prevent="handleRestore" class="q-gutter-y-xl">
             <div class="group">
               <label
                 class="block text-7 font-serif text-bold tracking-widest text-indigo-3 text-uppercase q-mb-md group-focus-within-gold">
                 Registered Email Address
               </label>
               <q-input v-model="email" dark placeholder="cosmos@universe.com" class="input-monolith" type="email"
-                borderless>
+                borderless :rules="[val => !!val || 'El email es necesario para la restauración']">
                 <template v-slot:prepend>
                   <q-icon name="alternate_email" class="q-ml-md" />
                 </template>
@@ -67,7 +67,7 @@
               </q-input>
             </div>
 
-            <q-btn unelevated class="full-width restore-btn q-py-md group overflow-hidden">
+            <q-btn :loading="loading" type="submit" unelevated class="full-width restore-btn q-py-md group overflow-hidden">
               <div class="shimmer-effect"></div>
               <div class="row full-width justify-between items-center q-px-md">
                 <span class="text-subtitle1 font-serif text-bold text-uppercase tracking-widest">Send Restoration
@@ -80,7 +80,7 @@
           </q-form>
 
           <div class="q-mt-xl q-pt-xl border-top-white-10 row justify-between items-center">
-            <q-btn flat no-caps color="indigo-4" icon="west" label="Return to Login"
+            <q-btn flat no-caps color="indigo-4" icon="west" label="Return to Login" @click="goToLogin"
               class="font-serif tracking-widest text-uppercase text-sm hover-white" />
             <div class="gt-xs row items-center q-gutter-x-sm opacity-30 text-indigo-5">
               <q-icon name="lock" size="14px" />
@@ -95,6 +95,42 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { postData } from '../services/services.js';
+import { useNotifications } from '../composables/notify.js';
+
+const email = ref("");
+const loading = ref(false);
+const { success, error: notifyError } = useNotifications();
+const router = useRouter();
+
+const handleRestore = async () => {
+  if (!email.value) {
+    notifyError("Campo Requerido", "Por favor ingresa tu dirección de correo electrónico.");
+    return;
+  }
+
+  loading.value = true;
+  try {
+    await postData("auth/recuperar-password", { email: email.value });
+    success("Enlace Enviado", "Hemos enviado la llave de restauración a tu correo celestial.");
+    // Opcional: Redirigir al login después de un momento
+    setTimeout(() => {
+        router.push('/login');
+    }, 3000);
+  } catch (error) {
+    console.error(error);
+    const msg = error.response?.data?.error || "No pudimos encontrar ese rastro en el cosmos.";
+    notifyError("Error de Conexión", msg);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const goToLogin = () => {
+    router.push('/login');
+};
 </script>
 
 <style scoped>

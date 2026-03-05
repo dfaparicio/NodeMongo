@@ -303,10 +303,24 @@ const logout = () => {
 
 const { user, lecturaActual } = storeToRefs(authStore);
 
+<<<<<<< HEAD
 const lecturaHoy = computed(() => !!lecturaActual.value);
 
 const stringHoy = converFecha(resetearHoras(new Date()));
 
+=======
+const stringHoy = converFecha(resetearHoras(new Date()));
+
+const lecturaHoy = computed(() => {
+  if (!lecturaActual.value?.fechaLectura) return false;
+
+  const fechaLectura = converFecha(new Date(lecturaActual.value.fechaLectura));
+
+  return fechaLectura === stringHoy;
+});
+
+
+>>>>>>> 9d0dd2c3b1ec428582b6ef154b6a2414cb4c1968
 const mislecturas = ref([]);
 const lecturaPrincipal = ref(null);
 
