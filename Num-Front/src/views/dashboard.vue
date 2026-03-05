@@ -2,7 +2,6 @@
   <q-page class="cosmic-bg font-display min-h-screen row text-white overflow-hidden">
 
     <div class="fixed-full z-behind opacity-20 pointer-events-none">
-
       <img
         src="https://lh3.googleusercontent.com/aida-public/AB6AXuDURC83wQPs436yjmwbq85kbDNxgA5yFl3ZccQmAnhmP1L1d7Cdy3QDi7PYKn3e9t5sczTCQMUSi6-Lo3IKEt-Tka66pve3m3VoE7oPoo2F2cF1pA0gCAuF8263SJwHkP6nIqlJRV8TRQ0V0I2awEHdf7rZBTMTRivLL-zyR80jG5DUdosAFnIwfN5aZubQqF26PbAY64tRdve7DRaRKfIfICvs1PQIRGm9sBwqRomUIsFKGeDbfnfARX9B9xlCraeE8VgDRcRbvKEV"
         class="fit object-cover" />
@@ -39,14 +38,12 @@
         </div>
       </div>
     </div>
+
     <div class="col-12 col-md-4 gt-sm"></div>
 
     <div class="col-12 col-md-8 relative-position q-pa-xl scroll-y" style="z-index: 1;">
 
       <router-view />
-
-
-
 
       <div class="fixed-top" style="left: 33.3333%; right: 0; z-index: 999;">
         <div class="flex justify-center">
@@ -66,19 +63,12 @@
 
       <div class="row">
         <div class="col-md-4 gt-sm"></div>
-
         <div class="col-12 col-md-8">
           <div class="q-px-xl" style="padding-top: 140px;">
-
-            <div class="q-pb-xl">
-            </div>
-
+            <div class="q-pb-xl"></div>
           </div>
         </div>
       </div>
-
-
-
 
       <div class="glass-panel rounded-xl q-pa-lg q-mb-xl flex items-center justify-between">
         <div>
@@ -108,8 +98,6 @@
           </div>
         </div>
 
-
-
         <div class="badge-status text-center q-pa-md">
           <div class="text-status-title text-uppercase tracking-widest opacity-70 q-mb-xs" style="font-size: 0.7rem;">
             Estado del Alma
@@ -130,14 +118,9 @@
           </div>
 
         </div>
-
-
       </div>
 
-
-
       <div class="row q-col-gutter-lg q-mb-xl">
-
         <div class="col-12 col-md-6">
           <div v-if="user?.estado === 1" class="glass-panel rounded-xl q-pa-md flex items-center justify-between">
             <div class="flex items-center">
@@ -166,7 +149,6 @@
           </div>
         </div>
 
-
         <div class="col-12 col-md-6">
           <div v-if="lecturaHoy" class="glass-panel rounded-xl q-pa-md flex items-center justify-between">
             <div class="flex items-center">
@@ -194,9 +176,7 @@
             <q-icon name="cancel" color="negative" size="lg" />
           </div>
         </div>
-
       </div>
-
 
       <div class="q-col-gutter-lg q-mb-xl">
         <div class="col-12 col-md-6">
@@ -207,8 +187,9 @@
               <h3 class="text-card-title q-mt-none q-mb-md">
                 Lectura Principal
               </h3>
-              <p class="text-slate-800 text-italic font-light" style="line-height: 2">{{
-                lecturaPrincipal?.contenido?.descripcion }}</p>
+              <p class="text-slate-800 text-italic font-light" style="line-height: 2">
+                {{ lecturaPrincipal?.contenido?.descripcion }}
+              </p>
             </div>
 
             <secondButton to="/lectura_principal" label="VER TRANSCRIPCIÓN COMPLETA" class="nav-gold-item" />
@@ -216,9 +197,6 @@
           </div>
         </div>
       </div>
-
-
-
 
       <div class="glass-panel rounded-xl overflow-hidden">
         <primaryTable v-model="tabActiva" :tabs="misPestanas" :data="tabActiva === 'lecturas' ? Lecturas : Pagos"
@@ -239,7 +217,6 @@
               <th class="text-right">Recibo</th>
             </tr>
           </template>
-
 
           <template #body="{ items }">
 
@@ -294,50 +271,58 @@
         </primaryTable>
       </div>
 
-
-
-
     </div>
   </q-page>
 </template>
 
 <script setup>
-import secondButton from "../components/secondButton.vue";
-import { useAuthStore } from "../store/auth.js";
+import { ref, onMounted, computed } from 'vue';
+import { useQuasar } from 'quasar';
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
+import secondButton from "../components/secondButton.vue";
+import primaryTable from "../components/primaryTable.vue";
+import { useAuthStore } from "../store/auth.js";
 import { converFecha, resetearHoras, formatoPesos, generarFactura } from "../utils/functions.js";
-import { getData, postData } from "../services/services.js";
-import { useQuasar } from 'quasar';
-import { ref, onMounted, computed } from 'vue';
-import primaryTable from "../components/primaryTable.vue"
+import { postData } from "../services/services.js";
 
 const $q = useQuasar();
-const authStore = useAuthStore();
 const router = useRouter();
+const authStore = useAuthStore();
 
-const { user, lecturaActual, lecturasguardadas, pagosUsuario } = storeToRefs(authStore);
+
+const { user, lecturasguardadas, pagosUsuario } = storeToRefs(authStore);
+
+
+const tabActiva = ref('lecturas');
+const misPestanas = ref([
+  { label: 'Lecturas', value: 'lecturas' },
+  { label: 'Pagos', value: 'pagos' }
+]);
+
+const Lecturas = computed(() => lecturasguardadas.value || []);
+const Pagos = computed(() => pagosUsuario.value || []);
+
 
 const stringHoy = converFecha(resetearHoras(new Date()));
 
 const lecturaHoy = computed(() => {
-  const encontrada = lecturasguardadas.value.find(item => {
+  const encontrada = (lecturasguardadas.value || []).find(item => {
     if (item.tipo !== 'diaria') return false;
-
     const fechaItemStr = converFecha(resetearHoras(new Date(item.fechaLectura)));
     return fechaItemStr === stringHoy;
   });
-
   return !!encontrada;
 });
 
 const lecturaPrincipal = computed(() => {
-  return lecturasguardadas.value.find(item => item.tipo === 'principal') || null;
+  return (lecturasguardadas.value || []).find(item => item.tipo === 'principal') || null;
 });
+
 
 onMounted(() => {
   if (!user.value) {
-    router.push('/login')
+    router.push('/login');
   }
 });
 
@@ -359,34 +344,15 @@ const logout = () => {
     authStore.user = null;
     authStore.lecturaActual = null;
     authStore.lecturasguardadas = [];
-
+    authStore.pagosUsuario = [];
     router.push('/login');
   });
 };
 
-const Lecturas = lecturasguardadas.value;
-console.log("Lecturas", Lecturas);
+const enviarCorreoFactura = async (pago, currentUser) => {
+  if (!currentUser?._id) return;
 
-const lecturaHoy = computed(() => {
-  if (!lecturaActual.value?.fechaLectura) return false;
-
-  const fechaLectura = converFecha(new Date(lecturaActual.value.fechaLectura));
-
-  return fechaLectura === stringHoy;
-});
-
-
-const mislecturas = ref([]);
-const lecturaPrincipal = ref(null);
-
-onMounted(() => {
-  if (!user.value) {
-    router.push('/login')
-  }
-});
-
-const lecturas = async () => {
-  if (!authStore.user?._id) return;
+  $q.loading.show();
 
   try {
     await postData('/pago/enviar-factura', {
@@ -404,7 +370,6 @@ const lecturas = async () => {
 
   } catch (error) {
     console.error('Error al enviar correo:', error);
-
     $q.notify({
       color: 'negative',
       icon: 'warning',

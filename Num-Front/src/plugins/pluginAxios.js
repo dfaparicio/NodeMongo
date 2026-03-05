@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "../store/auth.js";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5040/api",
+  baseURL: "https://nodemongo-ihx8.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },
