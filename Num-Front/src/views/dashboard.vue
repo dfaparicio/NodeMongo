@@ -51,11 +51,13 @@
       <div class="fixed-top" style="left: 33.3333%; right: 0; z-index: 999;">
         <div class="flex justify-center">
           <div class="glass-panel2 rounded-xl q-pa-md full-width">
-            <div class="flex no-wrap justify-center items-center q-gutter-x-sm sm:q-gutter-x-md q-pt-xl q-pb-xl overflow-auto scroll-none">
+            <div
+              class="flex no-wrap justify-center items-center q-gutter-x-sm sm:q-gutter-x-md q-pt-xl q-pb-xl overflow-auto scroll-none">
               <secondButton to="/lectura_principal" label="Lectura Principal" class="nav-gold-item" />
               <secondButton to="/lectura_diaria" label="Lectura Diaria" class="nav-gold-item" />
               <secondButton to="/planes" label="Planes" class="nav-gold-item" />
-              <secondButton v-if="user?.rol === 'ADMIN_ROLE'" to="/admin" label="Centro de Control" class="nav-gold-item" />
+              <secondButton v-if="user?.rol === 'ADMIN_ROLE'" to="/admin" label="Centro de Control"
+                class="nav-gold-item" />
               <secondButton label="Cerrar Sesión" class="nav-gold-item text-red-4" @click="logout" />
             </div>
           </div>
@@ -137,7 +139,7 @@
       <div class="row q-col-gutter-lg q-mb-xl">
 
         <div class="col-12 col-md-6">
-          <div v-if="user.estado === 1" class="glass-panel rounded-xl q-pa-md flex items-center justify-between">
+          <div v-if="user?.estado === 1" class="glass-panel rounded-xl q-pa-md flex items-center justify-between">
             <div class="flex items-center">
               <div class="icon-box bg-emerald-box q-mr-md">
                 <q-icon name="account_balance_wallet" class="text-emerald" size="sm" />
@@ -215,55 +217,86 @@
         </div>
       </div>
 
-      <div class="glass-panel rounded-xl overflow-hidden">
-        <div class="flex border-bottom-primary">
-          <button class="tab-btn active">Historial de Lecturas</button>
-          <button class="tab-btn inactive">Historial de Pagos</button>
-        </div>
 
-        <div class="overflow-auto">
-          <table class="full-width cosmic-table text-left" style="border-collapse: collapse">
-            <thead>
-              <tr>
-                <th>Fecha de Portal</th>
-                <th>Tipo de Lectura</th>
-                <th>Oráculo Asignado</th>
-                <th>Estado</th>
-                <th class="text-right">Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="table-row-hover">
-                <td class="text-slate-300">01 Sep, 2023</td>
-                <td class="text-weight-medium">Carta Astral Anual</td>
-                <td class="text-slate-400 text-italic">Mastro Zephyr</td>
-                <td><span class="badge-table-emerald">Archivada</span></td>
+
+
+      <div class="glass-panel rounded-xl overflow-hidden">
+        <primaryTable v-model="tabActiva" :tabs="misPestanas" :data="tabActiva === 'lecturas' ? Lecturas : Pagos"
+          :itemsPerPage="5">
+
+          <template #header>
+            <tr v-if="tabActiva === 'lecturas'">
+              <th>Tipo</th>
+              <th>Fecha</th>
+              <th>Contenido</th>
+              <th class="text-right">Visualizar</th>
+            </tr>
+
+            <tr v-else-if="tabActiva === 'pagos'">
+              <th>Descripción</th>
+              <th>Fecha de Pago</th>
+              <th>Monto</th>
+              <th class="text-right">Recibo</th>
+            </tr>
+          </template>
+
+
+          <template #body="{ items }">
+
+            <template v-if="tabActiva === 'lecturas'">
+              <tr v-for="item in items" :key="item._id" class="table-row-hover">
+                <td class="text-weight-medium" style="text-transform: capitalize;">{{ item.tipo }}</td>
+                <td class="text-slate-300">{{ converFecha(new Date(item.fechaLectura)) }}</td>
+                <td class="text-slate-400 text-italic">
+                  {{ item.contenido?.mensaje ? item.contenido.mensaje.substring(0, 60) + '...' : 'Sin contenido' }}
+                </td>
                 <td class="text-right">
-                  <q-icon name="download" class="cursor-pointer hover-white text-primary" size="sm" />
+                  <router-link to="/lectura_diaria">
+                    <q-icon name="visibility" class="cursor-pointer hover-white text-primary-custom" size="sm" />
+                  </router-link>
                 </td>
               </tr>
-              <tr class="table-row-hover">
-                <td class="text-slate-300">24 Ago, 2023</td>
-                <td class="text-weight-medium">Tránsito de Mercurio</td>
-                <td class="text-slate-400 text-italic">Dra. Selene</td>
-                <td><span class="badge-table-emerald">Archivada</span></td>
+            </template>
+
+            <template v-else-if="tabActiva === 'pagos'">
+              <tr v-for="pago in items" :key="pago.id" class="table-row-hover">
+                <td class="text-slate-300">{{ pago.descripcion }}</td>
+                <td class="text-weight-medium">{{ converFecha(new Date(pago.fecha)) }}</td>
+                <td class="text-slate-400 text-italic">{{ formatoPesos(pago.monto) }}</td>
                 <td class="text-right">
-                  <q-icon name="download" class="cursor-pointer hover-white text-primary" size="sm" />
+                  <div class="cursor-pointer flex justify-end items-center q-gutter-x-sm">
+
+                    <q-icon name="print" @click="generarFactura(pago, user?.nombre)"
+                      class="hover-white text-primary-custom" size="sm">
+                      <q-tooltip class="bg-dark text-primary">Imprimir Recibo</q-tooltip>
+                    </q-icon>
+
+                    <q-icon name="mail" @click="enviarCorreoFactura(pago, user)" class="hover-white text-emerald"
+                      size="sm">
+                      <q-tooltip class="bg-dark text-emerald">Enviar al Correo</q-tooltip>
+                    </q-icon>
+
+                  </div>
                 </td>
               </tr>
-              <tr class="table-row-hover">
-                <td class="text-slate-300">12 Ago, 2023</td>
-                <td class="text-weight-medium">Sinastría de Almas</td>
-                <td class="text-slate-400 text-italic">Oráculo Nox</td>
-                <td><span class="badge-table-primary">Pendiente</span></td>
-                <td class="text-right">
-                  <q-icon name="play_circle" class="cursor-pointer hover-white text-primary" size="sm" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            </template>
+
+            <tr v-if="items.length === 0">
+              <td colspan="4" class="text-center text-slate-400 q-pa-xl">
+                <q-icon name="auto_awesome" size="lg" class="q-mb-sm opacity-50" />
+                <div class="text-subtitle1 text-weight-medium">No se encontraron registros</div>
+                <div class="text-caption">Intenta con otra búsqueda</div>
+              </td>
+            </tr>
+
+          </template>
+
+        </primaryTable>
       </div>
+
+
+
+
     </div>
   </q-page>
 </template>
@@ -273,14 +306,41 @@ import secondButton from "../components/secondButton.vue";
 import { useAuthStore } from "../store/auth.js";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
-import { converFecha, resetearHoras } from "../utils/functions.js";
-import { getData } from "../services/services.js";
+import { converFecha, resetearHoras, formatoPesos, generarFactura } from "../utils/functions.js";
+import { getData, postData } from "../services/services.js";
 import { useQuasar } from 'quasar';
 import { ref, onMounted, computed } from 'vue';
+import primaryTable from "../components/primaryTable.vue"
 
 const $q = useQuasar();
 const authStore = useAuthStore();
 const router = useRouter();
+
+const { user, lecturaActual, lecturasguardadas, pagosUsuario } = storeToRefs(authStore);
+
+const stringHoy = converFecha(resetearHoras(new Date()));
+
+const lecturaHoy = computed(() => {
+  const encontrada = lecturasguardadas.value.find(item => {
+    if (item.tipo !== 'diaria') return false;
+
+    const fechaItemStr = converFecha(resetearHoras(new Date(item.fechaLectura)));
+    return fechaItemStr === stringHoy;
+  });
+
+  return !!encontrada;
+});
+
+const lecturaPrincipal = computed(() => {
+  return lecturasguardadas.value.find(item => item.tipo === 'principal') || null;
+});
+
+onMounted(() => {
+  if (!user.value) {
+    router.push('/login')
+  }
+});
+
 
 const logout = () => {
   $q.dialog({
@@ -297,13 +357,15 @@ const logout = () => {
   }).onOk(() => {
     authStore.token = "";
     authStore.user = null;
+    authStore.lecturaActual = null;
+    authStore.lecturasguardadas = [];
+
     router.push('/login');
   });
 };
 
-const { user, lecturaActual } = storeToRefs(authStore);
-
-const stringHoy = converFecha(resetearHoras(new Date()));
+const Lecturas = lecturasguardadas.value;
+console.log("Lecturas", Lecturas);
 
 const lecturaHoy = computed(() => {
   if (!lecturaActual.value?.fechaLectura) return false;
@@ -312,6 +374,8 @@ const lecturaHoy = computed(() => {
 
   return fechaLectura === stringHoy;
 });
+
+
 const mislecturas = ref([]);
 const lecturaPrincipal = ref(null);
 
@@ -325,33 +389,32 @@ const lecturas = async () => {
   if (!authStore.user?._id) return;
 
   try {
-    const res = await getData(`/lectura/usuario/${authStore.user._id}`);
-    const datoslecturas = res.lecturas || res.data?.lecturas || [];
+    await postData('/pago/enviar-factura', {
+      email: currentUser.email,
+      nombre: currentUser.nombre,
+      pago: pago
+    });
 
-    mislecturas.value = datoslecturas.map(item => ({
-      ...item,
-      contenido: typeof item.contenido === 'string' ? JSON.parse(item.contenido) : item.contenido
-    }));
-
-    authStore.lecturasguardadas = mislecturas.value;
-    lecturaPrincipal.value = mislecturas.value.find(item => item.tipo === 'principal') || null;
-
-    const encontradaHoy = mislecturas.value.find(item =>
-      item.tipo === 'diaria' && converFecha(new Date(item.fechaLectura)) === stringHoy
-    );
-
-    if (encontradaHoy) {
-      authStore.setLectura(encontradaHoy);
-    }
+    $q.notify({
+      color: 'positive',
+      icon: 'check_circle',
+      message: `Recibo enviado con éxito a ${currentUser.email}`,
+      position: 'top-right'
+    });
 
   } catch (error) {
-    console.error("Error al obtener lecturas:", error);
-    mislecturas.value = [];
-    lecturaPrincipal.value = null;
+    console.error('Error al enviar correo:', error);
+
+    $q.notify({
+      color: 'negative',
+      icon: 'warning',
+      message: 'No se pudo enviar el correo. Intenta de nuevo.',
+      position: 'top-right'
+    });
+  } finally {
+    $q.loading.hide();
   }
 };
-
-onMounted(lecturas);
 </script>
 
 <style scoped>

@@ -143,33 +143,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "../store/auth.js";
 import { converFecha, generarRangoFechas, obtenerEstadoLectura, resetearHoras } from "../utils/functions.js";
-import { getData } from "../services/services.js";
 import secondButton from "../components/secondButton.vue"
 
 const authStore = useAuthStore();
-const { user, lecturasguardadas } = storeToRefs(authStore);
+const { lecturasguardadas } = storeToRefs(authStore);
 
-const fetchLecturas = async () => {
-  if (!user.value?._id) return;
-  try {
-    const res = await getData(`/lectura/usuario/${user.value._id}`);
-    const rawLecturas = res.lecturas || res.data?.lecturas || [];
-    
-    authStore.lecturasguardadas = rawLecturas.map(item => ({
-      ...item,
-      contenido: typeof item.contenido === 'string' ? JSON.parse(item.contenido) : item.contenido
-    }));
-  } catch (error) {
-    console.error("Error al obtener lecturas:", error);
-  }
-};
-
-// Ejecución directa al cargar el script
-fetchLecturas();
 
 const lecturasDiarias = computed(() => {
   return (lecturasguardadas.value || []).filter(item => item.tipo === 'diaria');
@@ -195,15 +177,6 @@ const lecturaActual = computed(() => {
   );
 });
 
-const lecturaDeHoy = computed(() => {
-  return lecturasDiarias.value.find(item => 
-    converFecha(new Date(item.fechaLectura)) === stringHoy
-  );
-});
-
-watch(lecturaDeHoy, (nuevoValor) => {
-  if (nuevoValor) authStore.setLectura(nuevoValor);
-}, { immediate: true });
 
 const estadoLectura = computed(() => 
   obtenerEstadoLectura(lecturaActual.value, fechaSeleccionada.value.date, fechaActualObj)
@@ -218,8 +191,6 @@ const moverCarrusel = (dias) => {
 const seleccionarFecha = (dayObj) => {
   fechaSeleccionada.value = { str: dayObj.str, date: dayObj.date };
 };
-
-
 
 </script>
 

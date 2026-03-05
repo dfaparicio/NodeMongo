@@ -60,3 +60,18 @@ export const getEstadoUsuario = async (req, res) => {
     res.status(400).json({ error: "Error al obtener estado del usuario" });
   }
 };
+
+
+
+import { enviarFacturaCorreo } from "../helpers/mailer.js"
+
+export const enviarFactura = async (req, res) => {
+  const { email, nombre, pago } = req.body;
+
+  try {
+    await enviarFacturaCorreo(email, nombre, pago);
+    res.json({ msg: 'Factura enviada con éxito' });
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al enviar la factura' });
+  }
+};

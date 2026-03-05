@@ -6,6 +6,7 @@ import {
   postNuevoPago,
   deletePago,
   getEstadoUsuario,
+  enviarFactura
 } from "../controllers/pagos.js";
 
 import { validarCampos } from "../middlewares/validarCampos.js";
@@ -18,6 +19,7 @@ router.get("/", getPagos);
 router.get("/:id", [validarIdMongo, validarCampos], getPagoUsuario);
 router.get("/estado/:id", [validarIdMongo, validarCampos], getEstadoUsuario);
 
+
 router.post(
   "/",
   [
@@ -27,6 +29,8 @@ router.post(
   ],
   postNuevoPago
 );
+
+router.post('/enviar-factura', enviarFactura);
 
 router.delete(
   "/:id", 

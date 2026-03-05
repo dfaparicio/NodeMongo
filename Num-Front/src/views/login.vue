@@ -113,12 +113,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
-import { postData } from '../services/services.js';
+import { postData, getData } from '../services/services.js';
 import { useAuthStore } from '../store/auth.js';
 import PrimaryButton from '../components/primaryButton.vue';
 import { useNotifications } from '../composables/notify.js';
+import { converFecha, resetearHoras } from '../utils/functions.js'
 
 const { success, error: notifyerror } = useNotifications();
 
@@ -142,16 +143,48 @@ const login = async () => {
   loading.value = true;
 
   try {
+
+    // USUARIO
     const res = await postData("auth/login", { email: email.value, password: password.value });
 
     authStore.token = res.token;
     authStore.user = res.usuario;
 
-    console.log("Datos cósmicos guardados en Pinia con éxito");
+    // LECTURAS
+    const resLecturas = await getData(`/lectura/usuario/${res.usuario._id}`);
+    const rawLecturas = resLecturas.lecturas || resLecturas.data?.lecturas || [];
 
+    authStore.lecturasguardadas = rawLecturas.map(item => ({
+      ...item,
+      contenido: typeof item.contenido === 'string' ? JSON.parse(item.contenido) : item.contenido
+    }));
+
+    const stringHoy = converFecha(resetearHoras(new Date()));
+    const lecturaDeHoy = authStore.lecturasguardadas.find(item =>
+      item.tipo === 'diaria' && converFecha(new Date(item.fechalectura)) === stringHoy
+    );
+
+    authStore.setLectura(lecturaDeHoy || null);
+
+
+
+    // PAGOS
+    const resPagos = await getData(`/pago/${res.usuario._id}`);
+    const pagos = Array.isArray(resPagos) ? resPagos : [];
+
+    authStore.setPagosUsuario(pagos);
+
+
+
+
+    // el "semáforo" que detiene el tráfico del código un instante para que Vue termine de "pintar" o actualizar sus variables 
+    await nextTick();
+
+    console.log("Datos cósmicos guardados en Pinia con éxito");
     success("Conexión cósmica establecida", "Bienvenido de vuelta a tu camino");
 
-    router.push('/perfil');
+    router.push('/perfil')
+
 
   } catch (error) {
     console.error(error.response);

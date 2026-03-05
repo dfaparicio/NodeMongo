@@ -7,10 +7,15 @@ export const useAuthStore = defineStore(
     let token = ref("");
     const user = ref(null);
     const lecturasguardadas = ref([]);
-    
+
     const lecturaActual = ref(null);
     const setLectura = (valor) => {
       lecturaActual.value = valor;
+    };
+
+    const pagosUsuario = ref([]);
+    const setPagosUsuario = (pagos) => {
+      pagosUsuario.value = pagos;
     };
 
     return {
@@ -19,6 +24,8 @@ export const useAuthStore = defineStore(
       lecturasguardadas,
       lecturaActual,
       setLectura,
+      pagosUsuario,
+      setPagosUsuario,
     };
   },
 
