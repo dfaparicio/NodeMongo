@@ -149,7 +149,7 @@ export const generarlecturaprincipal = async (req, res) => {
 
 export const generarlecturadiaria = () => {
   cron.schedule(
-    "00 09 * * *",
+    "50 01 * * *",
     async () => {
       console.log("⏰ [Cron] Generando lecturas diarias para usuarios activos...");
 
