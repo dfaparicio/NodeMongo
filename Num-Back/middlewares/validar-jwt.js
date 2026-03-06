@@ -11,18 +11,22 @@ const validarJWT = async (req, res, next) => {
     }
 
     try {
-        const { id } = jwt.verify(token, process.env.SECRETORPRIVATEKEY); 
-        
-        const usuario = await Usuario.findById(id); 
+        const { id } = jwt.verify(token, process.env.SECRETORPRIVATEKEY);
+
+        const usuario = await Usuario.findById(id);
 
         if (!usuario) {
             return res.status(401).json({ msg: 'Token no válido - usuario no existe en DB' });
         }
 
-        if (!usuario.estado) { 
+        /* 
+        // Eliminamos esta validación porque el estado 0 ahora significa "No ha pagado aún" 
+        // y queremos que el usuario pueda entrar al dashboard básico.
+        if (!usuario.estado && usuario.estado !== 0) { 
              return res.status(401).json({ msg: 'Token no válido - usuario inactivo' });
         }
-        
+        */
+
         req.usuario = usuario;
         next();
 

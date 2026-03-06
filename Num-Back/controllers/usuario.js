@@ -42,10 +42,14 @@ export const postUsuario = async (req, res) => {
         // Enviar email de bienvenida (Nuevo diseño)
         await enviarBienvenida(email, nombre)
 
-        res.json({ usuario, msg: "Usuario creado exitosamente 🌠" })
+        // Ocultar contraseña en la respuesta
+        const { password: pw, ...usuarioSinPassword } = usuario.toObject();
+
+        res.json({ usuario: usuarioSinPassword, msg: "Usuario creado exitosamente 🌠" })
 
     } catch (error) {
-        res.status(400).json({ error })
+        console.log(error)
+        res.status(400).json({ error: "Error al crear usuario" })
     }
 }
 
