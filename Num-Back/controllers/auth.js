@@ -8,12 +8,18 @@ import { enviarEmail, enviarBienvenida, enviarRecuperacion } from "../helpers/no
 export const registro = async (req, res) => {
     const { nombre, edad, fechanacimiento, email, password } = req.body
     try {
-        // Crear usuario activo por defecto (sin verificación de email)
+        // Verificar si el email ya existe
+        const existeEmail = await Usuario.findOne({ email });
+        if (existeEmail) {
+            return res.status(400).json({ error: "Este email ya está en uso" });
+        }
+
+        // Crear usuario (estado 0 = inicial/sin pago)
         const usuario = new Usuario({
             nombre, edad, fechanacimiento, email, password,
             rol: "USER_ROLE",
-            estado: 0, // Activo inmediatamente
-            emailVerificado: true // Verificado por defecto
+            estado: 0, // Inicia sin pago por defecto
+            emailVerificado: true
         })
 
         // Encriptar la contraseña
@@ -22,21 +28,24 @@ export const registro = async (req, res) => {
 
         await usuario.save()
 
-        // Enviar email de bienvenida (Sin botón de verificación)
+        // Enviar email de bienvenida
         await enviarBienvenida(email, nombre)
 
-        // Generar JWT para que pueda usar la app inmediatamente
+        // Generar JWT
         const token = await generarJWT(usuario.id)
 
+        // Limpiar el objeto usuario para no enviar el password al frontend
+        const { password: pw, ...usuarioSinPassword } = usuario.toObject();
+
         res.status(201).json({
-            usuario,
+            usuario: usuarioSinPassword,
             token,
             msg: "¡Bienvenido al Cosmos! Revisa tu email para ver tu mensaje de bienvenida 🌠"
         })
 
     } catch (error) {
         console.log(error)
-        res.status(400).json({ error: "Error al registrar usuario" })
+        res.status(500).json({ error: "Error interno al registrar usuario" })
     }
 }
 
@@ -56,14 +65,18 @@ export const login = async (req, res) => {
             })
         }
         const token = await generarJWT(usuario.id)
+
+        // Ocultar contraseña en la respuesta
+        const { password: pw, ...usuarioSinPassword } = usuario.toObject();
+
         res.json({
-            usuario,
+            usuario: usuarioSinPassword,
             token
         })
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            error: "Error al iniciar sesion"
+            error: "Error interno al iniciar sesión"
         })
     }
 }
