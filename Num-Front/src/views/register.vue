@@ -186,14 +186,14 @@ const onRegister = async () => {
       password: password.value
     });
 
-    // Login automático tras registro
-    authStore.token = res.token;
-    authStore.user = res.usuario;
+    // Eliminamos el login automático para que el usuario deba loguearse manualmente
+    // authStore.token = res.token;
+    // authStore.user = res.usuario;
 
-    success("¡Bienvenido al Cosmos!", res.msg || "Tu mapa estelar ha sido revelado");
+    success("¡Registro Exitoso!", "Tu cuenta ha sido creada. Por favor, inicia sesión para continuar.");
     
-    // Redirigir al o perfil
-    router.push('/perfil');
+    // Redirigir al login
+    router.push('/login');
 
   } catch (error) {
     console.error(error);
