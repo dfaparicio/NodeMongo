@@ -10,6 +10,7 @@ export const enviarCorreoNotificacion = async (emailDestino, nombreUsuario) => {
       },
     });
 
+    const frontendURL = process.env.URL_FRONT || 'http://localhost:5173';
     const mailOptions = {
       from: `"Numeris 🌠" <${process.env.EMAIL_USER2}>`,
       to: emailDestino,
@@ -25,7 +26,7 @@ export const enviarCorreoNotificacion = async (emailDestino, nombreUsuario) => {
                 <p>Tu lectura diaria ya está disponible en tu dashboard. Te invitamos a descubrir qué energías te acompañarán en este nuevo ciclo.</p>
                 
                 <div style="text-align: center; margin: 40px 0;">
-                    <a href="http://localhost:5173/#/lectura_diaria" 
+                    <a href="${frontendURL}/#/lectura_diaria" 
                        style="background: #f2a900; color: #0b0c0e; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                        SABER MI LECTURA DE HOY
                     </a>

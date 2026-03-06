@@ -25,6 +25,7 @@ export const enviarEmail = async (to, subject, html) => {
 
 
 export const enviarBienvenida = async (to, nombre) => {
+    const frontendURL = process.env.URL_FRONT || 'http://localhost:5173';
     const html = `
     <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
         <div style="background: #0b0c0e; padding: 20px; text-align: center; color: #f2a900;">
@@ -36,7 +37,7 @@ export const enviarBienvenida = async (to, nombre) => {
             <p>Tu cuenta ha sido activada con éxito. Ya puedes acceder a todas nuestras herramientas para descubrir el mapa que las estrellas han trazado para ti.</p>
             
             <div style="text-align: center; margin: 40px 0;">
-                <a href="http://localhost:5173/#/dashboard" 
+                <a href="${frontendURL}/#/dashboard" 
                    style="background: #f2a900; color: #0b0c0e; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                    IR A MI DASHBOARD
                 </a>
@@ -55,7 +56,8 @@ export const enviarBienvenida = async (to, nombre) => {
 };
 
 export const enviarRecuperacion = async (to, token) => {
-    const resetUrl = `http://localhost:5173/#/reset-password/${token}`;
+    const frontendURL = process.env.URL_FRONT || 'http://localhost:5173';
+    const resetUrl = `${frontendURL}/#/reset-password/${token}`;
 
     const html = `
     <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">

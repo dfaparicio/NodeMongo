@@ -28,8 +28,8 @@ export const registro = async (req, res) => {
 
         await usuario.save()
 
-        // Enviar email de bienvenida
-        await enviarBienvenida(email, nombre)
+        // Enviar email de bienvenida (Sin await para no bloquear la respuesta)
+        enviarBienvenida(email, nombre).catch(err => console.error("❌ Error enviando bienvenida:", err.message));
 
         // Generar JWT
         const token = await generarJWT(usuario.id)

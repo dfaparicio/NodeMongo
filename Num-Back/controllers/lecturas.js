@@ -19,7 +19,7 @@ const ai = new GoogleGenAI({});
 
 async function respuestaIA(prompt) {
   try {
-    // Estructura exacta de la documentación
+    // Estructura exacta de la documentación de AI Studio 2026
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
@@ -94,8 +94,8 @@ export const generarlecturaprincipal = async (req, res) => {
       return res.status(404).json({ msg: "Usuario no encontrado" });
     }
 
-    if (resultado.usuario.estado !== 1) {
-      return res.status(403).json({ msg: "Usuario no activo." });
+    if (resultado.usuario.estado !== 0 && resultado.usuario.estado !== 1) {
+      return res.status(403).json({ msg: "Usuario no autorizado para generar lecturas." });
     }
 
     if (resultado.lecturaExistente) {

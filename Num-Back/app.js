@@ -20,7 +20,7 @@ conectarMongo();
 // Middlewares globales
 app.use(cors({
   origin: '*',
-  allowedHeaders: ['Content-Type', 'token'] 
+  allowedHeaders: ['Content-Type', 'x-token'] 
 }));
 app.use(express.json());
 
