@@ -79,8 +79,8 @@ export const formatoPesos = (valor) => {
   const formateador = new Intl.NumberFormat('es-CO', {
     style: 'currency',
     currency: 'COP',
-    minimumFractionDigits: 3, 
-    maximumFractionDigits: 3 
+    minimumFractionDigits: 0, 
+    maximumFractionDigits: 0 
   });
 
   return formateador.format(valor).replace(/[a-zA-Z]/g, '').trim();
