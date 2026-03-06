@@ -36,10 +36,10 @@
         <div v-if="lecturaPrincipal" class="row q-col-gutter-xl items-start relative-position z-top">
           <div class=" flex justify-center items-center col-md-4 q-gutter-y-xl">
             <div class="reading-section">
-              <h3 class="text-primary text-caption text-bold text-uppercase tracking-widest q-mb-md flex items-center">
+              <h3 class="section-title-cosmic q-mb-md flex items-center">
                 <div class="line-accent q-mr-sm"></div> DESCRIPCIÓN
               </h3>
-              <p class="font-light text-body1 line-height-relaxed text-white-80">
+              <p class="reading-content font-light">
                 {{ lecturaPrincipal?.contenido?.descripcion }}
               </p>
             </div>
@@ -66,19 +66,19 @@
           <div class="col-12 col-md-4 q-gutter-y-xl text-right-md">
             <div class="reading-section column items-end-md">
               <h3
-                class="text-primary text-caption text-bold text-uppercase tracking-widest q-mb-md flex items-center reverse-md">
+                class="section-title-cosmic q-mb-md flex items-center reverse-md">
                 MENSAJE <div class="line-accent q-mr-sm"></div>
               </h3>
-              <p class="font-light text-body1 line-height-relaxed text-white-80">
+              <p class="reading-content font-light">
                 {{ lecturaPrincipal?.contenido?.mensaje }}
               </p>
             </div>
             <div class="reading-section column items-end-md">
               <h3
-                class="text-primary text-caption text-bold text-uppercase tracking-widest q-mb-md flex items-center reverse-md">
+                class="section-title-cosmic q-mb-md flex items-center reverse-md">
                 TALENTOS<div class="line-accent q-mr-sm"></div>
               </h3>
-              <p class="font-light text-body2 line-height-relaxed text-white-60">
+              <p class="reading-content text-talent-highlight">
                 {{ lecturaPrincipal?.contenido?.talentos }}
               </p>
             </div>

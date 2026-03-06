@@ -33,7 +33,7 @@ app.use("/api/auth", authRoute);
 // 🔥 INICIAR AUTOMATIZACIÓN (Esto activa el cron job al arrancar el servidor)
 generarlecturadiaria();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT_LOCAL || process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`🔥 Servidor escuchando en el puerto ${PORT}`);

@@ -7,8 +7,7 @@
         class="fit object-cover" />
     </div>
 
-    <div class="col-12 col-md-4 fixed flex flex-center column q-pa-xl border-right-cosmic"
-      style="top: 0; left: 0; height: 100vh; width: 33.3333%; z-index: 100;">
+    <div class="col-12 col-md-4 sidebar-dashboard fixed flex flex-center column q-pa-xl border-right-cosmic">
 
       <div class="absolute nebula-glow nebula-1" style="z-index: 1;"></div>
       <div class="absolute nebula-glow nebula-2" style="z-index: 1;"></div>
@@ -41,11 +40,11 @@
 
     <div class="col-12 col-md-4 gt-sm"></div>
 
-    <div class="col-12 col-md-8 relative-position q-pa-xl scroll-y" style="z-index: 1;">
+    <div class="col-12 col-md-8 main-content-dashboard relative-position q-pa-xl scroll-y">
 
       <router-view />
 
-      <div class="fixed-top" style="left: 33.3333%; right: 0; z-index: 999;">
+      <div class="fixed-top nav-container-fixed">
         <div class="flex justify-center">
           <div class="glass-panel2 rounded-xl q-pa-md full-width">
             <div
@@ -61,21 +60,21 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row content-padding-top">
         <div class="col-md-4 gt-sm"></div>
         <div class="col-12 col-md-8">
-          <div class="q-px-xl" style="padding-top: 140px;">
+          <div class="q-px-md-xl" style="padding-top: 140px;">
             <div class="q-pb-xl"></div>
           </div>
         </div>
       </div>
 
-      <div class="glass-panel rounded-xl q-pa-lg q-mb-xl flex items-center justify-between">
-        <div>
-          <h2 class="text-h5 text-weight-bold q-mt-none q-mb-sm">
+      <div class="glass-panel rounded-xl q-pa-lg q-mb-xl flex column md-row items-center justify-between">
+        <div class="full-width">
+          <h2 class="text-h5 text-weight-bold q-mt-none q-mb-md text-center md-text-left">
             Perfil Cósmico
           </h2>
-          <div class="flex q-gutter-x-xl">
+          <div class="flex flex-center md-justify-start q-gutter-md q-mb-lg">
             <span class="flex items-center">
               <q-icon name="email" class="q-mr-xs" />
               {{ user?.email }}
@@ -88,7 +87,7 @@
 
             <span class="flex items-center">
               <q-icon name="calendar_today" class="q-mr-xs" />
-              {{ user?.edad }}
+              {{ user?.edad }} Años
             </span>
 
             <span class="flex items-center">
@@ -98,7 +97,7 @@
           </div>
         </div>
 
-        <div class="badge-status text-center q-pa-md">
+        <div class="badge-status text-center q-pa-md full-width md-shrink">
           <div class="text-status-title text-uppercase tracking-widest opacity-70 q-mb-xs" style="font-size: 0.7rem;">
             Estado del Alma
           </div>
@@ -156,7 +155,7 @@
                 <q-icon name="account_balance_wallet" class="text-emerald" size="sm" />
               </div>
               <div>
-                <span class="text-card-subtitle">Lectura Diaria Generada</span>
+                <span class="text-card-subtitle">Lectura Diaria</span>
                 <span class="block text-subtitle1 text-weight-bold">Activa</span>
               </div>
             </div>
@@ -169,7 +168,7 @@
                 <q-icon name="account_balance_wallet" class="text-red" size="sm" />
               </div>
               <div>
-                <span class="text-card-subtitle">Lectura Diaria Generada</span>
+                <span class="text-card-subtitle">Lectura Diaria</span>
                 <span class="block text-subtitle1 text-weight-bold text-red">Inactiva</span>
               </div>
             </div>
@@ -179,7 +178,7 @@
       </div>
 
       <div class="q-col-gutter-lg q-mb-xl">
-        <div class="col-12 col-md-6">
+        <div class="col-12">
           <div class="glass-panel rounded-xl q-pa-lg relative-position group h-full flex column justify-between">
             <q-icon name="history_edu" class="absolute-top-right q-pa-md text-slate-600" size="sm" />
 
@@ -187,88 +186,89 @@
               <h3 class="text-card-title q-mt-none q-mb-md">
                 Lectura Principal
               </h3>
-              <p class="text-slate-800 text-italic font-light" style="line-height: 2">
+              <p class="text-slate-200 text-italic font-light" style="line-height: 2">
                 {{ lecturaPrincipal?.contenido?.descripcion }}
               </p>
             </div>
 
-            <secondButton to="/lectura_principal" label="VER TRANSCRIPCIÓN COMPLETA" class="nav-gold-item" />
+            <secondButton to="/lectura_principal" label="VER TRANSCRIPCIÓN" class="nav-gold-item q-mt-md" />
 
           </div>
         </div>
       </div>
 
-      <div class="glass-panel rounded-xl overflow-hidden">
-        <primaryTable v-model="tabActiva" :tabs="misPestanas" :data="tabActiva === 'lecturas' ? Lecturas : Pagos"
-          :itemsPerPage="5">
+      <div class="glass-panel rounded-xl overflow-hidden q-mb-xl">
+        <div class="overflow-auto scroll-none">
+          <primaryTable v-model="tabActiva" :tabs="misPestanas" :data="tabActiva === 'lecturas' ? Lecturas : Pagos"
+            :itemsPerPage="5">
 
-          <template #header>
-            <tr v-if="tabActiva === 'lecturas'">
-              <th>Tipo</th>
-              <th>Fecha</th>
-              <th>Contenido</th>
-              <th class="text-right">Visualizar</th>
-            </tr>
+            <template #header>
+              <tr v-if="tabActiva === 'lecturas'">
+                <th>Tipo</th>
+                <th class="gt-xs">Fecha</th>
+                <th>Contenido</th>
+                <th class="text-right">Ver</th>
+              </tr>
 
-            <tr v-else-if="tabActiva === 'pagos'">
-              <th>Descripción</th>
-              <th>Fecha de Pago</th>
-              <th>Monto</th>
-              <th class="text-right">Recibo</th>
-            </tr>
-          </template>
-
-          <template #body="{ items }">
-
-            <template v-if="tabActiva === 'lecturas'">
-              <tr v-for="item in items" :key="item._id" class="table-row-hover">
-                <td class="text-weight-medium" style="text-transform: capitalize;">{{ item.tipo }}</td>
-                <td class="text-slate-300">{{ converFecha(new Date(item.fechaLectura)) }}</td>
-                <td class="text-slate-400 text-italic">
-                  {{ item.contenido?.mensaje ? item.contenido.mensaje.substring(0, 60) + '...' : 'Sin contenido' }}
-                </td>
-                <td class="text-right">
-                  <router-link to="/lectura_diaria">
-                    <q-icon name="visibility" class="cursor-pointer hover-white text-primary-custom" size="sm" />
-                  </router-link>
-                </td>
+              <tr v-else-if="tabActiva === 'pagos'">
+                <th>Descripción</th>
+                <th class="gt-xs">Fecha</th>
+                <th>Monto</th>
+                <th class="text-right">Acción</th>
               </tr>
             </template>
 
-            <template v-else-if="tabActiva === 'pagos'">
-              <tr v-for="pago in items" :key="pago.id" class="table-row-hover">
-                <td class="text-slate-300">{{ pago.descripcion }}</td>
-                <td class="text-weight-medium">{{ converFecha(new Date(pago.fecha)) }}</td>
-                <td class="text-slate-400 text-italic">{{ formatoPesos(pago.monto) }}</td>
-                <td class="text-right">
-                  <div class="cursor-pointer flex justify-end items-center q-gutter-x-sm">
+            <template #body="{ items }">
 
-                    <q-icon name="print" @click="generarFactura(pago, user?.nombre)"
-                      class="hover-white text-primary-custom" size="sm">
-                      <q-tooltip class="bg-dark text-primary">Imprimir Recibo</q-tooltip>
-                    </q-icon>
+              <template v-if="tabActiva === 'lecturas'">
+                <tr v-for="item in items" :key="item._id" class="table-row-hover">
+                  <td class="text-weight-medium" style="text-transform: capitalize;">{{ item.tipo }}</td>
+                  <td class="text-slate-300 gt-xs">{{ converFecha(new Date(item.fechaLectura)) }}</td>
+                  <td class="text-slate-400 text-italic">
+                    {{ item.contenido?.mensaje ? item.contenido.mensaje.substring(0, 30) + '...' : 'Sin contenido' }}
+                  </td>
+                  <td class="text-right">
+                    <router-link to="/lectura_diaria">
+                      <q-icon name="visibility" class="cursor-pointer hover-white text-primary-custom" size="sm" />
+                    </router-link>
+                  </td>
+                </tr>
+              </template>
 
-                    <q-icon name="mail" @click="enviarCorreoFactura(pago, user)" class="hover-white text-emerald"
-                      size="sm">
-                      <q-tooltip class="bg-dark text-emerald">Enviar al Correo</q-tooltip>
-                    </q-icon>
+              <template v-else-if="tabActiva === 'pagos'">
+                <tr v-for="pago in items" :key="pago.id" class="table-row-hover">
+                  <td class="text-slate-300">{{ pago.descripcion }}</td>
+                  <td class="text-weight-medium gt-xs">{{ converFecha(new Date(pago.fecha)) }}</td>
+                  <td class="text-slate-400 text-italic">{{ formatoPesos(pago.monto) }}</td>
+                  <td class="text-right">
+                    <div class="cursor-pointer flex justify-end items-center q-gutter-x-sm">
 
-                  </div>
+                      <q-icon name="print" @click="generarFactura(pago, user?.nombre)"
+                        class="hover-white text-primary-custom" size="sm">
+                        <q-tooltip class="bg-dark text-primary">Imprimir</q-tooltip>
+                      </q-icon>
+
+                      <q-icon name="mail" @click="enviarCorreoFactura(pago, user)" class="hover-white text-emerald"
+                        size="sm">
+                        <q-tooltip class="bg-dark text-emerald">Enviar</q-tooltip>
+                      </q-icon>
+
+                    </div>
+                  </td>
+                </tr>
+              </template>
+
+              <tr v-if="items.length === 0">
+                <td colspan="4" class="text-center text-slate-400 q-pa-xl">
+                  <q-icon name="auto_awesome" size="lg" class="q-mb-sm opacity-50" />
+                  <div class="text-subtitle1 text-weight-medium">No se encontraron registros</div>
                 </td>
               </tr>
+
             </template>
 
-            <tr v-if="items.length === 0">
-              <td colspan="4" class="text-center text-slate-400 q-pa-xl">
-                <q-icon name="auto_awesome" size="lg" class="q-mb-sm opacity-50" />
-                <div class="text-subtitle1 text-weight-medium">No se encontraron registros</div>
-                <div class="text-caption">Intenta con otra búsqueda</div>
-              </td>
-            </tr>
-
-          </template>
-
-        </primaryTable>
+          </primaryTable>
+        </div>
       </div>
 
     </div>
@@ -283,12 +283,14 @@ import { storeToRefs } from "pinia";
 import secondButton from "../components/secondButton.vue";
 import primaryTable from "../components/primaryTable.vue";
 import { useAuthStore } from "../store/auth.js";
+import { useAdminStore } from "../store/admin.js";
 import { converFecha, resetearHoras, formatoPesos, generarFactura } from "../utils/functions.js";
 import { postData } from "../services/services.js";
 
 const $q = useQuasar();
 const router = useRouter();
 const authStore = useAuthStore();
+const adminStore = useAdminStore();
 
 
 const { user, lecturasguardadas, pagosUsuario } = storeToRefs(authStore);
@@ -340,11 +342,18 @@ const logout = () => {
       label: 'Sí, Salir'
     }
   }).onOk(() => {
+    // Limpiar tienda de Auth
     authStore.token = "";
     authStore.user = null;
     authStore.lecturaActual = null;
     authStore.lecturasguardadas = [];
     authStore.pagosUsuario = [];
+    
+    // Limpiar tienda de Admin
+    adminStore.usuarios = [];
+    adminStore.lecturas = [];
+    adminStore.pagos = [];
+    
     router.push('/login');
   });
 };

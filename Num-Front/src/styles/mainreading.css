@@ -51,6 +51,29 @@
 .text-num { font-size: 120px; line-height: 1; }
 .text-glow { filter: drop-shadow(0 0 25px rgba(244, 175, 37, 0.6)); }
 
+.reading-content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.85);
+  text-align: justify;
+}
+
+.section-title-cosmic {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  color: #f4af25;
+  text-shadow: 0 0 10px rgba(244, 175, 37, 0.2);
+}
+
+.text-talent-highlight {
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+  border-left: 2px solid rgba(244, 175, 37, 0.3);
+  padding-left: 1rem;
+}
+
 /* --- Astrolabe Rings --- */
 .astrolabe-container { width: 250px; height: 250px; }
 .astrolabe-ring {

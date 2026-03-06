@@ -6,14 +6,14 @@
       <div class="warm-glow-orb absolute-bottom-left"></div>
     </div>
 
-    <div class="absolute-top row justify-between items-start q-pa-lg q-pl-xl z-top w-full ">
+    <div class="absolute-top row justify-between items-center q-pa-lg q-pl-md-xl z-top w-full header-daily-responsive">
 
-      <div class="glass-panel border-white-5 row items-center q-px-md q-py-sm q-gutter-x-lg hidden md-flex "
+      <div class="glass-panel border-white-5 row items-center q-px-md q-py-sm q-gutter-x-lg carousel-mobile"
         style="border-radius: 4px;">
         <q-icon name="chevron_left" class="text-grey-6 cursor-pointer hover-white" size="xs"
           @click="moverCarrusel(-1)" />
 
-        <div class="row q-gutter-x-lg items-end ">
+        <div class="row q-gutter-x-lg items-end no-wrap">
           <div v-for="day in fechasVisibles" :key="day.str" @click="seleccionarFecha(day)"
             :class="['column items-center cursor-pointer', day.str === fechaSeleccionada.str ? 'text-blue-accent relative-position' : 'text-grey-6 hover-white']">
 
@@ -33,36 +33,38 @@
           @click="moverCarrusel(1)" />
       </div>
 
-      <div class="glass-panel border-white-5 row items-center q-px-md q-py-sm" style="border-radius: 4px;">
-        <q-icon name="wb_sunny" class="text-blue-accent q-mr-sm" size="xs" />
-        <div class="column justify-center q-pl-sm">
-          <span class="text-uppercase text-grey-6 text-weight-bold"
-            style="font-size: 9px; letter-spacing: 3px;">HOY</span>
-          <span class="text-white text-weight-medium" style="font-size: 15px; line-height: 1;">{{ stringHoy }}</span>
+      <div class="flex items-center q-gutter-sm nav-buttons-daily">
+        <div class="glass-panel border-white-5 row items-center q-px-md q-py-sm" style="border-radius: 4px;">
+          <q-icon name="wb_sunny" class="text-blue-accent q-mr-sm" size="xs" />
+          <div class="column justify-center q-pl-xs">
+            <span class="text-uppercase text-grey-6 text-weight-bold"
+              style="font-size: 8px; letter-spacing: 2px;">HOY</span>
+            <span class="text-white text-weight-medium" style="font-size: 13px; line-height: 1;">{{ stringHoy }}</span>
+          </div>
         </div>
-      </div>
 
-      <div class="q-gutter-xl">
-        <secondButton to="/perfil" label="Perfil" class="nav-gold-item" />
-        <secondButton to="/lectura_principal" label="Lectura Principal" class="nav-gold-item" />
+        <div class="row q-gutter-x-sm">
+          <secondButton to="/perfil" label="Perfil" class="nav-gold-item" />
+          <secondButton to="/lectura_principal" label="Principal" class="nav-gold-item" />
+        </div>
       </div>
 
     </div>
 
-    <div class="absolute-full flex flex-center z-content">
-      <div class="row items-center justify-center w-full " style="max-width: 1500px; gap: 200px;">
+    <div class="absolute-full flex flex-center z-content scroll-y">
+      <div class="row items-center justify-center w-full main-container-daily">
 
         <div class="flex flex-center column q-pa-none">
-          <div class="relative-position flex flex-center q-mb-md">
+          <div class="relative-position flex flex-center">
             <div class="giant-number text-gold full-width full-height flex flex-center">
               {{ lecturaPrincipal?.contenido?.numero || '-' }}
             </div>
           </div>
-          <div class="badge-gold q-mt-lg">NÚMERO CAMINO DE VIDA</div>
+          <div class="badge-gold">NÚMERO CAMINO DE VIDA</div>
         </div>
 
-        <div class="col-md-6 q-pa-none">
-          <div class="info-card glass-panel border-white-5 column q-pa-md">
+        <div class="col-12 col-md-6 q-pa-none">
+          <div class="info-card glass-panel border-white-5 column q-pa-lg">
 
             <h2 class="text-h4 text-white q-ma-none text-weight-regular" style="font-family: Arial, sans-serif;">LECTURA
               DIARIA</h2>
@@ -74,36 +76,35 @@
             <div class="text-grey-7 q-my-md text-weight-bold" style="letter-spacing: 2px;">•••</div>
 
             <template v-if="estadoLectura === 'encontrada'">
-              <p class="text-grey-4 line-height-relaxed" style="font-size: 14px; margin-bottom: 30px;">
+              <p class="text-grey-4 line-height-relaxed" style="font-size: 14px; margin-bottom: 20px;">
                 {{ lecturaActual.contenido?.mensaje }}
               </p>
-              <br>
 
-              <div class="row border-top-light q-pt-lg">
-                <div class="col-6 column q-gutter-y-xs">
-                  <span class="text-grey-6 text-uppercase" style="font-size: 15px; letter-spacing: 1px;">ENERGIAS</span>
+              <div class="row border-top-light q-pt-lg q-col-gutter-md">
+                <div class="col-12 col-sm-6 column q-gutter-y-xs">
+                  <span class="text-grey-6 text-uppercase" style="font-size: 13px; letter-spacing: 1px;">ENERGIAS</span>
                   <div class="row items-center q-gutter-x-sm">
                     <span class="text-white text-weight-medium" style="font-size: 13px;">{{
                       lecturaActual.contenido?.energia }}</span>
                   </div>
                 </div>
 
-                <div class="col-6 column q-gutter-y-xs">
+                <div class="col-12 col-sm-6 column q-gutter-y-xs">
                   <span class="text-grey-6 text-uppercase"
-                    style="font-size: 15px; letter-spacing: 1px;">MOTIVACIÓN</span>
+                    style="font-size: 13px; letter-spacing: 1px;">MOTIVACIÓN</span>
                   <span class="text-white text-weight-medium" style="font-size: 13px;">{{
                     lecturaActual.contenido?.motivacion }}</span>
                 </div>
               </div>
 
               <div class="row q-mt-lg items-end">
-                <div class="col-6 column q-gutter-y-sm">
-                  <span class="text-grey-6 text-uppercase" style="font-size: 15px; letter-spacing: 1px;">
+                <div class="col-12 column q-gutter-y-sm">
+                  <span class="text-grey-6 text-uppercase" style="font-size: 13px; letter-spacing: 1px;">
                     🌟 Frecuencia Energética
                   </span>
 
-                  <q-linear-progress :value="Math.random() * 0.4 + 0.6" color="info" track-color="grey-9" size="3px"
-                    class="resonance-bar" style="width: 80%;" />
+                  <q-linear-progress :value="0.8" color="info" track-color="grey-9" size="3px"
+                    class="resonance-bar" style="width: 100%;" />
                 </div>
               </div>
 
@@ -113,23 +114,23 @@
             <template v-else-if="estadoLectura === 'pasada_sin_generar'">
               <div class="column flex-center q-py-xl text-center">
                 <q-icon name="history" size="xl" class="text-grey-7 q-mb-md" />
-                <span class="text-grey-4 text-h6">No generada "por pruebas"</span>
-                <span class="text-grey-6 text-caption">La lectura para este día no se encuentra disponible.</span>
+                <span class="text-grey-4 text-h6">No disponible</span>
+                <span class="text-grey-6 text-caption">La lectura para este día no se encuentra registrada.</span>
               </div>
             </template>
 
             <template v-else-if="estadoLectura === 'futura'">
               <div class="column flex-center q-py-xl text-center">
                 <q-icon name="auto_awesome" size="xl" class="text-grey-7 q-mb-md" />
-                <span class="text-grey-4 text-h6">Pronto a generar</span>
-                <span class="text-grey-6 text-caption">Vuelve en esta fecha para descubrir tu pronóstico cósmico.</span>
+                <span class="text-grey-4 text-h6">Pronto</span>
+                <span class="text-grey-6 text-caption">Vuelve en esta fecha para tu pronóstico.</span>
               </div>
             </template>
 
             <template v-else>
               <div class="column flex-center q-py-xl text-center">
                 <q-icon name="hourglass_empty" size="xl" class="text-grey-7 q-mb-md" />
-                <span class="text-grey-4 text-h6">Aún no se ha generado la lectura de hoy</span>
+                <span class="text-grey-4 text-h6">Aún no hay lectura</span>
               </div>
             </template>
 

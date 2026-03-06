@@ -4,13 +4,13 @@ export const generarJWT = (id) => {
   return new Promise(
     ((resolve, reject) => {
       const payload = { id };
+      const secret = process.env.SECRETORPRIVATEKEY_LOCAL || process.env.SECRETORPRIVATEKEY;
       jwt.sign(
-        payload,
-        process.env.SECRETORPRIVATEKEY,
-        {
-          expiresIn: "4h",
-        },
-        (err, token) => {
+      payload,
+      secret,
+      {
+        expiresIn: "4h",
+      },        (err, token) => {
           if (err) {
             console.log(err);
             reject("No se pudo generar el token");
