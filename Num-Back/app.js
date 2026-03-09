@@ -4,11 +4,11 @@ import "dotenv/config";
 import conectarMongo from "./database/cnx-mongo.js";
 
 // Importar la función de automatización desde tu controlador
-import { generarlecturadiaria } from "./controllers/lecturas.js"; 
+import { generarlecturadiaria } from "./controllers/lecturas.js";
 
 // Rutas
 import usuarioRoute from "./routes/usuario.js";
-import lecturaRoute from "./routes/lecturas.js"; 
+import lecturaRoute from "./routes/lecturas.js";
 import pagosRoute from "./routes/pagos.js";
 import authRoute from "./routes/auth.js";
 
@@ -20,13 +20,13 @@ conectarMongo();
 // Middlewares globales
 app.use(cors({
   origin: '*',
-  allowedHeaders: ['Content-Type', 'x-token'] 
+  allowedHeaders: ['Content-Type', 'x-token']
 }));
 app.use(express.json());
 
 // Rutas
-app.use("/api/usuario", usuarioRoute); 
-app.use("/api/lectura", lecturaRoute); 
+app.use("/api/usuario", usuarioRoute);
+app.use("/api/lectura", lecturaRoute);
 app.use("/api/pago", pagosRoute);
 app.use("/api/auth", authRoute);
 

@@ -55,17 +55,23 @@ export const postUsuario = async (req, res) => {
 
 export const putUsuario = async (req, res) => {
     try {
-        const { nombre } = req.body
+        const { nombre, email, rol, edad, estado } = req.body
         const { id } = req.params
 
-        await Usuario.findByIdAndUpdate(id, { nombre })
+        const camposActualizar = {}
+        if (nombre !== undefined) camposActualizar.nombre = nombre
+        if (email !== undefined) camposActualizar.email = email
+        if (rol !== undefined) camposActualizar.rol = rol
+        if (edad !== undefined) camposActualizar.edad = edad
+        if (estado !== undefined) camposActualizar.estado = estado
 
-        res.json({ msg: "Usuario modificado correctamente" })
+        const usuario = await Usuario.findByIdAndUpdate(id, camposActualizar, { new: true })
+
+        res.json({ usuario, msg: "Usuario modificado correctamente" })
     } catch (error) {
-        res.status(400).json({ error })
+        console.error("❌ Error en putUsuario:", error);
+        res.status(400).json({ error: error.message || "Error al actualizar" });
     }
-
-
 }
 
 export const putUsuarioActivar = async (req, res) => {

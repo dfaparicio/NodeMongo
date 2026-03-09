@@ -20,7 +20,7 @@ export const getPagoUsuario = async (req, res) => {
     const pago = await obtenerPagosUsuario(req.params.id);
 
     if (!pago || pago.length === 0) {
-      return res.status(404).json({ error: "Pago no encontrado" });
+      return res.json([]);
     }
 
     res.json(pago);

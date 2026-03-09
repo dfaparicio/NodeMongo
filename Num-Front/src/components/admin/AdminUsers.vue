@@ -53,14 +53,24 @@
         </template>
       </AdminTable>
     </template>
+
+    <!-- Diálogo de edición -->
+    <AdminUserEditDialog
+      v-model="dialogEditar"
+      :usuario="usuarioSeleccionado"
+      @guardar="guardarEdicion"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
+import { useQuasar } from 'quasar';
 import AdminTable from './AdminTable.vue';
+import AdminUserEditDialog from './AdminUserEditDialog.vue';
 import { useAdminStore } from '../../store/admin.js';
 
+const $q = useQuasar();
 const adminStore = useAdminStore();
 const loading = ref(false);
 const error = ref(null);
@@ -77,7 +87,7 @@ const fetchData = async () => {
   }
 };
 
-onMounted(fetchData);
+fetchData();
 
 const columns = [
   { key: 'nombre', label: 'Nombre', class: 'text-white text-weight-bold' },
@@ -102,6 +112,7 @@ const rows = computed(() =>
     nombre: u.nombre,
     email: u.email,
     rol: u.rol,
+    estado: u.estado,
     estadoTexto: u.estado === 1 ? 'Activo' : 'Inactivo',
     registro: formatearFecha(u.fechanacimiento),
   }))
@@ -118,7 +129,50 @@ const nuevosEsteMes = computed(() => {
   }).length;
 });
 
-const onEditar = (row) => console.log('Editar:', row);
+/* ═══════════ EDITAR ═══════════ */
+const dialogEditar = ref(false);
+const usuarioSeleccionado = ref({});
+
+const onEditar = (row) => {
+  // Obtener el objeto completo del store (con estado numérico)
+  const original = adminStore.usuarios.find(u => u._id === row._id) || row;
+  usuarioSeleccionado.value = { ...original };
+  dialogEditar.value = true;
+};
+
+const guardarEdicion = async ({ id, datos }) => {
+  console.log('🚀 Enviando cambio directo a la BD:', { id, ...datos });
+  
+  try {
+    // Enviamos TODO en una sola petición al servidor
+    await adminStore.updateUsuario(id, {
+      nombre: datos.nombre,
+      email: datos.email,
+      rol: datos.rol,
+      estado: datos.estado
+    });
+
+    dialogEditar.value = false;
+    $q.notify({ 
+      type: 'positive', 
+      message: 'Sincronización con la base de datos exitosa ✨', 
+      position: 'top' 
+    });
+
+  } catch (err) {
+    console.error("❌ Fallo en la petición:", err);
+    console.error("📦 Datos del error del servidor:", err.response?.data);
+    
+    const serverData = err.response?.data;
+    const errs = serverData?.errors;
+    const errorMsg = (Array.isArray(errs) ? errs[0]?.msg : errs && Object.values(errs)[0]?.msg)
+                  || serverData?.msg
+                  || serverData?.error
+                  || 'Error al actualizar el usuario';
+    
+    $q.notify({ type: 'negative', message: errorMsg, position: 'top', timeout: 5000 });
+  }
+};
 </script>
 
 <style scoped>

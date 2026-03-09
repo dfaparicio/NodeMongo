@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { getData } from "../services/services.js";
+import { getData, putData } from "../services/services.js";
 
 export const useAdminStore = defineStore(
     "admin",
@@ -36,6 +36,23 @@ export const useAdminStore = defineStore(
             await Promise.all([fetchUsuarios(), fetchLecturas(), fetchPagos()]);
         };
 
+        // 🚀 Función para actualizar TODO el usuario directamente en la BD
+        const updateUsuario = async (id, datos) => {
+            console.log("📡 Store: Petición enviada al servidor para ID:", id);
+            const resp = await putData(`/usuario/${id}`, datos);
+            await fetchUsuarios(); // Refrescamos la lista local
+            return resp;
+        };
+
+        const toggleUsuarioEstado = async (id, estadoActual) => {
+            const endpoint = estadoActual === 1
+                ? `/usuario/inactivar/${id}`
+                : `/usuario/activar/${id}`;
+            const resp = await putData(endpoint, {});
+            await fetchUsuarios();
+            return resp;
+        };
+
         return {
             usuarios,
             lecturas,
@@ -45,6 +62,8 @@ export const useAdminStore = defineStore(
             fetchLecturas,
             fetchPagos,
             fetchAll,
+            updateUsuario,
+            toggleUsuarioEstado,
         };
     },
     { persist: true }

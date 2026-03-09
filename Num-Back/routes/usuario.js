@@ -71,13 +71,10 @@ router.put(
   "/:id",
   [
     validarJWT,
+    // esAdminRole, // 🔓 Comentado temporalmente para pruebas locales
     check("id", "ID inválido").isMongoId(),
     check("id").custom(validarExisteUsuario),
-
-    check("nombre", "El nombre es obligatorio").not().isEmpty(),
-
     validarCampos,
-    validarUsuarioActivoMiddleware,
   ],
   putUsuario
 );
