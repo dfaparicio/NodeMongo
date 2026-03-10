@@ -147,9 +147,22 @@ export const generarlecturaprincipal = async (req, res) => {
   }
 };
 
+// Helper para obtener la fecha actual en formato Bogotá (YYYY-MM-DD)
+const obtenerFechaBogota = () => {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Bogota",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+};
+
 // Generación masiva de lecturas diarias (Cron Job)
 export const procesoGeneracionDiaria = async () => {
   console.log("🚀 Iniciando proceso de generación de lecturas diarias...");
+  const hoyBogota = obtenerFechaBogota();
+  console.log(`📅 Fecha de referencia (Bogotá): ${hoyBogota}`);
+
   try {
     const usuariosActivos = await Usuario.find({ estado: 1 });
     let generadas = 0;
@@ -157,25 +170,39 @@ export const procesoGeneracionDiaria = async () => {
     for (const usuario of usuariosActivos) {
       try {
         const repo = await lecturaDiaria(usuario._id);
-        const lecturaHoy = await repo.obtenerLecturaDiariaHoy(usuario._id);
-        if (lecturaHoy) continue;
+        const lecturaHoy = await repo.obtenerLecturaDiariaHoy(usuario._id, hoyBogota);
+        if (lecturaHoy) {
+          console.log(`✅ Usuario ${usuario.email} ya tiene lectura para ${hoyBogota}`);
+          continue;
+        }
 
         const principal = await repo.obtenerLecturaPrincipal(usuario._id);
         if (!principal) continue;
 
-        const prompt = `Actúa como un numerólogo experto. Basado en esta lectura principal: ${principal.contenido}, genera una lectura diaria para hoy ${new Date().toLocaleDateString()}.
-        Devuelve SOLO un JSON con este formato: {"fecha": "${new Date().toISOString()}", "mensaje": "...", "energia": "...", "motivacion": "..."}`;
+        const prompt = `Actúa como un numerólogo experto. Basado en esta lectura principal: ${principal.contenido}, genera una lectura diaria para hoy ${hoyBogota}.
+        Devuelve SOLO un JSON con este formato: {"fecha": "${hoyBogota}", "mensaje": "...", "energia": "...", "motivacion": "..."}`;
 
         const contenidoIA = await respuestaIA(prompt);
         const contenidoJSON = extraerJSON(contenidoIA);
 
         if (contenidoJSON) {
           contenidoJSON.estado = "activo";
-          await repo.crear(usuario._id, "diaria", JSON.stringify(contenidoJSON));
-          if (usuario.email) {
-            await enviarCorreoNotificacion(usuario.email, usuario.nombre);
+          
+          try {
+            // Se pasa hoyBogota como fechaReferencia
+            await repo.crear(usuario._id, "diaria", JSON.stringify(contenidoJSON), hoyBogota);
+            
+            if (usuario.email) {
+              await enviarCorreoNotificacion(usuario.email, usuario.nombre);
+            }
+            generadas++;
+          } catch (dbError) {
+            if (dbError.code === 11000) {
+              console.log(`⚠️ Duplicado detectado para ${usuario.email} en la fecha ${hoyBogota}, saltando...`);
+            } else {
+              throw dbError;
+            }
           }
-          generadas++;
         }
       } catch (err) {
         console.error(`❌ Error con usuario ${usuario.email}:`, err.message);
@@ -189,9 +216,9 @@ export const procesoGeneracionDiaria = async () => {
   }
 };
 
-// Registro del Cron Job para las 7:00 AM
+// Registro del Cron Job para las 10:00 AM
 export const generarlecturadiaria = () => {
-  cron.schedule("00 07 * * *", async () => {
+  cron.schedule("00 10 * * *", async () => {
     await procesoGeneracionDiaria();
   }, {
     scheduled: true,

@@ -20,9 +20,16 @@ const LecturaSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    fechaReferencia: {
+      type: String, // Formato "YYYY-MM-DD"
+      required: false,
+    }
   },
   { timestamps: true }
 );
+
+// Índice único para evitar duplicados de lecturas diarias por usuario y día
+LecturaSchema.index({ usuarioId: 1, tipo: 1, fechaReferencia: 1 }, { unique: true, partialFilterExpression: { tipo: "diaria" } });
 
 const Lectura = mongoose.model("Lectura", LecturaSchema);
 
@@ -39,22 +46,18 @@ export const lecturaPrincipal = async (idUsuario) => {
   return {
     usuario,
     lecturaExistente,
-    crear: async (usuarioId, tipo, contenido) => {
-      const nueva = await Lectura.create({ usuarioId, tipo, contenido });
+    crear: async (usuarioId, tipo, contenido, fechaReferencia = null) => {
+      const nueva = await Lectura.create({ usuarioId, tipo, contenido, fechaReferencia });
       return nueva._id;
     },
     obtenerLecturaPrincipal: async (usuarioId) => {
       return await Lectura.findOne({ usuarioId, tipo: "principal" });
     },
-    obtenerLecturaDiariaHoy: async (usuarioId) => {
-      const hoy = new Date();
-      const inicioDia = new Date(hoy.setHours(0, 0, 0, 0));
-      const finDia = new Date(hoy.setHours(23, 59, 59, 999));
-
+    obtenerLecturaDiariaHoy: async (usuarioId, fechaReferencia) => {
       return await Lectura.findOne({
         usuarioId,
         tipo: "diaria",
-        fechaLectura: { $gte: inicioDia, $lte: finDia },
+        fechaReferencia
       });
     },
   };
