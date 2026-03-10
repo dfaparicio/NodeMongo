@@ -2,8 +2,7 @@
   <q-dialog :model-value="modelValue" persistent transition-show="fade" transition-hide="fade"
     @update:model-value="$emit('update:modelValue', $event)">
     <q-card class="cosmic-dialog-card glass-panel shadow-24">
-      <!-- Top Decorative Bar -->
-      <div class="top-accent-bar"></div>
+      <div class="top-accent-bar" />
 
       <!-- Header Section -->
       <q-card-section class="row items-center q-pb-none q-pt-lg q-px-xl">
@@ -27,7 +26,6 @@
       <!-- Form Body -->
       <q-card-section class="q-px-xl q-py-lg scroll" style="max-height: 70vh">
         <q-form @submit.prevent="onGuardar" class="q-gutter-y-lg">
-          
           <!-- Nombre Input -->
           <div class="input-group">
             <label class="cosmic-label">Nombre Completo (Vibración)</label>
@@ -61,25 +59,21 @@
             </q-input>
           </div>
 
-          <div class="row q-col-gutter-lg">
-            <!-- Rol Select -->
-            <div class="col-12">
-              <div class="input-group">
-                <label class="cosmic-label">Nivel de Acceso</label>
-                <q-select
-                  v-model="form.rol"
-                  :options="rolesOptions"
-                  dark outlined color="amber"
-                  dense
-                  emit-value map-options
-                  class="cosmic-input"
-                >
-                  <template #prepend>
-                    <q-icon name="shield" size="18px" />
-                  </template>
-                </q-select>
-              </div>
-            </div>
+          <!-- Rol Select -->
+          <div class="input-group">
+            <label class="cosmic-label">Nivel de Acceso</label>
+            <q-select
+              v-model="form.rol"
+              :options="rolesOptions"
+              dark outlined color="amber"
+              dense
+              emit-value map-options
+              class="cosmic-input"
+            >
+              <template #prepend>
+                <q-icon name="shield" size="18px" />
+              </template>
+            </q-select>
           </div>
 
           <!-- Estado Toggle -->
@@ -161,123 +155,147 @@ const rolesOptions = [
   { label: 'Visitante Astral', value: 'OTHER_ROLE' },
 ];
 
-// ✅ SOLO sincronizar el formulario cuando el diálogo SE ABRE (modelValue pasa a true)
-// Esto evita que el watch reactivo sobreescriba los datos del formulario
-// cuando el store se refresca tras guardar.
-watch(() => props.modelValue, (abierto) => {
-  saving.value = false; // Resetear siempre al cambiar visibilidad
-  if (abierto && props.usuario?._id) {
-    form.value = {
-      nombre: props.usuario.nombre || '',
-      email: props.usuario.email || '',
-      rol: props.usuario.rol || 'USER_ROLE',
-      estado: props.usuario.estado ?? 1,
-    };
+// Sincronizar el formulario cuando el diálogo se abre
+watch(() => props.modelValue, (isOpen) => {
+  saving.value = false;
+  if (isOpen && props.usuario?._id) {
+    const { nombre = '', email = '', rol = 'USER_ROLE', estado = 1 } = props.usuario;
+    form.value = { nombre, email, rol, estado };
   }
 }, { immediate: true });
 
 const onGuardar = () => {
   if (!form.value.nombre?.trim()) {
-    $q.notify({ 
-      type: 'warning', 
-      message: 'El nombre es obligatorio', 
-      position: 'top',
-    });
+    $q.notify({ type: 'warning', message: 'El nombre es obligatorio', position: 'top' });
     return;
   }
 
   saving.value = true;
-
-  // emit() es SÍNCRONO en Vue. No usar await.
-  // El padre (AdminUsers) maneja la lógica async.
-  console.log('📤 Emitiendo evento guardar desde el diálogo:', { id: props.usuario._id, datos: form.value });
   emit('guardar', {
     id: props.usuario._id,
-    datos: { 
-      nombre: form.value.nombre,
-      email: form.value.email,
-      rol: form.value.rol,
-      estado: form.value.estado
-    },
+    datos: { ...form.value },
   });
 };
 </script>
-
 
 <style scoped>
 .cosmic-dialog-card {
   width: 520px;
   max-width: 95vw;
   background-color: #0d0f12 !important;
-  border-radius: 24px;
+  border-radius: 28px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   font-family: 'Manrope', sans-serif;
+  position: relative;
+}
+
+.cosmic-dialog-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(242, 169, 0, 0.03) 0%, transparent 70%);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .glass-panel {
-  backdrop-filter: blur(20px);
-  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 40px 120px -20px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .top-accent-bar {
-  height: 4px;
-  background: linear-gradient(90deg, transparent, #f2a900, transparent);
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #f2a900, #ffcc33, #f2a900, transparent);
   width: 100%;
+  animation: shimmer 3s infinite linear;
+  background-size: 200% 100%;
 }
 
-.tracking-widest { letter-spacing: 0.15em; }
-.tracking-wide { letter-spacing: 0.08em; }
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.tracking-widest { letter-spacing: 0.25em; }
+.tracking-wide { letter-spacing: 0.1em; }
 .opacity-10 { opacity: 0.1; }
 
 .cosmic-label {
   display: block;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 900;
   text-transform: uppercase;
   color: #f2a900;
-  letter-spacing: 1.5px;
-  margin-bottom: 8px;
-  margin-left: 2px;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  margin-left: 4px;
+  opacity: 0.8;
 }
 
 .cosmic-input :deep(.q-field__control) {
-  border-radius: 12px !important;
-  background: rgba(255, 255, 255, 0.03) !important;
-  transition: all 0.3s ease;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .cosmic-input :deep(.q-field__control:hover) {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(242, 169, 0, 0.3) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(242, 169, 0, 0.4) !important;
+  transform: translateY(-1px);
 }
 
 .cosmic-input :deep(.q-field--focused .q-field__control) {
-  background: rgba(255, 255, 255, 0.07) !important;
-  box-shadow: 0 0 15px rgba(242, 169, 0, 0.1);
+  background: rgba(242, 169, 0, 0.02) !important;
+  border-color: #f2a900 !important;
+  box-shadow: 0 8px 25px -10px rgba(242, 169, 0, 0.2);
+}
+
+.glass-tile {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.glass-tile:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .rounded-pill { border-radius: 50px; }
 
 .shadow-amber {
-  box-shadow: 0 4px 15px rgba(242, 169, 0, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(242, 169, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.shadow-amber:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px -10px rgba(242, 169, 0, 0.5);
 }
 
 .glow-icon {
-  filter: drop-shadow(0 0 5px rgba(242, 169, 0, 0.5));
+  filter: drop-shadow(0 0 8px rgba(242, 169, 0, 0.4));
+  animation: pulse-glow 2s infinite alternate;
+}
+
+@keyframes pulse-glow {
+  from { filter: drop-shadow(0 0 4px rgba(242, 169, 0, 0.3)); }
+  to { filter: drop-shadow(0 0 12px rgba(242, 169, 0, 0.6)); }
 }
 
 .transition-03 { transition: all 0.3s ease; }
-.hover-white:hover { color: #fff !important; }
+.hover-white:hover { color: #fff !important; transform: rotate(90deg); }
 .hover-bg-light:hover { background: rgba(255,255,255,0.05) !important; }
 
 /* Scrollbar styling */
-.scroll::-webkit-scrollbar {
-  width: 4px;
-}
+.scroll::-webkit-scrollbar { width: 3px; }
 .scroll::-webkit-scrollbar-thumb {
-  background: rgba(242, 169, 0, 0.2);
+  background: linear-gradient(transparent, rgba(242, 169, 0, 0.3), transparent);
   border-radius: 10px;
 }
 </style>
-
