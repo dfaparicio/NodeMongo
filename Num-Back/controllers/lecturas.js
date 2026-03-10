@@ -265,11 +265,15 @@ export const enviarLecturaPorEmail = async (req, res) => {
       return res.status(400).json({ msg: "Email y lectura son obligatorios" });
     }
 
-    await enviarLecturaPrincipalCorreo(email, nombre, lectura);
+    // DISPARAR EL ENVÍO EN SEGUNDO PLANO (sin await)
+    enviarLecturaPrincipalCorreo(email, nombre, lectura).catch(err => {
+      console.error("❌ Fallo tardío de envío de email:", err.message);
+    });
 
-    res.status(200).json({ msg: "Lectura enviada con éxito ✨" });
+    // Responder de inmediato
+    res.status(200).json({ msg: "Las estrellas están enviando tu mensaje... ✨ (Revisa tu correo en unos instantes)" });
   } catch (error) {
-    console.error("❌ Error enviando email:", error.message);
-    res.status(500).json({ msg: "Error al enviar el correo", error: error.message });
+    console.error("❌ Error en el controlador de email:", error.message);
+    res.status(500).json({ msg: "Error al procesar la solicitud", error: error.message });
   }
 };

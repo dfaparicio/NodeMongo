@@ -1,15 +1,16 @@
 import nodemailer from 'nodemailer';
 
+// Creamos un transporter único para reutilizar la conexión (Mucho más rápido)
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER2,
+    pass: process.env.EMAIL_PASS2,
+  },
+});
+
 export const enviarCorreoNotificacion = async (emailDestino, nombreUsuario) => {
   try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER2,
-        pass: process.env.EMAIL_PASS2,
-      },
-    });
-
     const frontendURL = process.env.URL_FRONT || 'http://localhost:5173';
     const mailOptions = {
       from: `"Numeris 🌠" <${process.env.EMAIL_USER2}>`,
@@ -60,20 +61,8 @@ const formatoPesosBackend = (valor) => {
 
 export const enviarFacturaCorreo = async (emailDestino, nombreUsuario, pago) => {
   try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER2,
-        pass: process.env.EMAIL_PASS2,
-      },
-    });
-
-    // Formateamos los datos antes de meterlos al HTML
     const fechaFactura = new Date(pago.fecha).toLocaleDateString('es-CO');
-    
-    // USAMOS LA FUNCIÓN QUE DEFINIMOS ARRIBA
     const montoFormateado = formatoPesosBackend(pago.monto);
-    
     const idFactura = pago._id || Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
     const descripcion = pago.descripcion || 'Servicio de Numerología';
 
@@ -142,14 +131,6 @@ export const enviarFacturaCorreo = async (emailDestino, nombreUsuario, pago) => 
 
 export const enviarLecturaPrincipalCorreo = async (emailDestino, nombreUsuario, lectura) => {
   try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER2,
-        pass: process.env.EMAIL_PASS2,
-      },
-    });
-
     const { numero, descripcion, talentos, mensaje } = lectura.contenido;
     const fecha = new Date(lectura.fechaLectura).toLocaleDateString('es-CO', {
       day: 'numeric',
@@ -167,55 +148,50 @@ export const enviarLecturaPrincipalCorreo = async (emailDestino, nombreUsuario, 
         <head>
           <meta charset="UTF-8">
         </head>
-        <body style="margin: 0; padding: 0; background-color: #0b0c0e; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #ffffff;">
-          <table width="100%" bgcolor="#0b0c0e" cellpadding="0" cellspacing="0" style="padding: 40px 0;">
+        <body style="margin: 0; padding: 0; background-color: #0b0c0e; font-family: sans-serif; color: #ffffff;">
+          <table width="100%" bgcolor="#0b0c0e" cellpadding="0" cellspacing="0" style="padding: 20px 0;">
             <tr>
               <td>
-                <table align="center" width="600" style="background: linear-gradient(145deg, #1a1c20 0%, #0b0c0e 100%); border-radius: 20px; border: 1px solid #d4af37; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-                  <!-- Header -->
+                <table align="center" width="580" style="background-color: #1a1c20; border-radius: 15px; border: 1px solid #d4af37; overflow: hidden;">
                   <tr>
-                    <td style="padding: 40px; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                      <h1 style="margin: 0; color: #d4af37; letter-spacing: 5px; font-size: 28px; text-transform: uppercase;">NUMERIS</h1>
-                      <p style="color: rgba(255,255,255,0.5); font-size: 12px; letter-spacing: 2px; margin-top: 10px;">REVELACIÓN DEL CAMINO DE VIDA</p>
+                    <td style="padding: 30px; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+                      <h1 style="margin: 0; color: #d4af37; letter-spacing: 4px; font-size: 24px;">NUMERIS</h1>
+                      <p style="color: #aaaaaa; font-size: 10px; letter-spacing: 2px; margin: 5px 0 0;">REVELACIÓN DEL CAMINO DE VIDA</p>
                     </td>
                   </tr>
-                  
-                  <!-- Main Content -->
                   <tr>
-                    <td style="padding: 40px;">
-                      <h2 style="color: #ffffff; font-size: 22px; margin-bottom: 5px;">Hola, ${nombreUsuario} ✨</h2>
-                      <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 30px;">Tu lectura ha sido procesada por las estrellas el ${fecha}.</p>
+                    <td style="padding: 30px;">
+                      <h2 style="color: #ffffff; font-size: 20px; margin: 0 0 10px;">Hola, ${nombreUsuario} ✨</h2>
+                      <p style="color: #bbbbbb; font-size: 13px; margin: 0 0 25px;">Tu lectura ha sido procesada el ${fecha}.</p>
                       
-                      <!-- Número Central -->
-                      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 40px;">
+                      <table width="100%" style="margin-bottom: 30px;">
                         <tr>
                           <td align="center">
-                            <div style="width: 120px; height: 120px; line-height: 120px; border-radius: 50%; border: 2px solid #d4af37; color: #d4af37; font-size: 48px; font-weight: bold; text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);">
+                            <div style="width: 100px; height: 100px; line-height: 100px; border-radius: 50%; border: 2px solid #d4af37; color: #d4af37; font-size: 40px; font-weight: bold; text-align: center;">
                               ${numero}
                             </div>
-                            <p style="color: #d4af37; font-size: 12px; letter-spacing: 3px; margin-top: 15px; font-weight: bold;">TU NÚMERO MAESTRO</p>
+                            <p style="color: #d4af37; font-size: 11px; letter-spacing: 2px; margin: 10px 0 0; font-weight: bold;">CAMINO DE VIDA</p>
                           </td>
                         </tr>
                       </table>
 
-                      <!-- Secciones -->
-                      <div style="margin-bottom: 30px;">
-                        <h3 style="color: #d4af37; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid #d4af37; padding-left: 15px;">Descripción</h3>
-                        <p style="color: rgba(255,255,255,0.8); line-height: 1.8; font-size: 15px;">${descripcion}</p>
+                      <div style="margin-bottom: 25px;">
+                        <h3 style="color: #d4af37; font-size: 14px; text-transform: uppercase; border-left: 2px solid #d4af37; padding-left: 10px; margin-bottom: 10px;">Descripción</h3>
+                        <p style="color: #dddddd; line-height: 1.6; font-size: 14px; margin: 0;">${descripcion}</p>
+                      </div>
+
+                      <div style="margin-bottom: 25px;">
+                        <h3 style="color: #d4af37; font-size: 14px; text-transform: uppercase; border-left: 2px solid #d4af37; padding-left: 10px; margin-bottom: 10px;">Tus Talentos</h3>
+                        <p style="color: #ffffff; background-color: rgba(212, 175, 55, 0.1); padding: 12px; border-radius: 8px; line-height: 1.6; font-size: 14px; font-style: italic; margin: 0;">${talentos}</p>
                       </div>
 
                       <div style="margin-bottom: 30px;">
-                        <h3 style="color: #d4af37; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid #d4af37; padding-left: 15px;">Tus Talentos</h3>
-                        <p style="color: #ffffff; background: rgba(212, 175, 55, 0.1); padding: 15px; border-radius: 10px; line-height: 1.8; font-size: 15px; font-style: italic;">${talentos}</p>
+                        <h3 style="color: #d4af37; font-size: 14px; text-transform: uppercase; border-left: 2px solid #d4af37; padding-left: 10px; margin-bottom: 10px;">Mensaje Estelar</h3>
+                        <p style="color: #dddddd; line-height: 1.6; font-size: 14px; margin: 0;">${mensaje}</p>
                       </div>
 
-                      <div style="margin-bottom: 40px;">
-                        <h3 style="color: #d4af37; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid #d4af37; padding-left: 15px;">Mensaje de las Estrellas</h3>
-                        <p style="color: rgba(255,255,255,0.8); line-height: 1.8; font-size: 15px;">${mensaje}</p>
-                      </div>
-
-                      <div style="text-align: center; border-top: 1px solid rgba(212, 175, 55, 0.1); padding-top: 30px;">
-                        <p style="font-size: 12px; color: rgba(255,255,255,0.4); font-style: italic;">"Los números no mienten, solo esperan ser escuchados."</p>
+                      <div style="text-align: center; border-top: 1px solid rgba(212, 175, 55, 0.1); padding-top: 20px;">
+                        <p style="font-size: 11px; color: #888888; font-style: italic; margin: 0;">"Los números son el lenguaje universal del alma."</p>
                       </div>
                     </td>
                   </tr>
@@ -229,9 +205,10 @@ export const enviarLecturaPrincipalCorreo = async (emailDestino, nombreUsuario, 
     };
 
     await transporter.sendMail(mailOptions);
+    console.log(`📧 Lectura Principal enviada a ${emailDestino}`);
     return true;
   } catch (error) {
-    console.error('❌ Error enviando lectura por correo:', error.message);
+    console.error('❌ Error enviando lectura principal:', error.message);
     throw error;
   }
 };
