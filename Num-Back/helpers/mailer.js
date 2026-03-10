@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 
-// Creamos un transporter único para reutilizar la conexión (Mucho más rápido)
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -9,9 +8,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Notificación de lectura diaria lista
 export const enviarCorreoNotificacion = async (emailDestino, nombreUsuario) => {
   try {
-    const frontendURL = process.env.URL_FRONT || 'http://localhost:5173';
+    const frontendURL = process.env.URL_FRONT || 'https://numerologyservices.netlify.app';
     const mailOptions = {
       from: `"Numeris 🌠" <${process.env.EMAIL_USER2}>`,
       to: emailDestino,
@@ -23,104 +23,47 @@ export const enviarCorreoNotificacion = async (emailDestino, nombreUsuario) => {
             </div>
             <div style="padding: 30px; line-height: 1.6;">
                 <h2 style="color: #0b0c0e;">¡Hola, ${nombreUsuario}! ✨</h2>
-                <p>Las estrellas se han movido y tu mensaje para hoy ha sido revelado.</p>
-                <p>Tu lectura diaria ya está disponible en tu dashboard. Te invitamos a descubrir qué energías te acompañarán en este nuevo ciclo.</p>
-                
+                <p>Tu lectura diaria ya está disponible en tu dashboard.</p>
                 <div style="text-align: center; margin: 40px 0;">
                     <a href="${frontendURL}/#/lectura_diaria" 
                        style="background: #f2a900; color: #0b0c0e; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                        SABER MI LECTURA DE HOY
                     </a>
                 </div>
-                
-                <p style="font-style: italic; color: #666;">"Los números son el lenguaje universal del alma."</p>
-                <hr style="border:0; border-top: 1px solid #eee; margin: 30px 0;">
-                <p style="font-size: 0.8em; color: #999; text-align: center;">
-                    © 2026 Numeris. Todas las estrellas alineadas.
-                </p>
+                <p style="font-size: 0.8em; color: #999; text-align: center;">© 2026 Numeris.</p>
             </div>
         </div>
       `,
     };
-
     await transporter.sendMail(mailOptions);
-    console.log(`📧 Correo de confirmación enviado a ${emailDestino}`);
   } catch (error) {
     console.error('❌ Error enviando correo:', error.message);
   }
 };
 
-
-const formatoPesosBackend = (valor) => {
-  return new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: 'COP',
-    minimumFractionDigits: 0
-  }).format(valor).replace(/[a-zA-Z]/g, '').trim();
-};
-
+// Envío de recibo de pago
 export const enviarFacturaCorreo = async (emailDestino, nombreUsuario, pago) => {
   try {
     const fechaFactura = new Date(pago.fecha).toLocaleDateString('es-CO');
-    const montoFormateado = formatoPesosBackend(pago.monto);
-    const idFactura = pago._id || Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-    const descripcion = pago.descripcion || 'Servicio de Numerología';
-
+    const montoFormateado = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(pago.monto);
     const mailOptions = {
       from: `"Numeris 🌠" <${process.env.EMAIL_USER2}>`,
       to: emailDestino,
-      subject: `Tu recibo de pago #${idFactura} - Numeris ✨`,
+      subject: `Tu recibo de pago - Numeris ✨`,
       html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-        </head>
-        <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: sans-serif;">
-          <table width="100%" bgcolor="#f4f4f5" cellpadding="0" cellspacing="0" style="padding: 40px 0;">
-            <tr>
-              <td>
-                <table align="center" width="600" bgcolor="#ffffff" cellpadding="0" cellspacing="0" style="border-radius: 8px; border-top: 8px solid #270075; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                  <tr>
-                    <td style="padding: 40px;">
-                      <h1 style="margin: 0; color: #270075; letter-spacing: 2px;">NUMERIS</h1>
-                      <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                      <h2 style="font-size: 18px;">¡Hola, ${nombreUsuario}! ✨</h2>
-                      <p>Aquí tienes el detalle de tu transacción:</p>
-                      
-                      <table width="100%" style="background: #f8fafc; padding: 20px; border-radius: 5px;">
-                        <tr>
-                          <td><strong>Factura:</strong></td>
-                          <td align="right">#${idFactura}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Fecha:</strong></td>
-                          <td align="right">${fechaFactura}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Servicio:</strong></td>
-                          <td align="right">${descripcion}</td>
-                        </tr>
-                        <tr style="font-size: 18px; color: #270075;">
-                          <td style="padding-top: 10px;"><strong>Total:</strong></td>
-                          <td align="right" style="padding-top: 10px;"><strong>$ ${montoFormateado}</strong></td>
-                        </tr>
-                      </table>
-                      
-                      <p style="margin-top: 30px; font-size: 12px; color: #64748b; text-align: center;">
-                        Sede Central: San Gil, Santander, Colombia.
-                      </p>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </body>
-        </html>
+        <div style="font-family: sans-serif; padding: 40px; background: #f4f4f5;">
+          <div style="background: #ffffff; padding: 40px; border-radius: 8px; border-top: 8px solid #270075;">
+            <h1 style="color: #270075;">NUMERIS</h1>
+            <p>Hola ${nombreUsuario}, aquí tienes el detalle de tu transacción:</p>
+            <div style="background: #f8fafc; padding: 20px; border-radius: 5px;">
+              <p><strong>Fecha:</strong> ${fechaFactura}</p>
+              <p><strong>Servicio:</strong> ${pago.descripcion}</p>
+              <p style="font-size: 18px; color: #270075;"><strong>Total: ${montoFormateado}</strong></p>
+            </div>
+          </div>
+        </div>
       `,
     };
-
     await transporter.sendMail(mailOptions);
     return true;
   } catch (error) {
@@ -129,83 +72,39 @@ export const enviarFacturaCorreo = async (emailDestino, nombreUsuario, pago) => 
   }
 };
 
+// Envío de lectura principal completa
 export const enviarLecturaPrincipalCorreo = async (emailDestino, nombreUsuario, lectura) => {
   try {
     const { numero, descripcion, talentos, mensaje } = lectura.contenido;
-    const fecha = new Date(lectura.fechaLectura).toLocaleDateString('es-CO', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-
+    const fecha = new Date(lectura.fechaLectura).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
     const mailOptions = {
       from: `"Numeris 🌠" <${process.env.EMAIL_USER2}>`,
       to: emailDestino,
       subject: `Tu Lectura Principal - El Camino del ${numero} ✨`,
       html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-        </head>
-        <body style="margin: 0; padding: 0; background-color: #0b0c0e; font-family: sans-serif; color: #ffffff;">
-          <table width="100%" bgcolor="#0b0c0e" cellpadding="0" cellspacing="0" style="padding: 20px 0;">
-            <tr>
-              <td>
-                <table align="center" width="580" style="background-color: #1a1c20; border-radius: 15px; border: 1px solid #d4af37; overflow: hidden;">
-                  <tr>
-                    <td style="padding: 30px; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                      <h1 style="margin: 0; color: #d4af37; letter-spacing: 4px; font-size: 24px;">NUMERIS</h1>
-                      <p style="color: #aaaaaa; font-size: 10px; letter-spacing: 2px; margin: 5px 0 0;">REVELACIÓN DEL CAMINO DE VIDA</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 30px;">
-                      <h2 style="color: #ffffff; font-size: 20px; margin: 0 0 10px;">Hola, ${nombreUsuario} ✨</h2>
-                      <p style="color: #bbbbbb; font-size: 13px; margin: 0 0 25px;">Tu lectura ha sido procesada el ${fecha}.</p>
-                      
-                      <table width="100%" style="margin-bottom: 30px;">
-                        <tr>
-                          <td align="center">
-                            <div style="width: 100px; height: 100px; line-height: 100px; border-radius: 50%; border: 2px solid #d4af37; color: #d4af37; font-size: 40px; font-weight: bold; text-align: center;">
-                              ${numero}
-                            </div>
-                            <p style="color: #d4af37; font-size: 11px; letter-spacing: 2px; margin: 10px 0 0; font-weight: bold;">CAMINO DE VIDA</p>
-                          </td>
-                        </tr>
-                      </table>
-
-                      <div style="margin-bottom: 25px;">
-                        <h3 style="color: #d4af37; font-size: 14px; text-transform: uppercase; border-left: 2px solid #d4af37; padding-left: 10px; margin-bottom: 10px;">Descripción</h3>
-                        <p style="color: #dddddd; line-height: 1.6; font-size: 14px; margin: 0;">${descripcion}</p>
-                      </div>
-
-                      <div style="margin-bottom: 25px;">
-                        <h3 style="color: #d4af37; font-size: 14px; text-transform: uppercase; border-left: 2px solid #d4af37; padding-left: 10px; margin-bottom: 10px;">Tus Talentos</h3>
-                        <p style="color: #ffffff; background-color: rgba(212, 175, 55, 0.1); padding: 12px; border-radius: 8px; line-height: 1.6; font-size: 14px; font-style: italic; margin: 0;">${talentos}</p>
-                      </div>
-
-                      <div style="margin-bottom: 30px;">
-                        <h3 style="color: #d4af37; font-size: 14px; text-transform: uppercase; border-left: 2px solid #d4af37; padding-left: 10px; margin-bottom: 10px;">Mensaje Estelar</h3>
-                        <p style="color: #dddddd; line-height: 1.6; font-size: 14px; margin: 0;">${mensaje}</p>
-                      </div>
-
-                      <div style="text-align: center; border-top: 1px solid rgba(212, 175, 55, 0.1); padding-top: 20px;">
-                        <p style="font-size: 11px; color: #888888; font-style: italic; margin: 0;">"Los números son el lenguaje universal del alma."</p>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
+        <body style="background-color: #0b0c0e; font-family: sans-serif; color: #ffffff; padding: 20px;">
+          <table align="center" width="580" style="background-color: #1a1c20; border-radius: 15px; border: 1px solid #d4af37;">
+            <tr><td style="padding: 30px; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+              <h1 style="color: #d4af37;">NUMERIS</h1>
+            </td></tr>
+            <tr><td style="padding: 30px;">
+              <h2>Hola, ${nombreUsuario} ✨</h2>
+              <div style="text-align: center; margin: 30px 0;">
+                <div style="width: 100px; height: 100px; line-height: 100px; border-radius: 50%; border: 2px solid #d4af37; color: #d4af37; font-size: 40px; font-weight: bold; margin: auto;">${numero}</div>
+                <p style="color: #d4af37; font-size: 11px; letter-spacing: 2px; font-weight: bold;">CAMINO DE VIDA</p>
+              </div>
+              <h3 style="color: #d4af37; border-left: 2px solid #d4af37; padding-left: 10px;">Descripción</h3>
+              <p style="color: #dddddd; line-height: 1.6;">${descripcion}</p>
+              <h3 style="color: #d4af37; border-left: 2px solid #d4af37; padding-left: 10px;">Tus Talentos</h3>
+              <p style="color: #ffffff; background: rgba(212, 175, 55, 0.1); padding: 12px; border-radius: 8px;">${talentos}</p>
+              <h3 style="color: #d4af37; border-left: 2px solid #d4af37; padding-left: 10px;">Mensaje Estelar</h3>
+              <p style="color: #dddddd; line-height: 1.6;">${mensaje}</p>
+            </td></tr>
           </table>
         </body>
-        </html>
       `,
     };
-
     await transporter.sendMail(mailOptions);
-    console.log(`📧 Lectura Principal enviada a ${emailDestino}`);
     return true;
   } catch (error) {
     console.error('❌ Error enviando lectura principal:', error.message);

@@ -147,7 +147,7 @@ export const generarlecturaprincipal = async (req, res) => {
   }
 };
 
-// Función núcleo que hace el trabajo (reutilizable)
+// Generación masiva de lecturas diarias (Cron Job)
 export const procesoGeneracionDiaria = async () => {
   console.log("🚀 Iniciando proceso de generación de lecturas diarias...");
   try {
@@ -189,8 +189,8 @@ export const procesoGeneracionDiaria = async () => {
   }
 };
 
+// Registro del Cron Job para las 7:00 AM
 export const generarlecturadiaria = () => {
-  // Mantenemos el cron por si el servidor está despierto
   cron.schedule("00 07 * * *", async () => {
     await procesoGeneracionDiaria();
   }, {
@@ -199,10 +199,10 @@ export const generarlecturadiaria = () => {
   });
 };
 
+// Activación externa del proceso de lecturas (Trigger)
 export const triggerLecturasDiarias = async (req, res) => {
   const { token } = req.query;
   
-  // Seguridad básica: puedes cambiar 'numeris-secret-123' por algo más complejo
   if (token !== process.env.CRON_TOKEN && token !== 'numeris-2026') {
     return res.status(401).json({ msg: "Token de activación inválido" });
   }

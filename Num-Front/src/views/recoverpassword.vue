@@ -67,7 +67,8 @@
               </q-input>
             </div>
 
-            <q-btn :loading="loading" type="submit" unelevated class="full-width restore-btn q-py-md group overflow-hidden">
+            <q-btn :loading="loading" type="submit" unelevated
+              class="full-width restore-btn q-py-md group overflow-hidden">
               <div class="shimmer-effect"></div>
               <div class="row full-width justify-between items-center q-px-md">
                 <span class="text-subtitle1 font-serif text-bold text-uppercase tracking-widest">Send Restoration
@@ -113,11 +114,12 @@ const handleRestore = async () => {
 
   loading.value = true;
   try {
+    await new Promise(resolve => setTimeout(resolve, 800));
     await postData("auth/recuperar-password", { email: email.value });
     success("Enlace Enviado", "Hemos enviado la llave de restauración a tu correo celestial.");
     // Opcional: Redirigir al login después de un momento
     setTimeout(() => {
-        router.push('/login');
+      router.push('/login');
     }, 3000);
   } catch (error) {
     console.error(error);
@@ -129,7 +131,7 @@ const handleRestore = async () => {
 };
 
 const goToLogin = () => {
-    router.push('/login');
+  router.push('/login');
 };
 </script>
 

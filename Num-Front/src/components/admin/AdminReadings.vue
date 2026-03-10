@@ -66,6 +66,7 @@ const fetchData = async () => {
   loading.value = true;
   error.value = null;
   try {
+    await new Promise(resolve => setTimeout(resolve, 800));
     await adminStore.fetchLecturas();
   } catch (err) {
     error.value = "Error al sintonizar con el flujo de lecturas";

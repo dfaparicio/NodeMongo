@@ -113,3 +113,33 @@ export const deleteUsuario = async (req, res) => {
         res.status(400).json({ error })
     }
 }
+
+export const cambiarPassword = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { passwordActual, passwordNueva } = req.body;
+
+        const usuario = await Usuario.findById(id);
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        // Verificar contraseña actual
+        const validPassword = bcrypt.compareSync(passwordActual, usuario.password);
+        if (!validPassword) {
+            return res.status(400).json({ error: "La contraseña actual es incorrecta" });
+        }
+
+        // Encriptar la nueva contraseña
+        const salt = bcrypt.genSaltSync();
+        usuario.password = bcrypt.hashSync(passwordNueva, salt);
+
+        await usuario.save();
+
+        res.json({ msg: "Contraseña actualizada exitosamente ✨" });
+
+    } catch (error) {
+        console.error("❌ Error en cambiarPassword:", error);
+        res.status(500).json({ error: "Error al cambiar la contraseña" });
+    }
+};

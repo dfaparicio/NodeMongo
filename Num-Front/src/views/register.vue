@@ -176,6 +176,7 @@ const onRegister = async () => {
 
   loading.value = true;
   try {
+    await new Promise(resolve => setTimeout(resolve, 800));
     const age = calculateAge(dob.value);
     
     const res = await postData("auth/registro", {
@@ -186,13 +187,9 @@ const onRegister = async () => {
       password: password.value
     });
 
-    // Eliminamos el login automático para que el usuario deba loguearse manualmente
-    // authStore.token = res.token;
-    // authStore.user = res.usuario;
 
     success("¡Registro Exitoso!", "Tu cuenta ha sido creada. Por favor, inicia sesión para continuar.");
     
-    // Redirigir al login
     router.push('/login');
 
   } catch (error) {

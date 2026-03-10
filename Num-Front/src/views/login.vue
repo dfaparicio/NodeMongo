@@ -141,24 +141,23 @@ const login = async () => {
   loading.value = true;
 
   try {
-    // 1. LOGIN: Enviamos credenciales
-    const res = await postData("auth/login", { 
-      email: email.value, 
-      password: password.value 
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    const res = await postData("auth/login", {
+      email: email.value,
+      password: password.value
     });
 
-    // Validamos que el login fue exitoso antes de seguir
     if (!res || !res.token || !res.usuario) {
-       throw new Error("Respuesta del servidor incompleta");
+      throw new Error("Respuesta del servidor incompleta");
     }
 
     authStore.token = res.token;
     authStore.user = res.usuario;
 
-    // 2. LECTURAS: Usamos bloques individuales para que si falla uno, el login no se caiga
     try {
       const resLecturas = await getData(`lectura/usuario/${res.usuario._id}`);
-      // Blindamos la extracción de datos
+
       const rawLecturas = resLecturas?.lecturas || resLecturas?.data?.lecturas || [];
 
       authStore.lecturasguardadas = rawLecturas.map(item => ({
@@ -177,7 +176,6 @@ const login = async () => {
       authStore.lecturasguardadas = [];
     }
 
-    // 3. PAGOS
     try {
       const resPagos = await getData(`pago/${res.usuario._id}`);
       authStore.setPagosUsuario(Array.isArray(resPagos) ? resPagos : []);
@@ -192,8 +190,6 @@ const login = async () => {
 
   } catch (error) {
     console.error("Detalle del error:", error.response?.data || error.message);
-    
-    // Capturamos el mensaje exacto que envía tu backend (ej: "Usuario no encontrado")
     const errormsg = error.response?.data?.msg || error.response?.data?.error || "Credenciales incorrectas";
     notifyerror("Error de acceso", errormsg);
 

@@ -9,6 +9,7 @@ import {
   putUsuario,
   putUsuarioActivar,
   putUsuarioInactivar,
+  cambiarPassword,
 } from "../controllers/usuario.js";
 
 import { validarCampos } from "../middlewares/validarCampos.js";
@@ -35,6 +36,19 @@ router.get(
     validarCampos,
   ],
   getUsuarioEmail
+);
+
+router.put(
+  "/password/:id",
+  [
+    validarJWT,
+    check("id", "ID inválido").isMongoId(),
+    check("id").custom(validarExisteUsuario),
+    check("passwordActual", "La contraseña actual es obligatoria").notEmpty(),
+    check("passwordNueva", "La nueva contraseña debe tener al menos 6 caracteres").isLength({ min: 6 }),
+    validarCampos,
+  ],
+  cambiarPassword
 );
 
 router.post(
@@ -71,7 +85,6 @@ router.put(
   "/:id",
   [
     validarJWT,
-    // esAdminRole, // 🔓 Comentado temporalmente para pruebas locales
     check("id", "ID inválido").isMongoId(),
     check("id").custom(validarExisteUsuario),
     validarCampos,

@@ -46,7 +46,7 @@
         @editar="onEditar"
       >
         <template #actions-header>
-          <q-btn unelevated color="primary" label="Nuevo Usuario" icon="person_add" class="rounded-pill no-caps" />
+          <q-btn unelevated color="amber" label="Refrescar" icon="refresh" class="rounded-pill no-caps text-black" @click="fetchData" />
         </template>
         <template #row-actions="{ row }">
           <q-btn flat round dense icon="edit" size="sm" color="grey-5" @click="onEditar(row)" />
@@ -79,6 +79,8 @@ const fetchData = async () => {
   loading.value = true;
   error.value = null;
   try {
+    // Añadimos un pequeño delay para que el spinner no parpadee demasiado rápido
+    await new Promise(resolve => setTimeout(resolve, 800));
     await adminStore.fetchUsuarios();
   } catch (err) {
     error.value = "Error al conectar con el oráculo de usuarios";

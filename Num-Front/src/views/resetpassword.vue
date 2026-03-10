@@ -97,6 +97,7 @@ const handleReset = async () => {
 
   loading.value = true;
   try {
+    await new Promise(resolve => setTimeout(resolve, 800));
     await postData(`auth/nuevo-password/${token}`, { password: password.value });
     success("Cambio Exitoso", "Tu llave cósmica ha sido actualizada. Ya puedes ingresar.");
     router.push('/login');

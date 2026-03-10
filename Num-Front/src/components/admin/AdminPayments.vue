@@ -42,7 +42,7 @@
         search-placeholder="Buscar transacción o usuario..."
       >
         <template #actions-header>
-          <q-btn unelevated color="cyan" label="Exportar" icon="download" class="rounded-pill no-caps" />
+          <q-btn unelevated color="cyan" label="Refrescar" icon="refresh" class="rounded-pill no-caps" @click="fetchData" />
         </template>
       </AdminTable>
     </template>
@@ -62,6 +62,7 @@ const fetchData = async () => {
   loading.value = true;
   error.value = null;
   try {
+    await new Promise(resolve => setTimeout(resolve, 800));
     await adminStore.fetchPagos();
   } catch (err) {
     error.value = "Error al recuperar los registros de tesorería";
