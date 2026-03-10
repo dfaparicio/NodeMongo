@@ -399,3 +399,171 @@ export const generarFactura = (pago, nombreUsuario = 'Buscador') => {
     ventanaImpresion.print();
   }, 500);
 };
+
+export const generarPDFLectura = (lectura, nombreUsuario = 'Buscador') => {
+  const { numero, descripcion, talentos, mensaje } = lectura.contenido;
+  const fechaLectura = converFecha(lectura.fechaLectura);
+
+  const html = `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Lectura Numeris - ${nombreUsuario}</title>
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap');
+        
+        body {
+          margin: 0;
+          padding: 0;
+          background-color: #0b0c0e;
+          font-family: 'Montserrat', sans-serif;
+          color: #ffffff;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        .container {
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 60px;
+          border: 2px solid #d4af37;
+          background: radial-gradient(circle at top right, #1a1c20, #0b0c0e);
+          position: relative;
+          min-height: 100vh;
+          box-sizing: border-box;
+        }
+
+        .header {
+          text-align: center;
+          margin-bottom: 50px;
+          border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+          padding-bottom: 30px;
+        }
+
+        h1 {
+          font-family: 'Cinzel', serif;
+          color: #d4af37;
+          font-size: 32px;
+          letter-spacing: 6px;
+          margin: 0;
+          text-transform: uppercase;
+        }
+
+        .fecha {
+          font-size: 12px;
+          letter-spacing: 3px;
+          color: rgba(255,255,255,0.5);
+          margin-top: 10px;
+          text-transform: uppercase;
+        }
+
+        .numero-container {
+          text-align: center;
+          margin: 40px 0;
+        }
+
+        .numero-circle {
+          width: 120px;
+          height: 120px;
+          line-height: 120px;
+          border-radius: 50%;
+          border: 2px solid #d4af37;
+          display: inline-block;
+          font-family: 'Cinzel', serif;
+          font-size: 54px;
+          color: #d4af37;
+          box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .seccion {
+          margin-bottom: 40px;
+        }
+
+        h3 {
+          font-family: 'Cinzel', serif;
+          color: #d4af37;
+          font-size: 18px;
+          letter-spacing: 2px;
+          border-left: 3px solid #d4af37;
+          padding-left: 15px;
+          margin-bottom: 15px;
+          text-transform: uppercase;
+        }
+
+        p {
+          line-height: 1.8;
+          font-size: 15px;
+          color: rgba(255,255,255,0.8);
+          text-align: justify;
+        }
+
+        .talentos-box {
+          background: rgba(212, 175, 55, 0.1);
+          padding: 20px;
+          border-radius: 10px;
+          border: 1px solid rgba(212, 175, 55, 0.2);
+          font-style: italic;
+        }
+
+        .footer {
+          margin-top: 60px;
+          text-align: center;
+          font-size: 11px;
+          color: rgba(255,255,255,0.4);
+          letter-spacing: 1px;
+        }
+
+        @media print {
+          body { background: #0b0c0e; }
+          .container { margin: 0; border: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>NUMERIS</h1>
+          <div class="fecha">${fechaLectura} • ${nombreUsuario}</div>
+        </div>
+
+        <div class="numero-container">
+          <div class="numero-circle">${numero}</div>
+          <div style="color: #d4af37; font-size: 10px; letter-spacing: 4px; margin-top: 10px; font-weight: bold;">CAMINO DE VIDA</div>
+        </div>
+
+        <div class="seccion">
+          <h3>Descripción</h3>
+          <p>${descripcion}</p>
+        </div>
+
+        <div class="seccion">
+          <h3>Tus Talentos</h3>
+          <div class="talentos-box">
+            <p style="margin:0;">${talentos}</p>
+          </div>
+        </div>
+
+        <div class="seccion">
+          <h3>Mensaje de las Estrellas</h3>
+          <p>${mensaje}</p>
+        </div>
+
+        <div class="footer">
+          <p>"Los números son el lenguaje universal del alma"</p>
+          <p>© 2026 Numeris • Revelando tu Esencia</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const ventana = window.open('', '_blank');
+  ventana.document.write(html);
+  ventana.document.close();
+  ventana.focus();
+  
+  setTimeout(() => {
+    ventana.print();
+  }, 500);
+};

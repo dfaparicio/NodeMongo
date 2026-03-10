@@ -8,7 +8,7 @@ import {
 import Usuario from "../models/usuario.js";
 
 import cron from "node-cron";
-import { enviarCorreoNotificacion } from "../helpers/mailer.js";
+import { enviarCorreoNotificacion, enviarLecturaPrincipalCorreo } from "../helpers/mailer.js";
 
 // Importamos la librería y variables de entorno
 import { GoogleGenAI } from "@google/genai";
@@ -147,60 +147,75 @@ export const generarlecturaprincipal = async (req, res) => {
   }
 };
 
-export const generarlecturadiaria = () => {
-  cron.schedule(
-    "07 02 * * *",
-    async () => {
-      console.log("⏰ [Cron] Generando lecturas diarias para usuarios activos...");
+// Función núcleo que hace el trabajo (reutilizable)
+export const procesoGeneracionDiaria = async () => {
+  console.log("🚀 Iniciando proceso de generación de lecturas diarias...");
+  try {
+    const usuariosActivos = await Usuario.find({ estado: 1 });
+    let generadas = 0;
 
+    for (const usuario of usuariosActivos) {
       try {
-        const usuariosActivos = await Usuario.find({ estado: 1 });
-        console.log(`👥 Usuarios activos detectados: ${usuariosActivos.length}`);
+        const repo = await lecturaDiaria(usuario._id);
+        const lecturaHoy = await repo.obtenerLecturaDiariaHoy(usuario._id);
+        if (lecturaHoy) continue;
 
-        for (const usuario of usuariosActivos) {
-          try {
-            const repo = await lecturaDiaria(usuario._id);
+        const principal = await repo.obtenerLecturaPrincipal(usuario._id);
+        if (!principal) continue;
 
-            // 1. Saltarlos si ya tienen lectura hoy
-            const lecturaHoy = await repo.obtenerLecturaDiariaHoy(usuario._id);
-            if (lecturaHoy) continue;
+        const prompt = `Actúa como un numerólogo experto. Basado en esta lectura principal: ${principal.contenido}, genera una lectura diaria para hoy ${new Date().toLocaleDateString()}.
+        Devuelve SOLO un JSON con este formato: {"fecha": "${new Date().toISOString()}", "mensaje": "...", "energia": "...", "motivacion": "..."}`;
 
-            // 2. Solo generar si ya tienen una Lectura Principal
-            const principal = await repo.obtenerLecturaPrincipal(usuario._id);
-            if (!principal) {
-              console.log(`⏩ Salteando ${usuario.email}: Falta lectura principal.`);
-              continue;
-            }
+        const contenidoIA = await respuestaIA(prompt);
+        const contenidoJSON = extraerJSON(contenidoIA);
 
-            // 3. Generar Lectura Diaria
-            const prompt = `Genera una lectura diaria basada en este perfil numerológico: ${principal.contenido}. 
-            Devuelve SOLO un JSON: {"fecha": "${new Date().toLocaleDateString()}", "mensaje": "...", "energia": "...", "motivacion": "..."}`;
-
-            const contenidoIA = await respuestaIA(prompt);
-            const contenidoJSON = extraerJSON(contenidoIA);
-
-            if (contenidoJSON) {
-              contenidoJSON.estado = "activo";
-              await repo.crear(usuario._id, "diaria", JSON.stringify(contenidoJSON));
-
-              if (usuario.email) {
-                await enviarCorreoNotificacion(usuario.email, usuario.nombre);
-              }
-              console.log(`✅ Lectura diaria enviada a: ${usuario.email}`);
-            }
-          } catch (err) {
-            console.error(`❌ Error con usuario ${usuario._id}:`, err.message);
+        if (contenidoJSON) {
+          contenidoJSON.estado = "activo";
+          await repo.crear(usuario._id, "diaria", JSON.stringify(contenidoJSON));
+          if (usuario.email) {
+            await enviarCorreoNotificacion(usuario.email, usuario.nombre);
           }
+          generadas++;
         }
-      } catch (error) {
-        console.error("❌ Error global en Cron:", error.message);
+      } catch (err) {
+        console.error(`❌ Error con usuario ${usuario.email}:`, err.message);
       }
-    },
-    {
-      scheduled: true,
-      timezone: "America/Bogota",
-    },
-  );
+    }
+    console.log(`✨ Proceso finalizado. Lecturas generadas: ${generadas}`);
+    return generadas;
+  } catch (error) {
+    console.error("❌ Error en procesoGeneracionDiaria:", error.message);
+    throw error;
+  }
+};
+
+export const generarlecturadiaria = () => {
+  // Mantenemos el cron por si el servidor está despierto
+  cron.schedule("00 07 * * *", async () => {
+    await procesoGeneracionDiaria();
+  }, {
+    scheduled: true,
+    timezone: "America/Bogota",
+  });
+};
+
+export const triggerLecturasDiarias = async (req, res) => {
+  const { token } = req.query;
+  
+  // Seguridad básica: puedes cambiar 'numeris-secret-123' por algo más complejo
+  if (token !== process.env.CRON_TOKEN && token !== 'numeris-2026') {
+    return res.status(401).json({ msg: "Token de activación inválido" });
+  }
+
+  try {
+    const total = await procesoGeneracionDiaria();
+    res.status(200).json({ 
+      msg: "Proceso ejecutado correctamente", 
+      lecturas_generadas: total 
+    });
+  } catch (error) {
+    res.status(500).json({ msg: "Error en el proceso", error: error.message });
+  }
 };
 
 export const obtenerlecturasdeunusuario = async (req, res) => {
@@ -239,5 +254,22 @@ export const obtenerTodasLasLecturas = async (req, res) => {
     res.status(200).json({ lecturas });
   } catch (error) {
     res.status(500).json({ msg: "Error al obtener todas las lecturas", error: error.message });
+  }
+};
+
+export const enviarLecturaPorEmail = async (req, res) => {
+  try {
+    const { email, nombre, lectura } = req.body;
+
+    if (!email || !lectura) {
+      return res.status(400).json({ msg: "Email y lectura son obligatorios" });
+    }
+
+    await enviarLecturaPrincipalCorreo(email, nombre, lectura);
+
+    res.status(200).json({ msg: "Lectura enviada con éxito ✨" });
+  } catch (error) {
+    console.error("❌ Error enviando email:", error.message);
+    res.status(500).json({ msg: "Error al enviar el correo", error: error.message });
   }
 };

@@ -6,6 +6,8 @@ import {
   obtenerlecturasdeunusuario,
   obtenerlecturaporid,
   obtenerTodasLasLecturas,
+  enviarLecturaPorEmail,
+  triggerLecturasDiarias,
 } from "../controllers/lecturas.js";
 import validarJWT from "../middlewares/validar-jwt.js";
 import { esAdminRole } from "../middlewares/validar-rol.js";
@@ -50,6 +52,9 @@ router.get(
   obtenerlecturasdeunusuario,
 );
 
+// Ruta para despertar el servidor y generar lecturas (usada por cron-job.org)
+router.get("/generar-diarias-sistema", triggerLecturasDiarias);
+
 router.get(
   "/:id",
   [
@@ -58,6 +63,17 @@ router.get(
     validarCampos,
   ],
   obtenerlecturaporid,
+);
+
+router.post(
+  "/enviar-email",
+  [
+    validarJWT,
+    check("email", "El email es obligatorio").isEmail(),
+    check("lectura", "La lectura es obligatoria").notEmpty(),
+    validarCampos,
+  ],
+  enviarLecturaPorEmail,
 );
 
 export default router;

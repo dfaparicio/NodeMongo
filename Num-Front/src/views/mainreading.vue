@@ -93,13 +93,23 @@
           </p>
         </div>
 
-        <div class="flex justify-center items-center q-gutter-xl q-pt-xl">
+        <div class="flex justify-center items-center q-gutter-md q-pt-xl">
           <div v-if="!lecturaPrincipal">
             <secondButton label="Generar Lectura Principal" :loading="loading" @click="onGeneratePrincipal" />
           </div>
-          <div v-else>
-            <secondButton label="Descargar Lectura" :loading="loading" />
-          </div>
+          <template v-else>
+            <secondButton 
+              label="Descargar PDF" 
+              icon="download"
+              @click="onDownloadPDF" 
+            />
+            <secondButton 
+              label="Enviar al Correo" 
+              icon="mail"
+              :loading="sendingEmail"
+              @click="onSendEmail" 
+            />
+          </template>
         </div>
       </div>
     </main>
@@ -112,7 +122,7 @@ import { storeToRefs } from "pinia";
 import { ref, computed } from "vue";
 import { useQuasar } from "quasar";
 import { postData } from "../services/services.js";
-import { converFecha } from "../utils/functions.js";
+import { converFecha, generarPDFLectura } from "../utils/functions.js";
 import secondButton from '../components/secondButton.vue';
 
 const $q = useQuasar();
@@ -120,10 +130,44 @@ const authStore = useAuthStore();
 const { user, lecturasguardadas } = storeToRefs(authStore);
 
 const loading = ref(false);
+const sendingEmail = ref(false);
 
 const lecturaPrincipal = computed(() => 
   lecturasguardadas.value.find(item => item.tipo === 'principal') || null
 );
+
+const onDownloadPDF = () => {
+  if (!lecturaPrincipal.value) return;
+  generarPDFLectura(lecturaPrincipal.value, user.value?.nombre);
+};
+
+const onSendEmail = async () => {
+  if (!lecturaPrincipal.value || !user.value?.email) return;
+
+  sendingEmail.value = true;
+  try {
+    await postData('/lectura/enviar-email', {
+      email: user.value.email,
+      nombre: user.value.nombre,
+      lectura: lecturaPrincipal.value
+    });
+
+    $q.notify({
+      color: "positive",
+      message: "¡Lectura enviada a tu correo! 📧✨",
+      icon: "send",
+    });
+  } catch (error) {
+    console.error(error);
+    $q.notify({
+      color: "negative",
+      message: "No pudimos enviar el correo. Intenta de nuevo. 🌌",
+      icon: "error",
+    });
+  } finally {
+    sendingEmail.value = false;
+  }
+};
 
 const onGeneratePrincipal = async () => {
   if (!user.value?._id) return;

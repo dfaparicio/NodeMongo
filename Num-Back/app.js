@@ -37,5 +37,5 @@ const PORT = process.env.PORT_LOCAL || process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`🔥 Servidor escuchando en el puerto ${PORT}`);
-  console.log(`⏰ Cron Job de lecturas programado para las 8:55 AM (Bogotá)`);
+  console.log(`⏰ Cron Job de lecturas diarias programado para las 7:00 AM (Bogotá)`);
 });
