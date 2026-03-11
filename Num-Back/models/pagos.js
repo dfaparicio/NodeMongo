@@ -1,22 +1,19 @@
 import mongoose from "mongoose";
 
 const pagoSchema = new mongoose.Schema({
-  usuarioId: {
+  usuarioId: { type: String, required: true },
+  monto: { type: Number, required: true },
+  fecha: { type: Date, default: Date.now },
+  descripcion: { type: String, default: "" },
+  estado: {
     type: String,
-    required: true
+    enum: ["pendiente", "aprobado", "rechazado", "en_proceso"],
+    default: "pendiente",
   },
-  monto: {
-    type: Number,
-    required: true
-  },
-  fecha: {
-    type: Date,
-    default: Date.now
-  },
-  descripcion: {
-    type: String,
-    default: ""
-  }
+  metodoPago: { type: String, default: "" },
+  moneda: { type: String, default: "COP" },
+  mpPaymentId: { type: String, default: "" },
+  mpPreferenceId: { type: String, default: "" },
 });
 
 const Pago = mongoose.model("Pago", pagoSchema);
@@ -44,6 +41,6 @@ export const verificarEstadoUsuario = async (idUsuario) => {
   const tienePagos = await Pago.exists({ usuarioId: idUsuario });
   return {
     usuarioId: idUsuario,
-    estado: tienePagos ? "Activo" : "Sin pagos"
+    estado: tienePagos ? "Activo" : "Sin pagos",
   };
 };

@@ -5,6 +5,8 @@ import {
   eliminarPago,
   verificarEstadoUsuario
 } from "../models/pagos.js";
+import Usuario from "../models/usuario.js";
+import { enviarFacturaCorreo } from "../helpers/mailer.js";
 
 export const getPagos = async (req, res) => {
   try {
@@ -18,11 +20,9 @@ export const getPagos = async (req, res) => {
 export const getPagoUsuario = async (req, res) => {
   try {
     const pago = await obtenerPagosUsuario(req.params.id);
-
     if (!pago || pago.length === 0) {
       return res.json([]);
     }
-
     res.json(pago);
   } catch (error) {
     res.status(400).json({ error: "Error al obtener el pago" });
@@ -32,8 +32,21 @@ export const getPagoUsuario = async (req, res) => {
 export const postNuevoPago = async (req, res) => {
   try {
     const nuevoPago = await registrarPago(req.body);
+    
+    // FORZAR ACTIVACIÓN DEL USUARIO
+    if (nuevoPago && nuevoPago.usuarioId) {
+      console.log(`Fuerza Bruta: Activando usuario ${nuevoPago.usuarioId}`);
+      
+      // Usamos updateOne que es más directo para forzar el estado a 1
+      await Usuario.updateOne(
+        { _id: nuevoPago.usuarioId }, 
+        { $set: { estado: 1 } }
+      );
+    }
+
     res.status(201).json(nuevoPago);
   } catch (error) {
+    console.error("Error en postNuevoPago:", error);
     res.status(400).json({ error: "Error al registrar el pago" });
   }
 };
@@ -41,11 +54,9 @@ export const postNuevoPago = async (req, res) => {
 export const deletePago = async (req, res) => {
   try {
     const pagoEliminado = await eliminarPago(req.params.id);
-
     if (!pagoEliminado) {
       return res.status(404).json({ error: "Pago no encontrado" });
     }
-
     res.json({ eliminado: pagoEliminado });
   } catch (error) {
     res.status(400).json({ error: "Error al eliminar el pago" });
@@ -61,13 +72,8 @@ export const getEstadoUsuario = async (req, res) => {
   }
 };
 
-
-
-import { enviarFacturaCorreo } from "../helpers/mailer.js"
-
 export const enviarFactura = async (req, res) => {
   const { email, nombre, pago } = req.body;
-
   try {
     await enviarFacturaCorreo(email, nombre, pago);
     res.json({ msg: 'Factura enviada con éxito' });

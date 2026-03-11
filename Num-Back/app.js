@@ -1,9 +1,15 @@
 import express from "express";
 import cors from "cors";
-import "dotenv/config";
-import conectarMongo from "./database/cnx-mongo.js";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from 'url';
 
-// Importar la función de automatización desde tu controlador
+// Configuración manual de dotenv para asegurar que encuentre el archivo
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+import conectarMongo from "./database/cnx-mongo.js";
 import { generarlecturadiaria } from "./controllers/lecturas.js";
 
 // Rutas
@@ -11,6 +17,7 @@ import usuarioRoute from "./routes/usuario.js";
 import lecturaRoute from "./routes/lecturas.js";
 import pagosRoute from "./routes/pagos.js";
 import authRoute from "./routes/auth.js";
+import mercadopagoRoute from "./routes/mercadopago.js";
 
 const app = express();
 
@@ -29,13 +36,13 @@ app.use("/api/usuario", usuarioRoute);
 app.use("/api/lectura", lecturaRoute);
 app.use("/api/pago", pagosRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/mercadopago", mercadopagoRoute);
 
-// 🔥 INICIAR AUTOMATIZACIÓN (Esto activa el cron job al arrancar el servidor)
 generarlecturadiaria();
 
-const PORT = process.env.PORT_LOCAL || process.env.PORT || 3000;
+const PORT = process.env.PORT_LOCAL || process.env.PORT || 5040;
 
 app.listen(PORT, () => {
   console.log(`🔥 Servidor escuchando en el puerto ${PORT}`);
-  console.log(`⏰ Cron Job de lecturas diarias programado para las 10:00 AM (Bogotá)`);
+  console.log(`✅ Token MP cargado: ${!!process.env.MERCADOPAGO_ACCESS_TOKEN}`);
 });

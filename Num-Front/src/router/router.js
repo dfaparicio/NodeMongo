@@ -11,6 +11,7 @@ import lectura_diaria from "../views/dailyreading.vue";
 import historial_lecturas from "../views/readinghistory.vue";
 import admin_finance from "../views/financedashboard.vue";
 import admin from "../views/admin.vue";
+import payment_result from "../views/payment-result.vue";
 
 import { createRouter, createWebHashHistory } from "vue-router";
 import { useAuthStore } from "../store/auth.js";
@@ -34,6 +35,11 @@ const routes = [
   { path: "/historial_lecturas", component: historial_lecturas, meta: { requiresAuth: true } },
   { path: "/admin_finance", component: admin_finance, meta: { requiresAuth: true, role: 'ADMIN_ROLE' } },
   { path: "/admin", component: admin, meta: { requiresAuth: true, role: 'ADMIN_ROLE' } },
+
+  // Rutas Mercado Pago
+  { path: "/pagos/exito", component: payment_result, meta: { requiresAuth: true } },
+  { path: "/pagos/fallo", component: payment_result, meta: { requiresAuth: true } },
+  { path: "/pagos/pendiente", component: payment_result, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({

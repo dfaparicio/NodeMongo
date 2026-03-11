@@ -142,7 +142,7 @@
               </q-item>
             </q-list>
 
-            <button class="destiny-btn q-mt-auto">Desbloquear Mi Destino Ahora</button>
+            <button class="destiny-btn q-mt-auto" @click="seleccionarPlan(9.99, 'El Cosmos')">Desbloquear Mi Destino Ahora</button>
           </div>
         </div>
 
@@ -160,6 +160,17 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const seleccionarPlan = (monto, titulo) => {
+  // Guardamos el plan seleccionado temporalmente (podrías usar store o query params)
+  router.push({ 
+    path: '/pagos', 
+    query: { monto, titulo } 
+  });
+};
 </script>
 
 <style scoped>
