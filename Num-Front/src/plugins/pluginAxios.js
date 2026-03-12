@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "../store/auth.js";
 
 const axiosInstance = axios.create({
-  baseURL: "https://numerologiaastral.jagsnexus.site/api",
+  baseURL: import.meta.env.VITE_API_URL || "/api",
   headers: {
     "Content-Type": "application/json",
   },
