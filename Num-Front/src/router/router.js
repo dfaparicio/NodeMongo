@@ -47,21 +47,42 @@ const router = createRouter({
   routes,
 });
 
+// --- GUARDIÁN DE NAVEGACIÓN (PORTERO) ---
+// Se ejecuta antes de entrar a cualquier ruta
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
+  
+  // 1. REVISIÓN DE AUTENTICACIÓN: ¿Tiene un token válido?
   const isAuthenticated = !!authStore.token;
 
+  // REGLA A: Si la página pide estar logueado (meta.requiresAuth) y NO lo está
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next("/login");
+    console.log("🚫 Bloqueado: Usuario no autenticado. Redirigiendo a Login.");
+    next("/login"); // No lo dejes pasar, mándalo a loguearse
   }
+  
+  // REGLA B: Si YA ESTÁ logueado y trata de ir a Login o Register
   else if (isAuthenticated && (to.path === "/login" || to.path === "/register")) {
-    next("/perfil");
+    console.log("✅ Ya estás logueado. No necesitas ir a Login. Redirigiendo a Perfil.");
+    next("/perfil"); // Mándalo directo a su perfil
   }
+  
+  // REGLA C: REVISIÓN DE PAGO (NUEVO): Si la página requiere suscripción activa
+  // Usamos el campo 'estado' del usuario (1 = pagó, 0 = no ha pagado)
+  else if (to.meta.requiresActive && authStore.user?.estado !== 1) {
+    console.log("💰 Bloqueado: Se requiere suscripción activa. Redirigiendo a Planes.");
+    next("/planes"); // Mándalo a que elija un plan de pago
+  }
+  
+  // REGLA D: REVISIÓN DE ROLES: Si la página pide un rol específico (ej: ADMIN_ROLE)
   else if (to.meta.role && authStore.user?.rol !== to.meta.role) {
-    next("/perfil");
+    console.log("🛑 Bloqueado: No tienes el rol necesario para esta página.");
+    next("/perfil"); // Si no es admin, mándalo a su perfil personal
   }
+  
+  // REGLA FINAL: Si pasó todas las pruebas anteriores
   else {
-    next();
+    next(); // "Pase usted": Deja que la navegación continúe normalmente
   }
 });
 

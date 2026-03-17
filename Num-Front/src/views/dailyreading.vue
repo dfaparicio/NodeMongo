@@ -1,4 +1,63 @@
 <template>
+  <!-- ══════════════════════════════════════════════════════════
+       MODAL DE SUSCRIPCIÓN
+       Se muestra automáticamente si el usuario NO ha pagado
+       (authStore.user.estado !== 1)
+       El usuario no puede cerrarlo, DEBE ir a la página de Planes
+       ══════════════════════════════════════════════════════════ -->
+  <q-dialog v-model="mostrarModalSuscripcion" persistent>
+    <q-card class="subs-modal text-white q-pa-lg">
+
+      <!-- Ícono e imagen decorativa -->
+      <div class="text-center q-mb-md">
+        <q-icon name="lock" size="3.5em" class="text-gold q-mb-sm" />
+        <h2 class="text-h5 text-bold text-white q-ma-none">Contenido Exclusivo</h2>
+        <p class="text-grey-4 text-body2 q-mt-sm">
+          Las <strong class="text-gold">Lecturas Diarias</strong> son parte del Plan <strong>El Cosmos</strong>.
+          Activa tu suscripción y recibe tu guía cósmica personalizada cada día.
+        </p>
+      </div>
+
+      <q-separator dark class="q-my-md opacity-20" />
+
+      <!-- Lista de beneficios rápidos -->
+      <q-list dense dark class="q-mb-lg">
+        <q-item dense>
+          <q-item-section avatar><q-icon name="verified" class="text-gold" size="xs" /></q-item-section>
+          <q-item-section class="text-grey-3 text-body2">Pronósticos cósmicos diarios personalizados</q-item-section>
+        </q-item>
+        <q-item dense>
+          <q-item-section avatar><q-icon name="verified" class="text-gold" size="xs" /></q-item-section>
+          <q-item-section class="text-grey-3 text-body2">Análisis de compatibilidad kármica</q-item-section>
+        </q-item>
+        <q-item dense>
+          <q-item-section avatar><q-icon name="verified" class="text-gold" size="xs" /></q-item-section>
+          <q-item-section class="text-grey-3 text-body2">Rituales y mantras personalizados</q-item-section>
+        </q-item>
+      </q-list>
+
+      <!-- Botones de acción -->
+      <div class="row q-gutter-sm justify-center">
+        <!-- Botón principal: lleva a la página de planes -->
+        <q-btn
+          unelevated
+          label="🌟 Ver Planes"
+          class="subs-btn-primary col"
+          @click="irAPlanes"
+        />
+        <!-- Botón secundario: vuelve al perfil (no cierra el modal) -->
+        <q-btn
+          flat
+          label="Volver al perfil"
+          color="grey-5"
+          class="col"
+          @click="irAPerfil"
+        />
+      </div>
+
+    </q-card>
+  </q-dialog>
+
   <q-page class="dashboard-page overflow-hidden relative-position text-white">
     <div class="absolute-full bg-deep-space z-behind">
       <div class="absolute-full grid-pattern"></div>
@@ -118,15 +177,29 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "../store/auth.js";
 import { converFecha, generarRangoFechas, obtenerEstadoLectura, resetearHoras } from "../utils/functions.js";
 import secondButton from "../components/secondButton.vue"
 
 const route = useRoute();
+const router = useRouter();
 const authStore = useAuthStore();
 const { lecturasguardadas } = storeToRefs(authStore);
+
+// ══════════════════════════════════════════════════════════
+// LÓGICA DEL MODAL DE SUSCRIPCIÓN
+// Revisamos si el usuario tiene estado 1 (pagó) o 0 (no pagó)
+// El modal se abre automáticamente si no tiene suscripción activa
+// ══════════════════════════════════════════════════════════
+const mostrarModalSuscripcion = ref(authStore.user?.estado !== 1);
+
+// Lleva al usuario a la página de planes para que pague
+const irAPlanes = () => router.push('/planes');
+
+// Si no quiere pagar, lo manda de vuelta al perfil
+const irAPerfil = () => router.push('/perfil');
 
 const lecturasDiarias = computed(() => (lecturasguardadas.value || []).filter(item => item.tipo === 'diaria'));
 const lecturaPrincipal = computed(() => (lecturasguardadas.value || []).find(item => item.tipo === 'principal') || null);
@@ -165,4 +238,26 @@ onMounted(() => {
 
 <style scoped>
 @import url('../styles/dailyreading.css');
+
+/* ── Modal de Suscripción ── */
+.subs-modal {
+  background: linear-gradient(135deg, #0d0d1a 0%, #1a1a3e 100%);
+  border: 1px solid rgba(244, 175, 37, 0.3);
+  border-radius: 16px;
+  max-width: 420px;
+  width: 100%;
+}
+
+.subs-btn-primary {
+  background: linear-gradient(45deg, #f4af25, #e09010);
+  color: #0d0d1a;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.subs-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(244, 175, 37, 0.4);
+  transition: all 0.2s ease;
+}
 </style>

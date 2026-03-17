@@ -94,8 +94,8 @@
             <div class="q-mb-lg relative-position z-top">
               <h3 class="text-h4 font-normal text-white q-mb-xs tracking-wide">El Cosmos</h3>
               <div class="flex flex-center items-baseline">
-                <span class="text-h2 text-weight-bold text-gold text-glow">$9.99</span>
-                <span class="text-gold text-weight-light q-ml-xs opacity-80">/ mes</span>
+                <span class="text-h2 text-weight-bold text-gold text-glow">$50,000</span>
+                <span class="text-gold text-weight-light q-ml-xs opacity-80">/ mes (COP)</span>
               </div>
               <p class="text-caption text-gold opacity-80 q-mt-md">Acceso total a las respuestas más profundas de tu
                 vida.</p>
@@ -142,7 +142,7 @@
               </q-item>
             </q-list>
 
-            <button class="destiny-btn q-mt-auto" @click="seleccionarPlan(9.99, 'El Cosmos')">Desbloquear Mi Destino Ahora</button>
+            <button class="destiny-btn q-mt-auto" @click="seleccionarPlan(50000, 'El Cosmos')">Desbloquear Mi Destino Ahora</button>
           </div>
         </div>
 
