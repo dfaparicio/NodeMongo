@@ -24,7 +24,7 @@ export const enviarEmail = async (to, subject, html) => {
 
 // Correo de bienvenida tras registro
 export const enviarBienvenida = async (to, nombre) => {
-    const frontendURL = process.env.URL_FRONT || 'https://numerologyservices.netlify.app';
+    const frontendURL = process.env.URL_FRONT || 'https://numerologiaastral.jagsnexus.site';
     const html = `
     <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
         <div style="background: #0b0c0e; padding: 20px; text-align: center; color: #f2a900;">
@@ -34,7 +34,7 @@ export const enviarBienvenida = async (to, nombre) => {
             <h2>¡Bienvenido al Cosmos, ${nombre}! 🌠</h2>
             <p>Tu viaje hacia el autodescubrimiento ha comenzado oficialmente.</p>
             <div style="text-align: center; margin: 40px 0;">
-                <a href="${frontendURL}/#/dashboard" style="background: #f2a900; color: #0b0c0e; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">IR A MI DASHBOARD</a>
+                <a href="${frontendURL}/#/perfil" style="background: #f2a900; color: #0b0c0e; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">IR A MI PERFIL</a>
             </div>
             <p style="font-size: 0.8em; color: #999; text-align: center;">© 2026 Numeris.</p>
         </div>
@@ -45,7 +45,7 @@ export const enviarBienvenida = async (to, nombre) => {
 
 // Correo con enlace de recuperación de contraseña
 export const enviarRecuperacion = async (to, token) => {
-    const frontendURL = process.env.URL_FRONT || 'https://numerologyservices.netlify.app';
+    const frontendURL = process.env.URL_FRONT || 'https://numerologiaastral.jagsnexus.site';
     const resetUrl = `${frontendURL}/#/reset-password/${token}`;
     const html = `
     <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">

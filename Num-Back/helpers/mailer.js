@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 // Notificación de lectura diaria lista
 export const enviarCorreoNotificacion = async (emailDestino, nombreUsuario) => {
   try {
-    const frontendURL = process.env.URL_FRONT || 'https://numerologyservices.netlify.app';
+    const frontendURL = process.env.URL_FRONT || 'https://numerologiaastral.jagsnexus.site';
     const mailOptions = {
       from: `"Numeris 🌠" <${process.env.EMAIL_USER2}>`,
       to: emailDestino,
