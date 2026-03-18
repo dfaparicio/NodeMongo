@@ -15,6 +15,10 @@ export default defineConfig({
       ),
     }),
   ],
+  build: {
+    outDir: '../Num-Back/public',
+    emptyOutDir: true,
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

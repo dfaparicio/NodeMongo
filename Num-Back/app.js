@@ -39,6 +39,11 @@ app.use("/api/pago", pagosRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/mercadopago", mercadopagoRoute);
 
+// Cualquier ruta que no sea de la API servirá el index.html del frontend
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 generarlecturadiaria();
 
 const PORT = process.env.PORT_LOCAL || process.env.PORT || 5040;
