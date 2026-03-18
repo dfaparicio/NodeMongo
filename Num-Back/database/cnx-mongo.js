@@ -2,24 +2,18 @@ import mongoose from "mongoose";
 
 export default async function conectarMongo() {
   try {
-    // Priorizamos MONGO_URL (Producción) y si no existe usamos la Local
-    const dbUrl = process.env.MONGO_URL || process.env.MONGO_URL_LOCAL;
+    // Conexión fija y exclusiva a MongoDB Atlas
+    const dbUrl = process.env.MONGO_URL;
 
     if (!dbUrl) {
-      throw new Error("❌ No se encontró la URL de conexión a MongoDB en las variables de entorno.");
+      throw new Error("❌ Error: La variable MONGO_URL no está definida en el entorno.");
     }
 
     await mongoose.connect(dbUrl);
-    
-    const status = dbUrl.includes('mongodb.net') ? 'Producción (Atlas) 🚀' : 'Local 🏠';
-    console.log(`✅ Base de Datos conectada exitosamente a: ${status}`);
+    console.log("✅ Conexión establecida con MongoDB Atlas (Producción) 🚀");
     
   } catch (error) {
-    console.error("❌ Error crítico al conectar a MongoDB:");
+    console.error("❌ Error de conexión a MongoDB Atlas:");
     console.error(error.message);
-    if (error.message.includes('IP address')) {
-      console.error("👉 TIP: Asegúrate de que la IP de Render esté permitida en MongoDB Atlas (Network Access -> Allow Access From Anywhere 0.0.0.0/0)");
-    }
   }
 }
-
