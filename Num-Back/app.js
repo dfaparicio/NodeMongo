@@ -26,7 +26,7 @@ conectarMongo();
 
 // Middlewares globales
 app.use(cors({
-  origin: '*',
+  origin: 'https://numerologiaastral.jagsnexus.site',
   allowedHeaders: ['Content-Type', 'x-token']
 }));
 app.use(express.json());
@@ -53,9 +53,10 @@ app.get(/.*/, (req, res) => {
 
 generarlecturadiaria();
 
-const PORT = process.env.PORT_LOCAL || process.env.PORT || 5040;
+const PORT = process.env.PORT || 5040;
 
 app.listen(PORT, () => {
   console.log(`🔥 Servidor escuchando en el puerto ${PORT}`);
+  console.log(`✅ MongoDB URL configurada: ${!!process.env.MONGO_URL}`);
   console.log(`✅ Token MP cargado: ${!!process.env.MERCADOPAGO_ACCESS_TOKEN}`);
 });

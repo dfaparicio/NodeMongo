@@ -4,7 +4,10 @@ export const generarJWT = (id) => {
   return new Promise(
     ((resolve, reject) => {
       const payload = { id };
-      const secret = process.env.SECRETORPRIVATEKEY_LOCAL || process.env.SECRETORPRIVATEKEY;
+      const secret = process.env.SECRETORPRIVATEKEY;
+      if (!secret) {
+        return reject("SECRETORPRIVATEKEY no está definida en el entorno");
+      }
       jwt.sign(
       payload,
       secret,
