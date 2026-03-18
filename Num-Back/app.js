@@ -30,17 +30,24 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'x-token']
 }));
 app.use(express.json());
+
+// 1. Servir archivos estáticos (Prioridad para JS, CSS, Imágenes)
 app.use(express.static(path.join(__dirname, "public")));
 
-// Rutas
+// 2. Rutas de la API
 app.use("/api/usuario", usuarioRoute);
 app.use("/api/lectura", lecturaRoute);
 app.use("/api/pago", pagosRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/mercadopago", mercadopagoRoute);
 
-// Cualquier ruta que no sea de la API servirá el index.html del frontend
+// 3. LA SOLUCIÓN: Solo si NO es un archivo real y NO es API, sirve el index.html
 app.get(/.*/, (req, res) => {
+  // Si la petición pide algo que parece un archivo (tiene extensión), pero no se encontró arriba,
+  // no le mandes el index.html porque causará el error de MIME type.
+  if (req.path.includes(".") || req.path.startsWith("/api")) {
+    return res.status(404).send("Not found");
+  }
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
