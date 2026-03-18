@@ -1,3 +1,7 @@
+# Node modules (ignora en cualquier nivel)
+node_modules/
+**/node_modules/
+
 # Logs
 logs
 *.log
@@ -7,23 +11,23 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-/node_modules
+# Entorno y variables (¡SEGURIDAD!)
 .env
-
-dist
-dist-ssr
-*.local
-=======
 .env.*
-dist
-dist-ssr
 *.local
+Num-Back/.env
+Num-Front/.env
 
+# Builds y dist (Vite/Quasar)
+dist/
+dist-ssr/
+**/dist/
+Num-Front/dist/
 
-# Editor directories and files
-.vscode/*
+# Editor e IDEs
+.vscode/
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
