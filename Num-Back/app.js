@@ -35,6 +35,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 // 2. Rutas de la API
+app.get("/api/ping", (req, res) => res.send("pong")); // Ruta para despertar el servidor sin carga
 app.use("/api/usuario", usuarioRoute);
 app.use("/api/lectura", lecturaRoute);
 app.use("/api/pago", pagosRoute);

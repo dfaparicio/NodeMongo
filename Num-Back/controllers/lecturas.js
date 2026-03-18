@@ -218,7 +218,7 @@ export const procesoGeneracionDiaria = async () => {
 
 // Registro del Cron Job para las 07:00 AM
 export const generarlecturadiaria = () => {
-  cron.schedule("00 07 * * *", async () => {
+  cron.schedule("00 09 * * *", async () => {
     await procesoGeneracionDiaria();
   }, {
     scheduled: true,
@@ -234,15 +234,16 @@ export const triggerLecturasDiarias = async (req, res) => {
     return res.status(401).json({ msg: "Token de activación inválido" });
   }
 
-  try {
-    const total = await procesoGeneracionDiaria();
-    res.status(200).json({ 
-      msg: "Proceso ejecutado correctamente", 
-      lecturas_generadas: total 
-    });
-  } catch (error) {
-    res.status(500).json({ msg: "Error en el proceso", error: error.message });
-  }
+  // Responder de inmediato para evitar timeouts de Render y Cron-Job.org
+  res.status(202).json({ 
+    msg: "🚀 Proceso de generación diaria iniciado en segundo plano", 
+    timestamp: new Date().toISOString()
+  });
+
+  // Ejecutar el proceso pesado sin await para no bloquear la respuesta HTTP
+  procesoGeneracionDiaria().catch(error => {
+    console.error("❌ Fallo en ejecución de lecturas en segundo plano:", error.message);
+  });
 };
 
 export const obtenerlecturasdeunusuario = async (req, res) => {
