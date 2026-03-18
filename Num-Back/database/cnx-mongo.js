@@ -2,23 +2,37 @@ import mongoose from "mongoose";
 
 export default async function conectarMongo() {
   try {
-    // URL base de Atlas
     const dbUrl = process.env.MONGO_URL;
 
     if (!dbUrl) {
-      throw new Error("❌ Error: No se encontró la variable MONGO_URL.");
+      console.error("❌ ERROR: La variable MONGO_URL no está definida en el entorno (Render/Local).");
+      return;
     }
 
-    // FORZAMOS el uso de la base de datos 'test'
+    // Mostrar una versión segura de la URL en los logs para depurar (ocultando contraseña)
+    const maskedUrl = dbUrl.replace(/\/\/.*@/, "//*****:*****@");
+    console.log(`🔍 Intentando conectar a: ${maskedUrl}`);
+
+    // Forzamos el uso de la base de datos 'test'
     await mongoose.connect(dbUrl, {
       dbName: 'test'
     });
 
-    console.log("✅ Conexión exitosa a MongoDB Atlas 🚀");
-    console.log("📂 BASE DE DATOS ACTIVA: 'test'");
+    // Extraer información real de la conexión establecida
+    const { host, name } = mongoose.connection;
+    
+    console.log("========================================");
+    console.log("✅ ¡CONEXIÓN EXITOSA A MONGODB!");
+    console.log(`🌐 Host: ${host}`);
+    console.log(`📂 Base de Datos Activa: ${name}`);
+    console.log("========================================");
     
   } catch (error) {
-    console.error("❌ Error de conexión:");
+    console.error("❌ ERROR CRÍTICO DE CONEXIÓN:");
     console.error(error.message);
+    
+    if (error.message.includes('Authentication failed')) {
+      console.error("👉 REVISIÓN: La contraseña o el usuario en Render son INCORRECTOS.");
+    }
   }
 }
