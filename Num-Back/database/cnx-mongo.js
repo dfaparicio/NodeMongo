@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export default async function conectarMongo() {
   try {
-    // Conexión fija y exclusiva a MongoDB Atlas
+    // Conexión exclusiva a la nueva base de datos de MongoDB Atlas
     const dbUrl = process.env.MONGO_URL;
 
     if (!dbUrl) {
@@ -10,7 +10,7 @@ export default async function conectarMongo() {
     }
 
     await mongoose.connect(dbUrl);
-    console.log("✅ Conexión establecida con MongoDB Atlas (Producción) 🚀");
+    console.log("✅ Conexión establecida con la nueva base de datos en Atlas 🚀");
     
   } catch (error) {
     console.error("❌ Error de conexión a MongoDB Atlas:");
