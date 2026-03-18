@@ -218,7 +218,7 @@ export const procesoGeneracionDiaria = async () => {
 
 // Registro del Cron Job para las 10:00 AM
 export const generarlecturadiaria = () => {
-  cron.schedule("00 10 * * *", async () => {
+  cron.schedule("00 7 * * *", async () => {
     await procesoGeneracionDiaria();
   }, {
     scheduled: true,
