@@ -13,8 +13,9 @@ export const crearPreferencia = async (req, res) => {
 
   configureMercadoPago();
 
+  const isProduction = process.env.NODE_ENV === 'production';
   // URL base para redirecciones (prioriza variable de entorno)
-  const BASE_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+  const BASE_URL = isProduction ? process.env.FRONTEND_URL : (process.env.FRONTEND_URL_LOCAL || "http://localhost:5173");
 
   try {
     const montoFinal = Number(monto) < 100 ? 2000 : Number(monto);

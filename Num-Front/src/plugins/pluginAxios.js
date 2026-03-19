@@ -2,8 +2,10 @@ import axios from "axios";
 import { useAuthStore } from "../store/auth.js";
 
 const axiosInstance = axios.create({
-  // URL absoluta de producción en Render
-  baseURL: "https://nodemongo-ihx8.onrender.com/api",
+  // Si estamos en desarrollo, usamos la URL local, si no, la de producción.
+  // VITE_API_URL debería ser algo como "http://localhost:5040/api" en local
+  // o "/api" si se sirve desde el mismo servidor Express.
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5040/api",
   headers: {
     "Content-Type": "application/json",
   },

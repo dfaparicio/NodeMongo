@@ -25,8 +25,15 @@ const app = express();
 conectarMongo();
 
 // Middlewares globales
+const whitelist = ['https://numerologiaastral.jagsnexus.site', 'http://localhost:5040', 'http://localhost:5173', 'http://localhost:9000'];
 app.use(cors({
-  origin: 'https://numerologiaastral.jagsnexus.site',
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   allowedHeaders: ['Content-Type', 'x-token']
 }));
 app.use(express.json());
@@ -54,10 +61,11 @@ app.get(/.*/, (req, res) => {
 
 generarlecturadiaria();
 
-const PORT = process.env.PORT || 5040;
+const isProduction = process.env.NODE_ENV === 'production';
+const PORT = (isProduction ? process.env.PORT : (process.env.PORT_LOCAL || process.env.PORT)) || 5040;
 
 app.listen(PORT, () => {
   console.log(`🔥 Servidor escuchando en el puerto ${PORT}`);
-  console.log(`✅ MongoDB URL configurada: ${!!process.env.MONGO_URL}`);
-  console.log(`✅ Token MP cargado: ${!!process.env.MERCADOPAGO_ACCESS_TOKEN}`);
+  console.log(`🏠 Entorno: ${isProduction ? 'PRODUCCIÓN (Render)' : 'DESARROLLO (Local)'}`);
+  console.log(`✅ MongoDB URL configurada: ${!!(isProduction ? process.env.MONGO_URL : (process.env.MONGO_URL_LOCAL || process.env.MONGO_URL))}`);
 });

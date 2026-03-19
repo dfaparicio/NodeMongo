@@ -2,16 +2,17 @@ import mongoose from "mongoose";
 
 export default async function conectarMongo() {
   try {
-    const dbUrl = process.env.MONGO_URL;
+    const isProduction = process.env.NODE_ENV === 'production';
+    const dbUrl = isProduction ? process.env.MONGO_URL : (process.env.MONGO_URL_LOCAL || process.env.MONGO_URL);
 
     if (!dbUrl) {
-      console.error("❌ ERROR: La variable MONGO_URL no está definida en el entorno (Render/Local).");
+      console.error(`❌ ERROR: La variable ${isProduction ? 'MONGO_URL' : 'MONGO_URL_LOCAL'} no está definida en el entorno (Render/Local).`);
       return;
     }
 
     // Mostrar una versión segura de la URL en los logs para depurar (ocultando contraseña)
     const maskedUrl = dbUrl.replace(/\/\/.*@/, "//*****:*****@");
-    console.log(`🔍 Intentando conectar a: ${maskedUrl}`);
+    console.log(`🔍 Intentando conectar a (${isProduction ? 'Producción' : 'Local'}): ${maskedUrl}`);
 
     // Forzamos el uso de la base de datos 'test'
     await mongoose.connect(dbUrl, {
