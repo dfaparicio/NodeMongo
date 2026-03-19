@@ -142,7 +142,16 @@
               </q-item>
             </q-list>
 
-            <button class="destiny-btn q-mt-auto" @click="seleccionarPlan(50000, 'El Cosmos')">Desbloquear Mi Destino Ahora</button>
+            <div v-if="activePlan" class="active-plan-status q-mt-auto q-pa-md rounded-lg">
+              <div class="text-gold text-weight-bold tracking-widest q-mb-xs">ACCESO CÓSMICO ACTIVO</div>
+              <div class="text-grey-4 text-caption q-mb-sm">Tiempo restante:</div>
+              <div class="countdown-timer text-h4 text-gold text-glow font-medium">
+                {{ tiempoRestante }}
+              </div>
+              <q-tooltip class="bg-amber-9 text-black">Tu plan expira el {{ formatFecha(activePlan.fechaExpiracion) }}</q-tooltip>
+            </div>
+
+            <button v-else class="destiny-btn q-mt-auto" @click="seleccionarPlan(50000, 'El Cosmos')">Desbloquear Mi Destino Ahora</button>
           </div>
         </div>
 
@@ -160,12 +169,113 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../store/auth.js';
+import { getData, putData } from '../services/services.js';
+import { useQuasar } from 'quasar';
 
 const router = useRouter();
+const authStore = useAuthStore();
+const $q = useQuasar();
+
+const tiempoRestante = ref('');
+let timer = null;
+const isDeactivating = ref(false);
+
+const activePlan = computed(() => {
+  if (!authStore.pagosUsuario || authStore.pagosUsuario.length === 0) return null;
+  
+  const pagos = authStore.pagosUsuario
+    .filter(p => p.monto === 50000 && p.estado === 'approved')
+    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    
+  if (pagos.length === 0) return null;
+  
+  const ultimoPago = pagos[0];
+  const fechaExpiracion = new Date(ultimoPago.fecha);
+  fechaExpiracion.setDate(fechaExpiracion.getDate() + 30);
+  
+  const ahora = new Date();
+  if (ahora > fechaExpiracion) return null;
+  
+  return { ...ultimoPago, fechaExpiracion };
+});
+
+const finalizarSuscripcion = async () => {
+  if (isDeactivating.value || !authStore.user?._id) return;
+  isDeactivating.value = true;
+
+  try {
+    await putData(`usuario/${authStore.user._id}`, { estado: 0 });
+    authStore.user.estado = 0;
+    
+    // Refrescamos pagos para limpiar el estado visual
+    const resPagos = await getData(`pago/${authStore.user._id}`);
+    authStore.setPagosUsuario(Array.isArray(resPagos) ? resPagos : []);
+
+    $q.notify({
+      message: 'Tu suscripción cósmica ha expirado.',
+      color: 'warning',
+      icon: 'auto_awesome'
+    });
+  } catch (e) {
+    console.error("Error al inactivar usuario:", e);
+  } finally {
+    isDeactivating.value = false;
+  }
+};
+
+const actualizarCountdown = () => {
+  if (!activePlan.value) {
+    tiempoRestante.value = '';
+    return;
+  }
+  
+  const ahora = new Date();
+  const diff = activePlan.value.fechaExpiracion - ahora;
+  
+  if (diff <= 0) {
+    tiempoRestante.value = '00d 00h 00m 00s';
+    finalizarSuscripcion();
+    if (timer) clearInterval(timer);
+    return;
+  }
+  
+  const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const segundos = Math.floor((diff % (1000 * 60)) / 1000);
+  
+  const pad = (n) => n.toString().padStart(2, '0');
+  tiempoRestante.value = `${pad(dias)}d ${pad(horas)}h ${pad(minutos)}m ${pad(segundos)}s`;
+};
+
+const formatFecha = (date) => {
+  return new Intl.DateTimeFormat('es-CO', { 
+    day: '2-digit', month: 'long', year: 'numeric' 
+  }).format(date);
+};
+
+onMounted(async () => {
+  if (authStore.user?._id) {
+    try {
+      const resPagos = await getData(`pago/${authStore.user._id}`);
+      authStore.setPagosUsuario(Array.isArray(resPagos) ? resPagos : []);
+    } catch (e) {
+      console.warn("Error sincronizando pagos:", e);
+    }
+  }
+  
+  actualizarCountdown();
+  timer = setInterval(actualizarCountdown, 1000);
+});
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer);
+});
 
 const seleccionarPlan = (monto, titulo) => {
-  // Guardamos el plan seleccionado temporalmente (podrías usar store o query params)
   router.push({ 
     path: '/pagos', 
     query: { monto, titulo } 
@@ -175,4 +285,20 @@ const seleccionarPlan = (monto, titulo) => {
 
 <style scoped>
 @import url('../styles/plans.css');
+
+.active-plan-status {
+  background: rgba(244, 175, 37, 0.1);
+  border: 1px solid rgba(244, 175, 37, 0.3);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.countdown-timer {
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(244, 175, 37, 0.5);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 </style>
