@@ -18,11 +18,13 @@ lerna-debug.log*
 Num-Back/.env
 Num-Front/.env
 
-# Builds y dist (Vite/Quasar)
-dist/
-dist-ssr/
-**/dist/
-Num-Front/dist/
+# --- SECCIÓN CORREGIDA ---
+# Ya NO ignoramos dist/ para que los cambios de front suban al servidor
+# dist/ 
+# dist-ssr/
+# **/dist/
+# Num-Front/dist/
+# -------------------------
 
 # Editor e IDEs
 .vscode/
