@@ -10,7 +10,7 @@
         <!-- Logo Area -->
         <div class="q-px-md q-py-xl column items-center">
           <div class="row items-center no-wrap cursor-pointer">
-            <div class="logo-text">NUMERO<span>LOGIA</span></div>
+            <div class="logo-text">NUMERO <span>LOGIA</span></div>
           </div>
         </div>
 
