@@ -13,20 +13,24 @@ export const crearPreferencia = async (req, res) => {
 
   configureMercadoPago();
 
+  // URL base para redirecciones (prioriza variable de entorno)
+  const BASE_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+
   try {
     const montoFinal = Number(monto) < 100 ? 2000 : Number(monto);
 
     const response = await mercadopago.preferences.create({
       items: [{ title: String(titulo || "Plan Numeris"), quantity: 1, unit_price: montoFinal, currency_id: "COP" }],
       back_urls: {
-        success: "http://localhost:5173/pagos/exito",
-        failure: "http://localhost:5173/pagos/fallo",
-        pending: "http://localhost:5173/pagos/pendiente",
+        success: `${BASE_URL}/#/pagos/exito`,
+        failure: `${BASE_URL}/#/pagos/fallo`,
+        pending: `${BASE_URL}/#/pagos/pendiente`,
       },
+      auto_return: "approved",
       external_reference: usuarioId.toString()
     });
 
-    // REGISTRO Y ACTIVACIÓN FORZADA
+    // Registramos el pago como pendiente
     try {
       const nuevoPago = new Pago({
         usuarioId: usuarioId.toString(),
@@ -36,17 +40,9 @@ export const crearPreferencia = async (req, res) => {
         mpPreferenceId: response.body.id,
       });
       await nuevoPago.save();
-
-      // ACTIVACIÓN DE BAJO NIVEL (Para evitar fallos de Mongoose)
-      await Usuario.collection.updateOne(
-        { _id: new mongoose.Types.ObjectId(usuarioId.toString()) },
-        { $set: { estado: 1 } }
-      );
-      
-      console.log(`✅ USUARIO ${usuarioId} ACTIVADO EXITOSAMENTE`);
-
+      console.log(`⏳ Pago pendiente registrado para usuario ${usuarioId}`);
     } catch (dbError) {
-      console.error("⚠️ Error DB:", dbError.message);
+      console.error("⚠️ Error DB al registrar pago:", dbError.message);
     }
 
     res.json({
@@ -90,12 +86,19 @@ export const verificarPago = async (req, res) => {
   try {
     configureMercadoPago();
     const payment = await mercadopago.payment.findById(payment_id);
+    
     if (payment.body.status === "approved") {
       const pago = await Pago.findOneAndUpdate(
         { mpPreferenceId: payment.body.preference_id },
-        { estado: "aprobado", mpPaymentId: payment_id },
+        { 
+          estado: "aprobado", 
+          mpPaymentId: payment_id,
+          metodoPago: payment.body.payment_method_id,
+          fecha: payment.body.date_approved
+        },
         { new: true }
       );
+      
       let usuarioActualizado = null;
       if (pago) {
         await Usuario.collection.updateOne(
@@ -104,10 +107,23 @@ export const verificarPago = async (req, res) => {
         );
         usuarioActualizado = await Usuario.findById(pago.usuarioId);
       }
-      return res.json({ success: true, status: "approved", usuario: usuarioActualizado });
+      
+      return res.json({ 
+        success: true, 
+        status: "approved", 
+        usuario: usuarioActualizado,
+        detalles: {
+          monto: payment.body.transaction_amount,
+          id: payment_id,
+          fecha: payment.body.date_approved,
+          metodo: payment.body.payment_method_id,
+          descripcion: payment.body.description
+        }
+      });
     }
     res.json({ success: false, status: payment.body.status });
   } catch (error) {
+    console.error("Error en verificarPago:", error);
     res.status(500).json({ error: "Error Verificación" });
   }
 };
