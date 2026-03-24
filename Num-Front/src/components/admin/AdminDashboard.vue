@@ -1,56 +1,48 @@
 <template>
   <div class="q-animate-fade-in">
-    <!-- Fila de KPIs -->
+    <!-- FILA DE ESTADO GENERAL Y MÉTRICAS -->
     <div class="row q-col-gutter-lg q-mb-xl">
-      <div class="col-12 col-sm-6 col-md-3">
-        <div class="kpi-card border-gold">
-          <div class="kpi-icon-bg bg-gold-opacity">
-            <q-icon name="payments" size="24px" color="gold" />
+      <div class="col-12 col-md-4">
+        <div class="kpi-card-professional border-emerald pulse-glow-emerald">
+          <div class="row items-center justify-between">
+            <div>
+              <div class="text-overline text-emerald opacity-70">Estado del Sistema</div>
+              <div class="text-h4 text-white text-bold">OPERATIVO</div>
+            </div>
+            <div class="status-indicator-wrap large">
+              <div class="pulse-dot active"></div>
+            </div>
           </div>
-          <div class="kpi-content">
-            <div class="text-overline text-grey-5">Ingresos Totales</div>
-            <div class="text-h4 text-bold text-white font-mono">{{ formatoPesos(stats.ingresosTotales) }}</div>
-          </div>
-          <div class="kpi-badge text-gold">+12% vs mes anterior</div>
+          <div class="text-caption text-grey-5 q-mt-md">Sincronización Astral en Tiempo Real</div>
         </div>
       </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
-        <div class="kpi-card border-emerald">
-          <div class="kpi-icon-bg bg-emerald-opacity">
-            <q-icon name="group_add" size="24px" class="text-emerald" />
+      <div class="col-12 col-md-8">
+        <div class="row q-col-gutter-lg">
+          <div class="col-6 col-sm-3">
+            <div class="stat-box">
+              <div class="text-h5 text-white text-bold font-mono">{{ formatoPesos(stats.ingresosTotales) }}</div>
+              <div class="text-mini text-gold">Ingresos</div>
+            </div>
           </div>
-          <div class="kpi-content">
-            <div class="text-overline text-grey-5">Usuarios Activos</div>
-            <div class="text-h4 text-bold text-white">{{ stats.usuariosActivos }} / {{ stats.totalUsuarios }}</div>
+          <div class="col-6 col-sm-3">
+            <div class="stat-box">
+              <div class="text-h5 text-white text-bold">{{ stats.usuariosActivos }}</div>
+              <div class="text-mini text-emerald">Activos</div>
+            </div>
           </div>
-          <div class="kpi-badge text-emerald">Población Alineada</div>
-        </div>
-      </div>
-
-      <div class="col-12 col-sm-6 col-md-3">
-        <div class="kpi-card border-primary">
-          <div class="kpi-icon-bg bg-primary-opacity">
-            <q-icon name="auto_awesome" size="24px" color="primary" />
+          <div class="col-6 col-sm-3">
+            <div class="stat-box">
+              <div class="text-h5 text-white text-bold">{{ stats.totalLecturas }}</div>
+              <div class="text-mini text-primary">Lecturas</div>
+            </div>
           </div>
-          <div class="kpi-content">
-            <div class="text-overline text-grey-5">Lecturas Hoy</div>
-            <div class="text-h4 text-bold text-white">{{ stats.totalLecturas }}</div>
+          <div class="col-6 col-sm-3">
+            <div class="stat-box">
+              <div class="text-h5 text-white text-bold">+{{ stats.nuevosUsuarios }}</div>
+              <div class="text-mini text-grey-4">Nuevos</div>
+            </div>
           </div>
-          <div class="kpi-badge text-primary">{{ stats.lecturasPrincipales }} Principales</div>
-        </div>
-      </div>
-
-      <div class="col-12 col-sm-6 col-md-3">
-        <div class="kpi-card border-silver">
-          <div class="kpi-icon-bg bg-silver-opacity">
-            <q-icon name="trending_up" size="24px" color="white" />
-          </div>
-          <div class="kpi-content">
-            <div class="text-overline text-grey-5">Crecimiento 30d</div>
-            <div class="text-h4 text-bold text-white">{{ stats.nuevosUsuarios }} Nuevos</div>
-          </div>
-          <div class="kpi-badge text-grey-4">Expansión Astral</div>
         </div>
       </div>
     </div>
@@ -58,31 +50,41 @@
     <div class="row q-col-gutter-lg">
       <!-- Actividad Reciente (Usuarios) -->
       <div class="col-12 col-md-7">
-        <div class="glass-panel q-pa-lg full-height overflow-hidden border-glass">
-          <div class="row items-center justify-between q-mb-lg">
+        <div class="glass-panel-dark q-pa-xl full-height border-glass overflow-hidden shadow-24">
+          <div class="row items-center justify-between q-mb-xl">
             <div>
-              <h3 class="text-h6 text-weight-bold text-white no-margin">Almas Recientemente Alineadas</h3>
-              <p class="text-caption text-grey-5 no-margin">Últimos usuarios registrados en el portal</p>
+              <h3 class="text-h5 text-weight-bold text-white no-margin">Auditoría de Almas</h3>
+              <p class="text-caption text-grey-5 no-margin">Últimas sincronizaciones en el portal</p>
             </div>
-            <q-btn flat dense color="primary" label="Ver todos" no-caps @click="$emit('setView', 'usuarios')" />
+            <q-btn unelevated color="primary" label="Gestionar Usuarios" icon-right="chevron_right" no-caps @click="$emit('setView', 'usuarios')" class="rounded-lg" />
           </div>
 
-          <q-markup-table flat class="bg-transparent text-white cosmic-mini-table">
+          <q-markup-table flat class="bg-transparent text-white table-professional-mini">
             <thead>
-              <tr class="text-grey-6 text-uppercase text-caption letter-spacing-1">
-                <th class="text-left">Usuario</th>
-                <th class="text-left">Email</th>
-                <th class="text-right">Estado</th>
+              <tr class="text-primary text-bold text-uppercase text-caption letter-spacing-2">
+                <th class="text-left">Identidad</th>
+                <th class="text-left">Canal</th>
+                <th class="text-right">Alineación</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="user in ultimosUsuarios" :key="user._id" class="hover-row">
-                <td class="text-weight-bold">{{ user.nombre }}</td>
-                <td class="text-grey-5">{{ user.email }}</td>
+              <tr v-for="user in ultimosUsuarios" :key="user._id" class="row-professional-mini">
+                <td>
+                  <div class="row items-center gap-sm">
+                    <q-avatar size="28px" color="primary-opacity" text-color="primary" class="text-bold">
+                      {{ user.nombre.charAt(0) }}
+                    </q-avatar>
+                    <span class="text-weight-bold">{{ user.nombre }}</span>
+                  </div>
+                </td>
+                <td class="text-grey-5 font-mono text-caption">{{ user.email }}</td>
                 <td class="text-right">
-                  <q-badge :color="user.estado === 1 ? 'emerald-9' : 'grey-9'" :class="user.estado === 1 ? 'text-emerald' : 'text-grey-5'" rounded class="q-px-sm border-status">
-                    {{ user.estado === 1 ? 'Activo' : 'Inactivo' }}
-                  </q-badge>
+                  <div class="row items-center justify-end gap-sm">
+                    <div class="pulse-dot-mini" :class="user.estado === 1 ? 'active' : 'inactive'"></div>
+                    <span :class="user.estado === 1 ? 'text-emerald' : 'text-red-4'" class="text-mini text-bold">
+                      {{ user.estado === 1 ? 'ACTIVE' : 'IDLE' }}
+                    </span>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -92,27 +94,27 @@
 
       <!-- Pagos Recientes -->
       <div class="col-12 col-md-5">
-        <div class="glass-panel q-pa-lg full-height border-glass">
-          <div class="row items-center justify-between q-mb-lg">
+        <div class="glass-panel-dark q-pa-xl full-height border-glass shadow-24">
+          <div class="row items-center justify-between q-mb-xl">
             <div>
-              <h3 class="text-h6 text-weight-bold text-white no-margin">Flujo de Abundancia</h3>
-              <p class="text-caption text-grey-5 no-margin">Últimas transacciones procesadas</p>
+              <h3 class="text-h5 text-weight-bold text-white no-margin">Flujo Financiero</h3>
+              <p class="text-caption text-grey-5 no-margin">Últimas transacciones</p>
             </div>
-            <q-btn flat dense color="gold" label="Ver pagos" no-caps @click="$emit('setView', 'pagos')" />
+            <q-btn unelevated color="gold" label="Tesorería" icon-right="account_balance_wallet" no-caps @click="$emit('setView', 'pagos')" class="rounded-lg text-black" />
           </div>
 
-          <div class="q-gutter-y-md">
-            <div v-for="pago in ultimosPagos" :key="pago._id" class="pago-mini-item flex items-center justify-between">
+          <div class="q-gutter-y-lg">
+            <div v-for="pago in ultimosPagos" :key="pago._id" class="transaction-card-mini flex items-center justify-between">
               <div class="row items-center gap-md">
-                <div class="pago-icon-mini bg-gold-opacity flex flex-center">
-                  <q-icon name="receipt" color="gold" size="xs" />
+                <div class="icon-wrap bg-gold-opacity">
+                  <q-icon name="receipt" color="gold" size="sm" />
                 </div>
                 <div>
-                  <div class="text-subtitle2 text-white">{{ adminStore.usuariosMap[pago.usuarioId] || 'Buscador' }}</div>
+                  <div class="text-subtitle1 text-white text-bold">{{ adminStore.usuariosMap[pago.usuarioId] || 'Buscador' }}</div>
                   <div class="text-caption text-grey-6">{{ converFecha(pago.fecha) }}</div>
                 </div>
               </div>
-              <div class="text-subtitle1 text-gold text-weight-bold font-mono">
+              <div class="text-h6 text-gold text-weight-bolder font-mono">
                 {{ formatoPesos(pago.monto) }}
               </div>
             </div>
@@ -131,101 +133,115 @@ import { formatoPesos, converFecha } from '../../utils/functions.js';
 const adminStore = useAdminStore();
 const stats = computed(() => adminStore.stats);
 
-const ultimosUsuarios = computed(() => adminStore.usuarios.slice(-5).reverse());
-const ultimosPagos = computed(() => adminStore.pagos.slice(-5).reverse());
+const ultimosUsuarios = computed(() => adminStore.usuarios.slice(-6).reverse());
+const ultimosPagos = computed(() => adminStore.pagos.slice(-6).reverse());
 
 defineEmits(['setView']);
 </script>
 
 <style scoped>
-.kpi-card {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  padding: 24px;
+.kpi-card-professional {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px;
+  backdrop-filter: blur(15px);
   position: relative;
   overflow: hidden;
+}
+
+.pulse-glow-emerald {
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.05);
+}
+
+.stat-box {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border-radius: 16px;
+  text-align: center;
   transition: all 0.3s ease;
 }
 
-.kpi-card:hover {
+.stat-box:hover {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(59, 130, 246, 0.2);
   transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.04);
 }
 
-.kpi-icon-bg {
-  width: 48px;
-  height: 48px;
+.glass-panel-dark {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+}
+
+/* Pulsing Dots */
+.status-indicator-wrap.large {
+  padding: 10px;
+}
+
+.pulse-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  position: relative;
+}
+.pulse-dot.active { background: #10b981; }
+.pulse-dot.inactive { background: #f43f5e; }
+
+.pulse-dot::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+  opacity: 0.6;
+}
+.pulse-dot.active::after { border: 6px solid #10b981; }
+.pulse-dot.inactive::after { border: 6px solid #f43f5e; }
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(3.5); opacity: 0; }
+}
+
+.pulse-dot-mini {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.pulse-dot-mini.active { background: #10b981; box-shadow: 0 0 10px #10b981; }
+.pulse-dot-mini.inactive { background: #f43f5e; box-shadow: 0 0 10px #f43f5e; }
+
+.table-professional-mini { background: transparent; }
+.table-professional-mini th { letter-spacing: 2px; opacity: 0.6; padding-bottom: 20px; }
+.row-professional-mini td { padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+
+.transaction-card-mini {
+  padding: 15px;
   border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  transition: all 0.2s ease;
+}
+.transaction-card-mini:hover {
+  background: rgba(212, 175, 55, 0.04);
+  transform: translateX(5px);
+}
+
+.icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
 }
 
-.kpi-content {
-  margin-bottom: 12px;
-}
-
-.kpi-badge {
-  font-size: 11px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Colores Tematizados */
 .bg-gold-opacity { background: rgba(212, 175, 55, 0.1); }
-.border-gold { border-color: rgba(212, 175, 55, 0.2); }
-.text-gold { color: #d4af37; }
+.primary-opacity { background: rgba(59, 130, 246, 0.1); }
 
-.bg-emerald-opacity { background: rgba(16, 185, 129, 0.1); }
-.border-emerald { border-color: rgba(16, 185, 129, 0.2); }
-.text-emerald { color: #10b981; }
-
-.bg-primary-opacity { background: rgba(0, 150, 255, 0.1); }
-.border-primary { border-color: rgba(0, 150, 255, 0.2); }
-
-.bg-silver-opacity { background: rgba(255, 255, 255, 0.05); }
-.border-silver { border-color: rgba(255, 255, 255, 0.1); }
-
-.cosmic-mini-table {
-  border-spacing: 0 8px;
-  border-collapse: separate;
-}
-
-.cosmic-mini-table td {
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-}
-
-.hover-row:hover td {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.pago-mini-item {
-  padding: 12px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  transition: all 0.2s ease;
-}
-
-.pago-mini-item:hover {
-  background: rgba(212, 175, 55, 0.03);
-  border-color: rgba(212, 175, 55, 0.1);
-}
-
-.pago-icon-mini {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-}
-
-.border-status {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.letter-spacing-1 { letter-spacing: 1px; }
+.text-mini { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+.border-emerald { border-left: 5px solid #10b981; }
+.letter-spacing-2 { letter-spacing: 2px; }
 </style>
