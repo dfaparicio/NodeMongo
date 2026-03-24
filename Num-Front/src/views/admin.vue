@@ -1,17 +1,19 @@
 <template>
-  <q-layout view="lHh Lpr lFf" class="dashboard-layout">
+  <q-layout view="lHh Lpr lFf" class="dashboard-layout cosmic-bg">
     <!-- LEFT SIDEBAR -->
     <q-drawer
       show-if-above
-      :width="260"
-      class="bg-sidebar no-border"
+      :width="280"
+      class="bg-sidebar-glass no-border"
     >
-      <div class="column full-height">
+      <div class="column full-height relative-position glass-panel no-border no-radius-left">
         <!-- Logo Area -->
-        <div class="q-px-md q-py-xl column items-center">
-          <div class="row items-center no-wrap cursor-pointer">
-            <div class="logo-text">NUMERO <span>LOGIA</span></div>
+        <div class="q-px-lg q-py-xl column items-center">
+          <div class="logo-wrapper q-mb-md">
+            <q-icon name="auto_awesome" color="gold" size="42px" class="animate-pulse-slow shadow-glow" />
           </div>
+          <div class="logo-text">NUMERIS <span>ADMIN</span></div>
+          <div class="text-caption text-gold opacity-50 tracking-widest text-uppercase" style="font-size: 8px; letter-spacing: 4px;">Portal del Arquitecto</div>
         </div>
 
         <!-- Navigation -->
@@ -19,47 +21,62 @@
           <q-list class="q-gutter-y-sm">
             <q-item 
               clickable v-ripple 
-              class="nav-item" 
+              class="nav-item-cosmic" 
+              :class="{ 'active-nav': currentView === 'dashboard' }"
+              @click="setView('dashboard')"
+            >
+              <q-item-section avatar>
+                <q-icon name="dashboard" size="22px" class="nav-icon" />
+              </q-item-section>
+              <q-item-section class="nav-label">Resumen Astral</q-item-section>
+            </q-item>
+
+            <q-item 
+              clickable v-ripple 
+              class="nav-item-cosmic" 
               :class="{ 'active-nav': currentView === 'usuarios' }"
               @click="setView('usuarios')"
             >
               <q-item-section avatar>
-                <q-icon name="group" size="24px" class="nav-icon" />
+                <q-icon name="group" size="22px" class="nav-icon" />
               </q-item-section>
-              <q-item-section class="nav-label">Usuarios</q-item-section>
-              <div v-if="currentView === 'usuarios'" class="active-indicator"></div>
+              <q-item-section class="nav-label">Almas (Usuarios)</q-item-section>
             </q-item>
 
             <q-item 
               clickable v-ripple 
-              class="nav-item" 
+              class="nav-item-cosmic" 
               :class="{ 'active-nav': currentView === 'pagos' }"
               @click="setView('pagos')"
             >
               <q-item-section avatar>
-                <q-icon name="payments" size="24px" class="nav-icon" />
+                <q-icon name="payments" size="22px" class="nav-icon" />
               </q-item-section>
-              <q-item-section class="nav-label">Pagos</q-item-section>
-              <div v-if="currentView === 'pagos'" class="active-indicator"></div>
+              <q-item-section class="nav-label">Abundancia (Pagos)</q-item-section>
             </q-item>
 
             <q-item 
               clickable v-ripple 
-              class="nav-item" 
+              class="nav-item-cosmic" 
               :class="{ 'active-nav': currentView === 'lecturas' }"
               @click="setView('lecturas')"
             >
               <q-item-section avatar>
-                <q-icon name="auto_awesome" size="24px" class="nav-icon" />
+                <q-icon name="history_edu" size="22px" class="nav-icon" />
               </q-item-section>
-              <q-item-section class="nav-label">Lecturas</q-item-section>
-              <div v-if="currentView === 'lecturas'" class="active-indicator"></div>
+              <q-item-section class="nav-label">Registros (Lecturas)</q-item-section>
             </q-item>
           </q-list>
         </div>
 
-        <!-- User Profile -->
+        <!-- System Info & Profile -->
         <div class="q-pa-md q-mt-auto">
+          <div class="system-status q-pa-sm q-mb-md text-center bg-black-20 rounded-lg border-glass">
+            <div class="row items-center justify-center gap-sm">
+              <div class="status-dot-active"></div>
+              <span class="text-caption text-grey-5 uppercase tracking-widest" style="font-size: 9px; letter-spacing: 2px;">Sistema Online</span>
+            </div>
+          </div>
           <AdminProfileMenu />
         </div>
       </div>
@@ -67,20 +84,31 @@
 
     <!-- PAGE CONTENT -->
     <q-page-container>
-      <q-page class="q-px-xl q-py-lg page-bg">
+      <q-page class="q-px-xl q-py-lg page-content-cosmic">
         
         <!-- HEADER DINÁMICO -->
-        <header class="row items-center justify-between q-mb-xl">
-          <div>
-            <h1 class="page-title text-uppercase no-margin tracking-tighter">La visión del arquitecto</h1>
-            <p class="page-subtitle text-uppercase q-mt-xs q-mb-none font-weight-bold op-40 tracking-widest">
-              {{ viewTitles[currentView] }} • SYSTEM V9.2
+        <header class="row items-end justify-between q-mb-xl">
+          <div class="q-animate-fade-in">
+            <h1 class="page-title-cosmic no-margin">{{ viewTitles[currentView] }}</h1>
+            <p class="page-subtitle-cosmic text-uppercase q-mt-xs q-mb-none opacity-50 tracking-widest">
+              {{ viewSubtitles[currentView] }} • V.2026.4
             </p>
+          </div>
+          <div class="row gap-md">
+            <q-btn flat round icon="refresh" color="primary" @click="refreshData" :loading="refreshing">
+              <q-tooltip>Sincronizar Cosmos</q-tooltip>
+            </q-btn>
+            <q-btn outline color="primary" label="Ir al Portal" icon="launch" to="/" no-caps class="rounded-lg tracking-widest" />
           </div>
         </header>
 
-        <!-- Dynamic Content -->
-        <component :is="activeComponent" />
+        <!-- Dynamic Content with Transition -->
+        <transition 
+          name="fade-slide" 
+          mode="out-in"
+        >
+          <component :is="activeComponent" @setView="setView" :key="currentView" />
+        </transition>
 
       </q-page>
     </q-page-container>
@@ -91,46 +119,89 @@
 import { ref, onMounted, computed } from 'vue';
 import { useQuasar } from 'quasar';
 import { useAdminStore } from '../store/admin.js';
-import { useAuthStore } from '../store/auth.js';
 
 // Import sub-views
+import AdminDashboard from '../components/admin/AdminDashboard.vue';
 import AdminUsers from '../components/admin/AdminUsers.vue';
 import AdminPayments from '../components/admin/AdminPayments.vue';
 import AdminReadings from '../components/admin/AdminReadings.vue';
-
 import AdminProfileMenu from '../components/admin/AdminProfileMenu.vue';
 
 const $q = useQuasar();
 const adminStore = useAdminStore();
-const authStore = useAuthStore();
-const currentView = ref('lecturas');
+const currentView = ref('dashboard');
+const refreshing = ref(false);
 
-// Carga inicial proactiva de todos los datos necesarios para el dashboard
+// Carga inicial proactiva
 adminStore.fetchAll();
 
 const viewTitles = {
-  usuarios: 'Central de Usuarios',
-  pagos: 'Control de Facturación',
-  lecturas: 'Monitor de Actividad'
+  dashboard: 'Estado del Cosmos',
+  usuarios: 'Buscadores de Luz',
+  pagos: 'Registros de Abundancia',
+  lecturas: 'Crónicas Celestiales'
+};
+
+const viewSubtitles = {
+  dashboard: 'Resumen ejecutivo de la plataforma',
+  usuarios: 'Gestión integral de la comunidad',
+  pagos: 'Control financiero y facturación',
+  lecturas: 'Auditoría de mensajes generados'
 };
 
 const activeComponent = computed(() => {
   switch (currentView.value) {
+    case 'dashboard': return AdminDashboard;
     case 'usuarios': return AdminUsers;
     case 'pagos': return AdminPayments;
     case 'lecturas': return AdminReadings;
   }
 });
 
-onMounted(() => {
-  $q.dark.set(true);
-});
-
 const setView = (view) => {
   currentView.value = view;
 };
+
+const refreshData = async () => {
+  refreshing.value = true;
+  await adminStore.fetchAll();
+  refreshing.value = false;
+};
+
+onMounted(() => {
+  $q.dark.set(true);
+});
 </script>
 
 <style scoped>
 @import url('../styles/admin.css');
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.bg-sidebar-glass {
+  background: rgba(11, 12, 14, 0.5) !important;
+  backdrop-filter: blur(20px);
+}
+
+.no-radius-left {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.logo-wrapper {
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+}
 </style>

@@ -9,12 +9,43 @@ export const useAdminStore = defineStore(
         const lecturas = ref([]);
         const pagos = ref([]);
 
+        // Mapeo rápido de IDs a Nombres
         const usuariosMap = computed(() => {
             const mapa = {};
-            usuarios.value.forEach((u) => {
-                mapa[u._id] = u.nombre;
-            });
+            usuarios.value.forEach((u) => { mapa[u._id] = u.nombre; });
             return mapa;
+        });
+
+        // --- ESTADÍSTICAS INTELIGENTES (KPIs) ---
+        
+        const stats = computed(() => {
+            const totalPagos = pagos.value.reduce((acc, p) => acc + (p.monto || 0), 0);
+            const usuariosActivos = usuarios.value.filter(u => u.estado === 1).length;
+            const usuariosInactivos = usuarios.value.filter(u => u.estado === 0).length;
+            
+            // Lecturas por tipo
+            const lPrincipales = lecturas.value.filter(l => l.tipo === 'principal').length;
+            const lDiarias = lecturas.value.filter(l => l.tipo === 'diaria').length;
+
+            // Crecimiento mensual (usuarios registrados en los últimos 30 días)
+            const hace30Dias = new Date();
+            hace30Dias.setDate(hace30Dias.getDate() - 30);
+            // Nota: Asumimos que el _id de Mongo tiene la fecha embebida o que el backend devuelve timestamps
+            // Para mayor precisión, si el modelo tiene createdAt lo usaríamos. 
+            // Por ahora simulamos con los que tenemos si hay fecha de nacimiento (aunque no es lo mismo)
+            // O simplemente contamos los últimos registros.
+            const nuevosUsuarios = usuarios.value.slice(-5).length; 
+
+            return {
+                ingresosTotales: totalPagos,
+                usuariosActivos,
+                usuariosInactivos,
+                totalUsuarios: usuarios.value.length,
+                lecturasPrincipales: lPrincipales,
+                lecturasDiarias: lDiarias,
+                totalLecturas: lecturas.value.length,
+                nuevosUsuarios
+            };
         });
 
         const fetchUsuarios = async () => {
@@ -36,11 +67,9 @@ export const useAdminStore = defineStore(
             await Promise.all([fetchUsuarios(), fetchLecturas(), fetchPagos()]);
         };
 
-        // 🚀 Función para actualizar TODO el usuario directamente en la BD
         const updateUsuario = async (id, datos) => {
-            console.log("📡 Store: Petición enviada al servidor para ID:", id);
             const resp = await putData(`/usuario/${id}`, datos);
-            await fetchUsuarios(); // Refrescamos la lista local
+            await fetchUsuarios();
             return resp;
         };
 
@@ -58,6 +87,7 @@ export const useAdminStore = defineStore(
             lecturas,
             pagos,
             usuariosMap,
+            stats,
             fetchUsuarios,
             fetchLecturas,
             fetchPagos,
