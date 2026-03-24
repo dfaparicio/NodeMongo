@@ -68,84 +68,310 @@ export const obtenerEstadoLectura = (lectura, fechaSeleccionada, hoy) => {
   return 'no_generada_hoy';
 };
 
-// --- DISEÑO DE FACTURA PREMIUM ---
+// --- DISEÑO DE FACTURA ELECTRÓNICA PROFESIONAL (DEVSCENTER) ---
 export const generarFactura = (pago, nombreUsuario = 'Buscador') => {
   const fechaFactura = converFecha(pago.fecha);
   const montoFormateado = formatoPesos(pago.monto);
   const idFactura = pago.mpPaymentId || pago._id?.slice(-8).toUpperCase() || 'SYS-' + Math.random().toString(36).substr(2, 5).toUpperCase();
+  const cufe = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15); // Simulación de CUFE
 
   const html = `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="UTF-8">
+      <title>Factura Electrónica - ${idFactura}</title>
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap');
-        body { background-color: #0b0c0e; color: #ffffff; font-family: 'Montserrat', sans-serif; margin: 0; padding: 40px; -webkit-print-color-adjust: exact; }
-        .receipt-container { max-width: 800px; margin: auto; background: #16181d; border: 1px solid #d4af37; padding: 60px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-family: 'Cinzel', serif; font-size: 150px; color: rgba(212, 175, 55, 0.02); white-space: nowrap; pointer-events: none; }
-        .header { text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 30px; margin-bottom: 40px; }
-        h1 { font-family: 'Cinzel', serif; color: #d4af37; letter-spacing: 10px; margin: 0; font-size: 36px; }
-        .subtitle { font-size: 11px; letter-spacing: 5px; color: #888; margin-top: 10px; text-transform: uppercase; }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 50px; }
-        .info-block h4 { color: #d4af37; text-transform: uppercase; font-size: 12px; letter-spacing: 2px; margin-bottom: 15px; border-bottom: 1px solid rgba(212, 175, 55, 0.1); padding-bottom: 5px; }
-        .info-block p { margin: 8px 0; font-size: 14px; color: #ccc; }
-        .details-table { width: 100%; border-collapse: collapse; margin-bottom: 50px; }
-        .details-table th { text-align: left; color: #d4af37; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; padding: 15px; border-bottom: 2px solid #d4af37; }
-        .details-table td { padding: 20px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 15px; }
-        .total-section { text-align: right; }
-        .total-box { display: inline-block; background: rgba(212, 175, 55, 0.05); padding: 25px 50px; border-radius: 4px; border: 1px solid rgba(212, 175, 55, 0.2); }
-        .total-label { font-size: 12px; color: #888; text-transform: uppercase; display: block; margin-bottom: 10px; }
-        .total-amount { font-family: 'Cinzel', serif; font-size: 32px; color: #d4af37; font-weight: bold; }
-        .footer { margin-top: 80px; text-align: center; font-size: 11px; color: #555; letter-spacing: 1px; line-height: 2; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 30px; }
-        @media print { body { background: white !important; color: black !important; padding: 0; } .receipt-container { margin: 0; box-shadow: none; border: 1px solid #ddd; width: 100%; max-width: 100%; background: white !important; color: black !important; } .total-box { border: 1px solid #ddd; background: #f9f9f9 !important; } h1, .total-amount, .info-block h4 { color: #000 !important; } }
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&family=Space+Mono&display=swap');
+        
+        * { box-sizing: border-box; }
+        body { 
+          background-color: #0b0c0e; 
+          color: #ffffff; 
+          font-family: 'Montserrat', sans-serif; 
+          margin: 0; 
+          padding: 20px; 
+          -webkit-print-color-adjust: exact; 
+        }
+        
+        .invoice-card {
+          max-width: 800px;
+          margin: auto;
+          background: #1a1c20;
+          border-radius: 4px;
+          border: 1px solid #2d2f36;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+        }
+
+        /* Decoración Lateral */
+        .invoice-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 5px;
+          height: 100%;
+          background: linear-gradient(to bottom, #d4af37, #f4af25, #d4af37);
+        }
+
+        .header-top {
+          padding: 40px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .company-info h1 {
+          font-family: 'Cinzel', serif;
+          color: #d4af37;
+          margin: 0;
+          font-size: 24px;
+          letter-spacing: 5px;
+        }
+
+        .company-info p {
+          color: #6b6f76;
+          font-size: 11px;
+          margin: 5px 0;
+          letter-spacing: 1px;
+        }
+
+        .invoice-meta {
+          text-align: right;
+        }
+
+        .invoice-meta h2 {
+          font-family: 'Space Mono', monospace;
+          color: #ffffff;
+          margin: 0;
+          font-size: 18px;
+          letter-spacing: -1px;
+        }
+
+        .invoice-meta span {
+          color: #d4af37;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+        }
+
+        .billing-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          padding: 40px;
+          gap: 40px;
+          background: rgba(255,255,255,0.02);
+        }
+
+        .bill-to h3, .payment-details h3 {
+          font-size: 10px;
+          color: #d4af37;
+          text-transform: uppercase;
+          letter-spacing: 3px;
+          margin-bottom: 15px;
+          border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+          padding-bottom: 5px;
+          display: inline-block;
+        }
+
+        .bill-to p, .payment-details p {
+          margin: 5px 0;
+          font-size: 14px;
+          color: #b0b3b8;
+        }
+
+        .table-section {
+          padding: 0 40px;
+          margin-bottom: 40px;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+
+        th {
+          text-align: left;
+          font-size: 11px;
+          color: #6b6f76;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          padding: 15px 0;
+          border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        td {
+          padding: 20px 0;
+          font-size: 14px;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .desc-col { color: #ffffff; font-weight: 500; }
+        .price-col { text-align: right; font-family: 'Space Mono', monospace; color: #d4af37; font-size: 16px; }
+
+        .summary-section {
+          padding: 0 40px 40px 40px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+        }
+
+        .qr-placeholder {
+          background: #ffffff;
+          padding: 10px;
+          border-radius: 4px;
+          width: 120px;
+          height: 120px;
+        }
+
+        .totals-box {
+          width: 250px;
+        }
+
+        .total-row {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px 0;
+        }
+
+        .total-row.grand-total {
+          border-top: 2px solid #d4af37;
+          margin-top: 10px;
+          padding-top: 15px;
+        }
+
+        .total-row.grand-total span:last-child {
+          font-size: 24px;
+          color: #d4af37;
+          font-weight: bold;
+          font-family: 'Cinzel', serif;
+        }
+
+        .legal-footer {
+          padding: 30px 40px;
+          background: #121418;
+          border-top: 1px solid #2d2f36;
+        }
+
+        .legal-footer p {
+          font-size: 9px;
+          color: #4a4d52;
+          line-height: 1.6;
+          margin: 0;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .cufe-box {
+          font-family: 'Space Mono', monospace;
+          font-size: 8px;
+          color: #333;
+          background: #000;
+          padding: 5px;
+          margin-top: 10px;
+          word-break: break-all;
+          border-radius: 2px;
+        }
+
+        @media print {
+          body { padding: 0; background: #0b0c0e !important; }
+          .invoice-card { box-shadow: none; border: none; width: 100%; max-width: 100%; }
+        }
       </style>
     </head>
     <body>
-      <div class="receipt-container">
-        <div class="watermark">NUMERIS</div>
-        <div class="header">
-          <h1>NUMERIS</h1>
-          <div class="subtitle">Recibo de Activación Energética</div>
-        </div>
-        <div class="info-grid">
-          <div class="info-block">
-            <h4>Buscador</h4>
-            <p><strong>Nombre:</strong> ${nombreUsuario}</p>
-            <p><strong>Estado:</strong> Alineado con el Cosmos</p>
+      <div class="invoice-card">
+        <div class="header-top">
+          <div class="company-info">
+            <h1>NUMERIS</h1>
+            <p>DevsCenter S.A.S - NIT: 901.452.128-5</p>
+            <p>Cra. 43A #1-50, Medellín, Colombia</p>
+            <p>soporte@devscenter.online | +57 300 000 0000</p>
           </div>
-          <div class="info-block" style="text-align: right;">
-            <h4>Detalles de Transacción</h4>
-            <p><strong>ID Pago:</strong> ${idFactura}</p>
-            <p><strong>Fecha:</strong> ${fechaFactura}</p>
+          <div class="invoice-meta">
+            <span>Factura Electrónica de Venta</span>
+            <h2>N° ${idFactura}</h2>
+            <p style="font-size: 11px; color: #6b6f76; margin-top: 5px;">Generada: ${fechaFactura}</p>
           </div>
         </div>
-        <table class="details-table">
-          <thead>
-            <tr>
-              <th>Servicio Astral</th>
-              <th style="text-align: right;">Inversión</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>${pago.descripcion || 'Acceso Premium Numeris'}</td>
-              <td style="text-align: right; font-weight: 600; color: #d4af37;">${montoFormateado}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="total-section">
-          <div class="total-box">
-            <span class="total-label">Total Acreditado</span>
-            <span class="total-amount">${montoFormateado}</span>
+
+        <div class="billing-grid">
+          <div class="bill-to">
+            <h3>Adquiriente</h3>
+            <p><strong>${nombreUsuario}</strong></p>
+            <p>Usuario del Portal Numeris</p>
+            <p>Estado: Alineación Premium Activa</p>
+          </div>
+          <div class="payment-details">
+            <h3>Información de Pago</h3>
+            <p>Método: Mercado Pago Online</p>
+            <p>Transacción: ${pago.mpPaymentId || 'DEVS-'+idFactura}</p>
+            <p>Moneda: COP - Peso Colombiano</p>
           </div>
         </div>
-        <div class="footer">
-          <p>Este comprobante certifica tu acceso al Portal de Numerología Astral.<br>
-          La energía fluye donde la intención se pone.<br>
-          © 2026 Numeris • Conexión Universal</p>
+
+        <div class="table-section">
+          <table>
+            <thead>
+              <tr>
+                <th>Descripción del Servicio Astral</th>
+                <th style="text-align: right;">Total Item</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="desc-col">
+                  ${pago.descripcion || 'Sincronización Astral Premium - Acceso Ilimitado'}
+                  <br><span style="font-size: 10px; color: #6b6f76; font-weight: normal;">Suscripción activada por ciclo mensual.</span>
+                </td>
+                <td class="price-col">${montoFormateado}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="summary-section">
+          <div class="qr-block" style="text-align: center;">
+            <div class="qr-placeholder">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://numerologia-astral.devscenter.online/factura/${idFactura}&bgcolor=ffffff" alt="QR Factura" width="100" height="100">
+            </div>
+            <p style="font-size: 8px; color: #6b6f76; margin-top: 8px; text-transform: uppercase;">Validación DIAN Digital</p>
+          </div>
+          
+          <div class="totals-box">
+            <div class="total-row">
+              <span style="color: #6b6f76; font-size: 12px;">Subtotal</span>
+              <span style="color: #ffffff; font-family: 'Space Mono';">${montoFormateado}</span>
+            </div>
+            <div class="total-row">
+              <span style="color: #6b6f76; font-size: 12px;">IVA (0%)</span>
+              <span style="color: #ffffff; font-family: 'Space Mono';">$0</span>
+            </div>
+            <div class="total-row grand-total">
+              <span>TOTAL</span>
+              <span>${montoFormateado}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="legal-footer">
+          <p>Esta es una representación gráfica de una factura electrónica de venta. DevsCenter S.A.S. no se hace responsable por desalineaciones cósmicas externas. La firma digital de este documento garantiza su integridad y origen según el decreto 2242 de 2015.</p>
+          <div class="cufe-box">
+            CUFE: ${cufe.toUpperCase()}
+          </div>
+          <p style="text-align: center; margin-top: 15px; color: #2d2f36; font-weight: bold;">
+            GRACIAS POR CONFIAR EN TU DESTINO • DEVSCENTER S.A.S
+          </p>
         </div>
       </div>
+      <script>
+        window.onload = function() {
+          setTimeout(function() { window.print(); }, 1000);
+        };
+      </script>
     </body>
     </html>
   `;
@@ -153,7 +379,6 @@ export const generarFactura = (pago, nombreUsuario = 'Buscador') => {
   const win = window.open('', '_blank');
   win.document.write(html);
   win.document.close();
-  setTimeout(() => { win.print(); }, 800);
 };
 
 // --- DISEÑO DE LECTURA PRINCIPAL PROFESIONAL (PDF) ---
