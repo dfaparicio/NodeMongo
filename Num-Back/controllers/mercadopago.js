@@ -139,8 +139,6 @@ const procesarResultadoPago = async (paymentData) => {
   return { success: true, status, pago: nuevoPago };
 };
 
-import Lectura from "../models/lecturas.js";
-
 // VERIFICACIÓN (Llamada por el frontend al volver de Mercado Pago)
 export const verificarPago = async (req, res) => {
   const { payment_id } = req.query;
