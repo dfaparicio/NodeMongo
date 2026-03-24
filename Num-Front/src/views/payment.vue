@@ -134,41 +134,13 @@ onMounted(() => {
 
 onUnmounted(() => { if (pollingInterval) clearInterval(pollingInterval); });
 
-const iniciarSondeo = (preferenceId) => {
-  if (pollingInterval) clearInterval(pollingInterval);
-  pollingInterval = setInterval(async () => {
-    try {
-      const res = await consultarEstadoPago(preferenceId);
-      if (res.success && res.estado === 'aprobado') {
-        clearInterval(pollingInterval);
-        pagoIniciado.value = false;
-        showNotify.success('Frecuencia Alineada', '¡Transmisión completada con éxito! ✨');
-        router.push({ path: '/pagos/exito', query: { payment_id: res.pagoId, status: 'approved' } });
-      } 
-      else if (res.success && res.estado === 'rechazado') {
-        clearInterval(pollingInterval);
-        pagoIniciado.value = false;
-        showNotify.error('Transmisión Fallida', 'Los astros no pudieron completar la transacción. Intenta de nuevo.');
-      }
-    } catch (e) { console.error("Sondeo error:", e); }
-  }, 3000); 
-};
-
 const procesarPago = async () => {
   loading.value = true;
   try {
     const response = await crearPreferenciaPago(monto.value, tituloPlan.value);
     if (response.success && response.id) {
-      const checkoutUrl = response.init_point;
-      
-      // 1. Abrir Mercado Pago en una pestaña nueva
-      window.open(checkoutUrl, '_blank');
-      
-      // 2. Activar overlay de espera en la pestaña actual
-      pagoIniciado.value = true;
-      
-      // 3. Iniciar el "radar" (sondeo) para detectar cuando pague en la otra pestaña
-      iniciarSondeo(response.id);
+      // Redirigir directamente en la misma pestaña
+      window.location.href = response.init_point;
     }
   } catch (error) {
     showNotify.error('Algo salió mal', 'No se pudo conectar con el portal de pago.');
