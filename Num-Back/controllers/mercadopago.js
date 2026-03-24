@@ -122,8 +122,26 @@ const procesarResultadoPago = async (paymentData) => {
 
     console.log(`🎉 Usuario ${usuarioId} activado por ${diasAAgregar} días.`);
     
-    // Generar lectura diaria inmediata
+    // --- AUTOMATIZACIÓN DE ENVÍOS POST-PAGO ---
+    const usuario = await Usuario.findById(usuarioId);
+    
+    // 1. Enviar Factura Profesional
+    enviarFacturaCorreo(usuario.email, usuario.nombre, infoPago)
+      .catch(e => console.error("Error envío factura automática:", e.message));
+
+    // 2. Generar y Enviar Lectura Principal si no existe
     generarLecturaDiariaUsuario(usuarioId).catch(e => console.error("Error lectura post-pago:", e.message));
+    
+    // Buscar la lectura principal para enviarla por correo
+    const { obtenerLecturaPrincipal } = await import("../models/lecturas.js");
+    const lecturaP = await Lectura.findOne({ usuarioId, tipo: "principal" });
+    if (lecturaP) {
+      const { enviarLecturaPrincipalCorreo } = await import("../helpers/mailer.js");
+      enviarLecturaPrincipalCorreo(usuario.email, usuario.nombre, {
+        ...lecturaP.toObject(),
+        contenido: typeof lecturaP.contenido === 'string' ? JSON.parse(lecturaP.contenido) : lecturaP.contenido
+      }).catch(e => console.error("Error envío lectura principal post-pago:", e.message));
+    }
   }
 
   return { success: true, status, pago: nuevoPago };

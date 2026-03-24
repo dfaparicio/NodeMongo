@@ -161,8 +161,8 @@ const procesarPago = async () => {
     if (response.success && response.id) {
       pagoIniciado.value = true;
       const checkoutUrl = response.init_point;
-      window.open(checkoutUrl, '_blank');
-      iniciarSondeo(response.id);
+      // Redirigir en la misma pestaña para una experiencia más limpia
+      window.location.href = checkoutUrl;
     }
   } catch (error) {
     showNotify.error('Algo salió mal', 'No se pudo contactar con el Oráculo de Pago.');
