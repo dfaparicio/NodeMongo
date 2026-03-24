@@ -161,13 +161,14 @@ const procesarPago = async () => {
     if (response.success && response.id) {
       const checkoutUrl = response.init_point;
       
-      // Activar overlay de transición
+      // 1. Abrir Mercado Pago en una pestaña nueva
+      window.open(checkoutUrl, '_blank');
+      
+      // 2. Activar overlay de espera en la pestaña actual
       pagoIniciado.value = true;
       
-      // Esperar un momento para que el usuario vea el mensaje de "Transmitiendo Frecuencia"
-      setTimeout(() => {
-        window.location.href = checkoutUrl;
-      }, 1500);
+      // 3. Iniciar el "radar" (sondeo) para detectar cuando pague en la otra pestaña
+      iniciarSondeo(response.id);
     }
   } catch (error) {
     showNotify.error('Algo salió mal', 'No se pudo conectar con el portal de pago.');
