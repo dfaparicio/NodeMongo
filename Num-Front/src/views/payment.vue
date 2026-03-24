@@ -159,14 +159,21 @@ const procesarPago = async () => {
   try {
     const response = await crearPreferenciaPago(monto.value, tituloPlan.value);
     if (response.success && response.id) {
-      pagoIniciado.value = true;
       const checkoutUrl = response.init_point;
-      // Redirigir en la misma pestaña para una experiencia más limpia
-      window.location.href = checkoutUrl;
+      
+      // Activar overlay de transición
+      pagoIniciado.value = true;
+      
+      // Esperar un momento para que el usuario vea el mensaje de "Transmitiendo Frecuencia"
+      setTimeout(() => {
+        window.location.href = checkoutUrl;
+      }, 1500);
     }
   } catch (error) {
-    showNotify.error('Algo salió mal', 'No se pudo contactar con el Oráculo de Pago.');
-  } finally { loading.value = false; }
+    showNotify.error('Algo salió mal', 'No se pudo conectar con el portal de pago.');
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 

@@ -1,7 +1,9 @@
 import { preference, payment } from "../config/mercadopago.js";
 import Pago from "../models/pagos.js";
 import Usuario from "../models/usuario.js";
+import Lectura from "../models/lecturas.js";
 import { generarLecturaDiariaUsuario } from "./lecturas.js";
+import { enviarFacturaCorreo, enviarLecturaPrincipalCorreo } from "../helpers/mailer.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -15,7 +17,6 @@ export const crearPreferencia = async (req, res) => {
   const origin = req.get('origin');
   let BASE_URL = process.env.URL_FRONT || origin || "http://localhost:5173";
   
-  // Limpiar barras finales para evitar // en la URL
   BASE_URL = BASE_URL.replace(/\/$/, "");
   const isLocal = BASE_URL.includes("localhost");
 
@@ -45,7 +46,6 @@ export const crearPreferencia = async (req, res) => {
 
     const response = await preference.create({ body });
 
-    // NO SE CREA NADA EN LA DB AQUÍ. Mantenemos la limpieza.
     res.json({
       success: true,
       id: response.id,
@@ -60,7 +60,7 @@ export const crearPreferencia = async (req, res) => {
   }
 };
 
-// --- FUNCIÓN HELPER MAESTRA: SOLO REGISTRA SI HAY DATOS REALES ---
+// --- FUNCIÓN HELPER MAESTRA ---
 const procesarResultadoPago = async (paymentData) => {
   const status = paymentData.status;
   const paymentId = paymentData.id.toString();
@@ -70,14 +70,10 @@ const procesarResultadoPago = async (paymentData) => {
 
   console.log(`📊 [MP] Verificando Pago Real: ID=${paymentId}, Estado=${status}`);
 
-  // 1. Evitar duplicados (Si ya lo registramos, no hacemos nada más)
   let pagoExistente = await Pago.findOne({ mpPaymentId: paymentId });
   if (pagoExistente) return { success: true, status, pago: pagoExistente };
 
-  // 2. Solo guardamos si es aprobado (o pendiente/proceso si quieres traza técnica)
-  // Pero solo ACTIVAMOS al usuario si es 'approved'
   if (status !== "approved" && status !== "in_process" && status !== "pending") {
-    console.log(`❌ Pago ${paymentId} rechazado o fallido. No se registra.`);
     return { success: false, status };
   }
 
@@ -110,7 +106,6 @@ const procesarResultadoPago = async (paymentData) => {
 
   const nuevoPago = await new Pago(infoPago).save();
 
-  // ACTIVACIÓN DE USUARIO (Solo si fue aprobado)
   if (status === "approved") {
     const hoy = new Date();
     const nuevaExpiracion = new Date(hoy);
@@ -120,27 +115,24 @@ const procesarResultadoPago = async (paymentData) => {
       $set: { estado: 1, fechaExpiracion: nuevaExpiracion } 
     });
 
-    console.log(`🎉 Usuario ${usuarioId} activado por ${diasAAgregar} días.`);
-    
-    // --- AUTOMATIZACIÓN DE ENVÍOS POST-PAGO ---
-    const usuario = await Usuario.findById(usuarioId);
-    
     // 1. Enviar Factura Profesional
-    enviarFacturaCorreo(usuario.email, usuario.nombre, infoPago)
-      .catch(e => console.error("Error envío factura automática:", e.message));
+    const usuario = await Usuario.findById(usuarioId);
+    if (usuario && usuario.email) {
+      enviarFacturaCorreo(usuario.email, usuario.nombre, infoPago)
+        .catch(e => console.error("Error factura:", e.message));
+    }
 
-    // 2. Generar y Enviar Lectura Principal si no existe
-    generarLecturaDiariaUsuario(usuarioId).catch(e => console.error("Error lectura post-pago:", e.message));
+    // 2. Generar Lectura Diaria
+    generarLecturaDiariaUsuario(usuarioId).catch(e => console.error("Error diaria:", e.message));
     
-    // Buscar la lectura principal para enviarla por correo
-    const { obtenerLecturaPrincipal } = await import("../models/lecturas.js");
+    // 3. Enviar Lectura Principal si existe
     const lecturaP = await Lectura.findOne({ usuarioId, tipo: "principal" });
-    if (lecturaP) {
-      const { enviarLecturaPrincipalCorreo } = await import("../helpers/mailer.js");
+    if (lecturaP && usuario && usuario.email) {
+      const contenidoParseado = typeof lecturaP.contenido === 'string' ? JSON.parse(lecturaP.contenido) : lecturaP.contenido;
       enviarLecturaPrincipalCorreo(usuario.email, usuario.nombre, {
         ...lecturaP.toObject(),
-        contenido: typeof lecturaP.contenido === 'string' ? JSON.parse(lecturaP.contenido) : lecturaP.contenido
-      }).catch(e => console.error("Error envío lectura principal post-pago:", e.message));
+        contenido: contenidoParseado
+      }).catch(e => console.error("Error lectura principal:", e.message));
     }
   }
 
