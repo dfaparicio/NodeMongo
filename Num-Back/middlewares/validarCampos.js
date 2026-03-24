@@ -4,8 +4,9 @@ export const validarCampos = (req, res, next) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        console.log("❌ Errores de validación:", JSON.stringify(errors.array(), null, 2));
-        return res.status(400).json(errors);
+        const errorMessages = errors.array().map(err => err.msg).join(', ');
+        console.log("❌ Errores de validación:", errorMessages);
+        return res.status(400).json({ error: errorMessages });
     }
     next();
 };

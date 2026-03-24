@@ -14,3 +14,10 @@ export const verificarPago = async (paymentId) => {
   );
   return response.data;
 };
+
+export const consultarEstadoPago = async (preferenceId) => {
+  const response = await axiosInstance.get(
+    `/mercadopago/check-status?preference_id=${preferenceId}`
+  );
+  return response.data;
+};

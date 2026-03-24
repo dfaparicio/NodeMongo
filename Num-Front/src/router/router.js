@@ -47,6 +47,15 @@ const router = createRouter({
   routes,
 });
 
+// --- DETECCIÓN DE REDIRECCIÓN DE MERCADO PAGO ---
+// Si llegamos de MP sin el '#' (porque MP rechaza el '#' con auto_return),
+// redirigimos a la versión con '#' para que Vue Router lo maneje.
+if (window.location.pathname.startsWith('/pagos/')) {
+  const path = window.location.pathname;
+  const search = window.location.search;
+  window.location.href = `${window.location.origin}/#${path}${search}`;
+}
+
 // --- GUARDIÁN DE NAVEGACIÓN (PORTERO) ---
 // Se ejecuta antes de entrar a cualquier ruta
 router.beforeEach((to, from, next) => {
@@ -82,7 +91,20 @@ router.beforeEach((to, from, next) => {
   
   // REGLA FINAL: Si pasó todas las pruebas anteriores
   else {
-    next(); // "Pase usted": Deja que la navegación continúe normalmente
+    // ACTUALIZAR TÍTULO DE LA PÁGINA DINÁMICAMENTE
+    const titulos = {
+      '/': 'Inicio',
+      '/login': 'Entrar al Portal',
+      '/registro': 'Nuevo Buscador',
+      '/perfil': 'Mi Perfil Cósmico',
+      '/lectura_principal': 'ADN Cósmico',
+      '/lectura_diaria': 'Guía del Día',
+      '/planes': 'Planes de Activación',
+      '/admin': 'Centro de Control'
+    };
+    document.title = `Numeris | ${titulos[to.path] || 'Astrología y Numerología'}`;
+    
+    next(); 
   }
 });
 

@@ -39,7 +39,6 @@
         :columns="columns"
         :rows="rows"
         :has-actions="false"
-        search-placeholder="Buscar transacción o usuario..."
       >
         <template #actions-header>
           <q-btn unelevated color="cyan" label="Refrescar" icon="refresh" class="rounded-pill no-caps" @click="fetchData" />

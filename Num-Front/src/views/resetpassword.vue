@@ -41,9 +41,9 @@
               <label class="block text-7 font-serif text-bold tracking-widest text-indigo-3 text-uppercase q-mb-md">
                 New Password
               </label>
-              <q-input v-model="password" dark placeholder="••••••••" class="input-monolith" 
+              <q-input v-model="password" dark class="input-monolith" 
                 :type="showPassword ? 'text' : 'password'" borderless
-                :rules="[val => !!val || 'La contraseña es obligatoria', val => val.length >= 6 || 'Mínimo 6 caracteres']">
+                :rules="[val => !!val || 'La contraseña es obligatoria', val => val.length >= 8 || 'Mínimo 8 caracteres']">
                 <template v-slot:prepend><q-icon name="lock" class="q-ml-md" /></template>
                 <template v-slot:append>
                   <q-icon :name="showPassword ? 'visibility' : 'visibility_off'" class="cursor-pointer" @click="showPassword = !showPassword" />
@@ -55,7 +55,7 @@
               <label class="block text-7 font-serif text-bold tracking-widest text-indigo-3 text-uppercase q-mb-md">
                 Confirm Password
               </label>
-              <q-input v-model="confirmPassword" dark placeholder="••••••••" class="input-monolith" 
+              <q-input v-model="confirmPassword" dark class="input-monolith" 
                 :type="showPassword ? 'text' : 'password'" borderless
                 :rules="[val => val === password || 'Las contraseñas no coinciden']">
                 <template v-slot:prepend><q-icon name="lock_reset" class="q-ml-md" /></template>
@@ -77,11 +77,10 @@
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { postData } from '../services/services.js';
-import { useNotifications } from '../composables/notify.js';
+import { showNotify } from '../utils/notify.js';
 
 const route = useRoute();
 const router = useRouter();
-const { success, error: notifyError } = useNotifications();
 
 const password = ref("");
 const confirmPassword = ref("");
@@ -91,7 +90,7 @@ const loading = ref(false);
 const handleReset = async () => {
   const token = route.params.token;
   if (!token) {
-    notifyError("Token Ausente", "No se encontró un rastro de validación cósmica.");
+    showNotify.error("Token Ausente", "No se encontró un rastro de validación cósmica.");
     return;
   }
 
@@ -99,12 +98,12 @@ const handleReset = async () => {
   try {
     await new Promise(resolve => setTimeout(resolve, 800));
     await postData(`auth/nuevo-password/${token}`, { password: password.value });
-    success("Cambio Exitoso", "Tu llave cósmica ha sido actualizada. Ya puedes ingresar.");
+    showNotify.success("Cambio Exitoso", "Tu llave cósmica ha sido actualizada. Ya puedes ingresar.");
     router.push('/login');
   } catch (error) {
     console.error(error);
     const msg = error.response?.data?.error || "El token ha expirado o es inválido.";
-    notifyError("Error de Frecuencia", msg);
+    showNotify.error("Error de Frecuencia", msg);
   } finally {
     loading.value = false;
   }
@@ -112,9 +111,5 @@ const handleReset = async () => {
 </script>
 
 <style scoped>
-@import url('../styles/recoverpassword.css');
-
-.restore-connection-page {
-  min-height: 100vh;
-}
+@import url('../styles/resetpassword.css');
 </style>

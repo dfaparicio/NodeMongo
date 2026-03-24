@@ -18,6 +18,14 @@ export const useAuthStore = defineStore(
       pagosUsuario.value = pagos;
     };
 
+    const logout = () => {
+      token.value = "";
+      user.value = null;
+      lecturasguardadas.value = [];
+      pagosUsuario.value = [];
+      localStorage.clear(); // Limpieza agresiva del almacenamiento local
+    };
+
     return {
       token,
       user,
@@ -26,6 +34,7 @@ export const useAuthStore = defineStore(
       setLectura,
       pagosUsuario,
       setPagosUsuario,
+      logout
     };
   },
 

@@ -72,8 +72,8 @@
             <label
               class="block text-caption text-uppercase tracking-widest text-primary text-weight-bold q-ml-xs q-mb-xs"
               style="font-size: 10px;">Nombre Completo (Tu Vibración Base)</label>
-            <q-input v-model="fullName" dark outlined color="primary" placeholder="Ej. Orión Celeste" type="text"
-              :rules="[val => !!val || 'Requerimos tu nombre para iniciar']">
+            <q-input v-model="fullName" dark outlined color="primary" type="text"
+              hide-bottom-space>
               <template v-slot:prepend>
                 <q-icon name="person" class="material-symbols-outlined" />
               </template>
@@ -84,8 +84,7 @@
             <label
               class="block text-caption text-uppercase tracking-widest text-primary text-weight-bold q-ml-xs q-mb-xs"
               style="font-size: 10px;">Fecha de Nacimiento (Tu Código Sagrado)</label>
-            <q-input v-model="dob" dark outlined color="primary" type="date"
-              :rules="[val => !!val || 'Esta fecha es la llave de tu mapa']">
+            <q-input v-model="dob" dark outlined color="primary" type="date" hide-bottom-space>
               <template v-slot:prepend>
                 <q-icon name="auto_fix_high" class="material-symbols-outlined" />
               </template>
@@ -96,8 +95,8 @@
             <label
               class="block text-caption text-uppercase tracking-widest text-primary text-weight-bold q-ml-xs q-mb-xs"
               style="font-size: 10px;">Correo Electrónico</label>
-            <q-input v-model="email" dark outlined color="primary" placeholder="buscador@cosmos.com" type="email"
-              :rules="[val => !!val || 'El correo es vital para conectar']">
+            <q-input v-model="email" dark outlined color="primary" type="email"
+              hide-bottom-space>
               <template v-slot:prepend>
                 <q-icon name="alternate_email" class="material-symbols-outlined" />
               </template>
@@ -108,8 +107,8 @@
             <label
               class="block text-caption text-uppercase tracking-widest text-primary text-weight-bold q-ml-xs q-mb-xs"
               style="font-size: 10px;">Contraseña Segura</label>
-            <q-input v-model="password" dark outlined color="primary" placeholder="••••••••"
-              :type="showPassword ? 'text' : 'password'" :rules="[val => !!val || 'Protege tu energía con una clave']">
+            <q-input v-model="password" dark outlined color="primary"
+              :type="showPassword ? 'text' : 'password'" hide-bottom-space>
               <template v-slot:prepend>
                 <q-icon name="lock_open" class="material-symbols-outlined" />
               </template>
@@ -146,12 +145,11 @@ import { ref } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';
 import { postData } from '../services/services.js';
 import { useAuthStore } from '../store/auth.js';
-import { useNotifications } from '../composables/notify.js';
 import PrimaryButton from "../components/primaryButton.vue";
+import { showNotify } from '../utils/notify.js';
 
 const router = useRouter();
 const authStore = useAuthStore();
-const { success, error: notifyError } = useNotifications();
 
 const fullName = ref('');
 const dob = ref('');
@@ -161,6 +159,7 @@ const showPassword = ref(false);
 const loading = ref(false);
 
 const calculateAge = (birthDate) => {
+  if (!birthDate) return 0;
   const today = new Date();
   const birth = new Date(birthDate);
   let age = today.getFullYear() - birth.getFullYear();
@@ -172,30 +171,67 @@ const calculateAge = (birthDate) => {
 };
 
 const onRegister = async () => {
-  if (!fullName.value || !dob.value || !email.value || !password.value) return;
+  // --- LIMPIEZA DE ESPACIOS ---
+  fullName.value = fullName.value.trim();
+  email.value = email.value.trim();
+  password.value = password.value.trim();
 
+  // --- VALIDACIONES CON UTILIDAD CÓSMICA ---
+  if (!fullName.value || fullName.value.length < 5) {
+    showNotify.info('Nombre Incompleto', 'El nombre debe tener al menos 5 letras y no estar vacío.');
+    return;
+  }
+  
+  if (!dob.value) {
+    showNotify.info('Código Sagrado Faltante', 'La fecha de nacimiento es esencial.');
+    return;
+  }
+
+  const today = new Date();
+  const birth = new Date(dob.value);
+  if (birth > today) {
+    showNotify.warning('Fecha Inválida', 'Tu código sagrado no puede estar en el futuro.');
+    return;
+  }
+
+  if (!email.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+    showNotify.info('Correo Estelar Erróneo', 'Introduce un correo electrónico válido.');
+    return;
+  }
+  if (!password.value || password.value.length < 8) {
+    showNotify.info('Clave Cósmica Débil', 'La contraseña debe tener al menos 8 caracteres.');
+    return;
+  }
+
+  const age = calculateAge(dob.value);
+  if (age < 15) {
+    showNotify.warning('Acceso Restringido', 'Debes tener al menos 15 años para este viaje.');
+    return;
+  }
+
+  // Confirmación interactiva con diseño elegante
+  showNotify.confirm(
+    'Confirmar Código Sagrado',
+    `¿Tu fecha (${dob.value}) es correcta? Es vital para tu conexión cósmica.`,
+    () => executeRegister(age)
+  );
+};
+
+const executeRegister = async (age) => {
   loading.value = true;
   try {
-    await new Promise(resolve => setTimeout(resolve, 800));
-    const age = calculateAge(dob.value);
-    
-    const res = await postData("auth/registro", {
+    await postData("auth/registro", {
       nombre: fullName.value,
       fechanacimiento: dob.value,
       edad: age,
       email: email.value,
       password: password.value
     });
-
-
-    success("¡Registro Exitoso!", "Tu cuenta ha sido creada. Por favor, inicia sesión para continuar.");
-    
+    showNotify.success("Alineación Exitosa", "Bienvenido al Cosmos. Tu cuenta ha sido creada.");
     router.push('/login');
-
   } catch (error) {
-    console.error(error);
-    const errormsg = error.response?.data?.error || "La energía no pudo alinearse. Revisa los datos.";
-    notifyError("Error en el registro", errormsg);
+    const errormsg = error.response?.data?.error || error.response?.data?.msg || "La energía no pudo alinearse.";
+    showNotify.error("Error en el Registro", errormsg);
   } finally {
     loading.value = false;
   }

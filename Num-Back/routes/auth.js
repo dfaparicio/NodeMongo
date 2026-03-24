@@ -1,35 +1,22 @@
 import { Router } from "express";
-import { check } from "express-validator";
-import { login, registro, verificarEmail, recuperarPassword, nuevoPassword } from "../controllers/auth.js";
-import { validarCampos } from "../middlewares/validarCampos.js";
-import { validarEmail } from "../helpers/usuarios.js";
+import { login, registro, verificarEmail, recuperarPassword, nuevoPassword, renewToken } from "../controllers/auth.js";
+import { validarRegistro, validarLogin, validarRecuperacion, validarNuevoPassword } from "../middlewares/validarRegistro.js";
+import validarJWT from "../middlewares/validar-jwt.js";
 
 const router = Router();
 
+// REGLA: Obtener perfil actualizado
+router.get("/renew", validarJWT, renewToken);
+
 // REGISTRO PÚBLICO
-router.post("/registro", [
-    check('nombre', 'El nombre es obligatorio').not().isEmpty().isLength({ min: 3, max: 50 }),
-    check('email', 'Debe ser un email válido').isEmail(),
-    check('email').custom(validarEmail),
-    check('password', 'La contraseña debe tener al menos 6 caracteres').isLength({ min: 6 }),
-    validarCampos
-], registro);
+router.post("/registro", validarRegistro, registro);
 
 // LOGIN
-router.post("/login", [
-    check('email', 'El correo es obligatorio').isEmail(),
-    check('password', 'La contraseña es obligatoria').not().isEmpty(),
-    validarCampos
-], login);
+router.post("/login", validarLogin, login);
 
+// OTROS
 router.get("/confirmar/:token", verificarEmail);
-router.post("/recuperar-password", [
-    check('email', 'El correo es obligatorio').isEmail(),
-    validarCampos
-], recuperarPassword);
-router.post("/nuevo-password/:token", [
-    check('password', 'La contraseña es obligatoria').not().isEmpty(),
-    validarCampos
-], nuevoPassword);
+router.post("/recuperar-password", validarRecuperacion, recuperarPassword);
+router.post("/nuevo-password/:token", validarNuevoPassword, nuevoPassword);
 
 export default router;

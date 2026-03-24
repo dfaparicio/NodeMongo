@@ -18,7 +18,6 @@
         <input 
           v-model="searchQuery" 
           type="text" 
-          placeholder="Buscar registro..." 
           class="cosmic-input"
         />
       </div>

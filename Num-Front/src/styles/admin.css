@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;700&display=swap');
+
+.dashboard-layout {
+  font-family: 'Manrope', sans-serif;
+  background-color: #0d0f12 !important;
+  color: #ffffff;
+}
+
+:deep(.q-drawer) {
+  background-color: #0b0c0e !important;
+}
+
+.page-bg {
+  background-color: #0d0f12 !important;
+  min-height: 100vh;
+}
+
+.op-60 { opacity: 0.6; }
+.op-40 { opacity: 0.4; }
+.z-top { z-index: 10; }
+.flex-1 { flex: 1; }
+
+.bg-sidebar {
+  background-color: #0b0c0e !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+/* LOGO */
+.logo-container {
+  width: 32px;
+  height: 32px;
+  background: #f2a900;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  box-shadow: 0 0 15px rgba(242, 169, 0, 0.4);
+}
+
+.logo-text {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #ffffff;
+}
+
+.logo-text span {
+  color: #f2a900;
+}
+
+/* NAVIGATION */
+.nav-item {
+  border-radius: 12px;
+  margin-bottom: 4px;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+  min-height: 52px;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.active-nav {
+  background: rgba(242, 169, 0, 0.04) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(242, 169, 0, 0.1);
+}
+
+.nav-label {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.active-indicator {
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 3px;
+  background: #f2a900;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 0 10px rgba(242, 169, 0, 0.8);
+}
+
+.profile-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  margin-top: 20px;
+}
+
+.avatar-container {
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background: #4caf50;
+  border: 2px solid #0b0c0e;
+  border-radius: 50%;
+}
+
+.profile-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.profile-role {
+  font-size: 11px;
+  color: #f2a900;
+  opacity: 0.8;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: #ffffff;
+}
+
+.page-subtitle {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 2.5px;
+}

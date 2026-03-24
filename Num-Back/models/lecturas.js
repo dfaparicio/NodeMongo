@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
 import Usuario from "./usuario.js";
+import { obtenerAhoraColombia } from "../helpers/fechas.js";
 
 const LecturaSchema = new mongoose.Schema(
   {
     usuarioId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Usuario",
       required: true,
     },
     tipo: {
@@ -18,7 +20,7 @@ const LecturaSchema = new mongoose.Schema(
     },
     fechaLectura: {
       type: Date,
-      default: Date.now,
+      default: obtenerAhoraColombia,
     },
     fechaReferencia: {
       type: String, // Formato "YYYY-MM-DD"
@@ -39,7 +41,7 @@ export const lecturaPrincipal = async (idUsuario) => {
   const lecturaExistente = await Lectura.findOne({
     usuarioId: idUsuario,
     tipo: "principal",
-  });
+  }).populate("usuarioId", "nombre email");
 
   const usuario = await Usuario.findById(idUsuario);
 
@@ -51,14 +53,14 @@ export const lecturaPrincipal = async (idUsuario) => {
       return nueva._id;
     },
     obtenerLecturaPrincipal: async (usuarioId) => {
-      return await Lectura.findOne({ usuarioId, tipo: "principal" });
+      return await Lectura.findOne({ usuarioId, tipo: "principal" }).populate("usuarioId", "nombre email");
     },
     obtenerLecturaDiariaHoy: async (usuarioId, fechaReferencia) => {
       return await Lectura.findOne({
         usuarioId,
         tipo: "diaria",
         fechaReferencia
-      });
+      }).populate("usuarioId", "nombre email");
     },
   };
 };
@@ -66,7 +68,7 @@ export const lecturaPrincipal = async (idUsuario) => {
 export const lecturaDiaria = lecturaPrincipal;
 
 export const lecturasdeUnUsuario = async (usuarioId) => {
-  return await Lectura.find({ usuarioId }).sort({ fechaLectura: -1 });
+  return await Lectura.find({ usuarioId }).populate("usuarioId", "nombre email").sort({ fechaLectura: -1 });
 };
 
 export const lecturaPorId = async (id) => {

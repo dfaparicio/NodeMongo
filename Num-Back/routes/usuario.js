@@ -1,6 +1,4 @@
 import { Router } from "express";
-import { check } from "express-validator";
-
 import {
   deleteUsuario,
   getUsuario,
@@ -12,120 +10,41 @@ import {
   cambiarPassword,
 } from "../controllers/usuario.js";
 
-import { validarCampos } from "../middlewares/validarCampos.js";
-import { validarUsuarioActivoMiddleware } from "../middlewares/validarUsuarios.js";
-
 import {
-  validarEmail,
-  validarExisteUsuario,
-  validarRol
-} from "../helpers/usuarios.js";
+  validarGetUsuarioEmail,
+  validarCambiarPassword,
+  validarPostUsuario,
+  validarPutUsuario,
+  validarIdUsuario
+} from "../middlewares/validarUsuario.js";
+
 import validarJWT from "../middlewares/validar-jwt.js";
 import { esAdminRole } from "../middlewares/validar-rol.js";
 
 const router = Router();
 
+// GET ALL
 router.get("/", [validarJWT, esAdminRole], getUsuario);
 
-router.get(
-  "/email",
-  [
-    validarJWT,
-    check("email", "El email es obligatorio").not().isEmpty(),
-    check("email", "Formato de email no válido").isEmail(),
-    validarCampos,
-  ],
-  getUsuarioEmail
-);
+// GET BY EMAIL
+router.get("/email", [validarJWT, validarGetUsuarioEmail], getUsuarioEmail);
 
-router.put(
-  "/password/:id",
-  [
-    validarJWT,
-    check("id", "ID inválido").isMongoId(),
-    check("id").custom(validarExisteUsuario),
-    check("passwordActual", "La contraseña actual es obligatoria").notEmpty(),
-    check("passwordNueva", "La nueva contraseña debe tener al menos 6 caracteres").isLength({ min: 6 }),
-    validarCampos,
-  ],
-  cambiarPassword
-);
+// CHANGE PASSWORD
+router.put("/password/:id", [validarJWT, validarCambiarPassword], cambiarPassword);
 
-router.post(
-  "/",
-  [
-    validarJWT,
-    esAdminRole,
+// CREATE USUARIO (ADMIN)
+router.post("/", [validarJWT, esAdminRole, validarPostUsuario], postUsuario);
 
-    check("nombre", "El nombre es obligatorio")
-      .not()
-      .isEmpty()
-      .isLength({ min: 3, max: 50 }),
+// UPDATE USUARIO
+router.put("/:id", [validarJWT, validarPutUsuario], putUsuario);
 
-    check("edad", "La edad debe ser numérica")
-      .optional()
-      .isNumeric(),
+// ACTIVATE USUARIO (ADMIN)
+router.put("/activar/:id", [validarJWT, esAdminRole, validarIdUsuario], putUsuarioActivar);
 
-    check("fechanacimiento", "La fecha no es válida")
-      .optional()
-      .isISO8601()
-      .toDate(),
+// INACTIVATE USUARIO (ADMIN)
+router.put("/inactivar/:id", [validarJWT, esAdminRole, validarIdUsuario], putUsuarioInactivar);
 
-    check("email", "Debe ser un email válido").isEmail(),
-    check("email").custom(validarEmail),
-    check("password", "La contraseña es obligatoria y debe tener más de 6 caracteres").isLength({ min: 6 }),
-    check("rol").custom(validarRol),
-
-    validarCampos,
-  ],
-  postUsuario
-);
-
-router.put(
-  "/:id",
-  [
-    validarJWT,
-    check("id", "ID inválido").isMongoId(),
-    check("id").custom(validarExisteUsuario),
-    validarCampos,
-  ],
-  putUsuario
-);
-
-router.put(
-  "/activar/:id",
-  [
-    validarJWT,
-    esAdminRole,
-    check("id", "ID inválido").isMongoId(),
-    check("id").custom(validarExisteUsuario),
-    validarCampos,
-  ],
-  putUsuarioActivar
-);
-
-router.put(
-  "/inactivar/:id",
-  [
-    validarJWT,
-    esAdminRole,
-    check("id", "ID inválido").isMongoId(),
-    check("id").custom(validarExisteUsuario),
-    validarCampos,
-  ],
-  putUsuarioInactivar
-);
-
-router.delete(
-  "/:id",
-  [
-    validarJWT,
-    esAdminRole,
-    check("id", "ID inválido").isMongoId(),
-    check("id").custom(validarExisteUsuario),
-    validarCampos,
-  ],
-  deleteUsuario
-);
+// DELETE USUARIO (ADMIN)
+router.delete("/:id", [validarJWT, esAdminRole, validarIdUsuario], deleteUsuario);
 
 export default router;

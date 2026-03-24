@@ -1,5 +1,12 @@
 <template>
-  <q-btn :to="to" :label="label" :icon-right="icon" class="cosmic-gold-btn full-width" @click="$emit('click')">
+  <q-btn 
+    :to="to" 
+    :label="label" 
+    :icon-right="icon" 
+    class="primary-btn-astral full-width" 
+    unelevated
+    @click="$emit('click')"
+  >
   </q-btn>
 </template>
 
@@ -14,24 +21,27 @@ defineEmits(["click"]);
 </script>
 
 <style scoped>
-.cosmic-gold-btn {
-  background: linear-gradient(45deg, #cbac45 0%, #f9f295 45%, #e6be8a 70%, #b8860b 100%);
-  color: #1a1a1a;
+.primary-btn-astral {
+  background: linear-gradient(135deg, #f4af25 0%, #e09010 100%);
+  color: #0d0d1a;
   font-weight: 800;
-  border-radius: 12px;
-  border: none;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-size: 13px;
+  letter-spacing: 3px;
+  border-radius: 100px; /* Estilo píldora elegante */
+  text-transform: uppercase;
+  padding: 14px 24px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 25px rgba(244, 175, 37, 0.2);
 }
 
-.cosmic-gold-btn:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
-  filter: saturate(1.2);
+.primary-btn-astral:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(244, 175, 37, 0.4);
+  filter: brightness(1.1);
 }
 
-.cosmic-gold-btn:active {
-  transform: translateY(1px);
+.primary-btn-astral:active {
+  transform: translateY(-1px);
 }
 
 .full-width {

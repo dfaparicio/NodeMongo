@@ -42,7 +42,6 @@
         subtitle="Personas registradas en la plataforma"
         :columns="columns"
         :rows="rows"
-        search-placeholder="Buscar por nombre o email..."
         @editar="onEditar"
       >
         <template #actions-header>
@@ -65,12 +64,11 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { useQuasar } from 'quasar';
 import AdminTable from './AdminTable.vue';
 import AdminUserEditDialog from './AdminUserEditDialog.vue';
 import { useAdminStore } from '../../store/admin.js';
+import { showNotify } from '../../utils/notify.js';
 
-const $q = useQuasar();
 const adminStore = useAdminStore();
 const loading = ref(false);
 const error = ref(null);
@@ -155,24 +153,15 @@ const guardarEdicion = async ({ id, datos }) => {
     });
 
     dialogEditar.value = false;
-    $q.notify({ 
-      type: 'positive', 
-      message: 'Sincronización con la base de datos exitosa ✨', 
-      position: 'top' 
-    });
+    showNotify.success('Sincronización Exitosa', 'El destino del usuario ha sido actualizado ✨');
 
   } catch (err) {
     console.error("❌ Fallo en la petición:", err);
-    console.error("📦 Datos del error del servidor:", err.response?.data);
     
     const serverData = err.response?.data;
-    const errs = serverData?.errors;
-    const errorMsg = (Array.isArray(errs) ? errs[0]?.msg : errs && Object.values(errs)[0]?.msg)
-                  || serverData?.msg
-                  || serverData?.error
-                  || 'Error al actualizar el usuario';
+    const errorMsg = serverData?.error || serverData?.msg || 'Error al actualizar el usuario';
     
-    $q.notify({ type: 'negative', message: errorMsg, position: 'top', timeout: 5000 });
+    showNotify.error('Error de Actualización', errorMsg);
   }
 };
 </script>

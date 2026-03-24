@@ -1,0 +1,63 @@
+/* ══════════════════════════════════════════════════════════
+   SISTEMA DE ESTILOS GLOBALES - NUMERIS ASTRAL
+   Este archivo centraliza el diseño base para evitar duplicados.
+   ══════════════════════════════════════════════════════════ */
+
+:root {
+  --cosmic-gold: #d4af37;
+  --cosmic-blue: #0096ff;
+  --cosmic-bg: #0b0c0e;
+  --glass-white: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* PANALES DE CRISTAL (Glassmorphism) */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+}
+
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* TIPOGRAFÍA Y GRADIENTES */
+.text-gradient-gold {
+  background: linear-gradient(45deg, #f4af25, #e09010, #ffea70);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold { color: var(--cosmic-gold); }
+.text-blue-accent { color: var(--cosmic-blue); }
+
+/* UTILIDADES DE ANIMACIÓN */
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* SCROLLBARS CÓSMICAS */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cosmic-bg); }
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--cosmic-gold); }

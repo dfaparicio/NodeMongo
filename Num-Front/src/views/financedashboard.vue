@@ -149,7 +149,7 @@
           <q-card flat class="feed-section glass-panel">
             <div class="q-pa-lg row justify-between items-center border-bottom-white-5">
               <h2 class="text-subtitle1 text-bold text-white text-uppercase tracking-wider">Live Transaction Feed</h2>
-              <q-input dense rounded outlined v-model="search" placeholder="Search ID or Email..." class="search-input">
+              <q-input dense rounded outlined v-model="search" class="search-input">
                 <template v-slot:prepend><q-icon name="search" size="xs" color="slate-500" /></template>
               </q-input>
             </div>

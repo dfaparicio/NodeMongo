@@ -1,23 +1,23 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 
 export default async function conectarMongo() {
   try {
     const isProduction = process.env.NODE_ENV === 'production';
-    const dbUrl = isProduction ? process.env.MONGO_URL : (process.env.MONGO_URL_LOCAL || process.env.MONGO_URL);
+    const dbUrl = process.env.MONGO_URL;
 
     if (!dbUrl) {
-      console.error(`❌ ERROR: La variable ${isProduction ? 'MONGO_URL' : 'MONGO_URL_LOCAL'} no está definida en el entorno (Render/Local).`);
+      console.error(`❌ ERROR: MONGO_URL no está definida en el entorno (.env).`);
       return;
     }
 
-    // Mostrar una versión segura de la URL en los logs para depurar (ocultando contraseña)
-    const maskedUrl = dbUrl.replace(/\/\/.*@/, "//*****:*****@");
+    // Mostrar una versión segura de la URL en los logs para depurar
+    const maskedUrl = dbUrl.replace(/\/\/(.*)@/, "//*****:*****@");
     console.log(`🔍 Intentando conectar a (${isProduction ? 'Producción' : 'Local'}): ${maskedUrl}`);
 
-    // Forzamos el uso de la base de datos 'test'
-    await mongoose.connect(dbUrl, {
-      dbName: 'test'
-    });
+    // Conexión estándar (deja que el nombre de la DB venga en la URL)
+    await mongoose.connect(dbUrl);
 
     // Extraer información real de la conexión establecida
     const { host, name } = mongoose.connection;
@@ -31,9 +31,5 @@ export default async function conectarMongo() {
   } catch (error) {
     console.error("❌ ERROR CRÍTICO DE CONEXIÓN:");
     console.error(error.message);
-    
-    if (error.message.includes('Authentication failed')) {
-      console.error("👉 REVISIÓN: La contraseña o el usuario en Render son INCORRECTOS.");
-    }
   }
 }

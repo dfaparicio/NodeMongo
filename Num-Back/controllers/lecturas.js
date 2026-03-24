@@ -6,6 +6,8 @@ import {
   lecturaPorId,
 } from "../models/lecturas.js";
 import Usuario from "../models/usuario.js";
+import { DateTime } from "luxon";
+import { obtenerAhoraColombia } from "../helpers/fechas.js";
 
 import cron from "node-cron";
 import { enviarCorreoNotificacion, enviarLecturaPrincipalCorreo } from "../helpers/mailer.js";
@@ -31,7 +33,6 @@ async function respuestaIA(prompt) {
   } catch (error) {
     console.error("❌ Error de Gemini:", JSON.stringify(error.message || error));
 
-    // Si vuelve a salir el error 503, lo capturamos para no romper el servidor
     if (error.message?.includes("503") || error.message?.includes("UNAVAILABLE")) {
       throw new Error("IA_SATURADA: El modelo preview está en alta demanda. Intenta más tarde.");
     }
@@ -57,10 +58,11 @@ function extraerJSON(texto) {
 }
 
 function calcularCaminoDeVida(fecha_nacimiento) {
-  const fecha = new Date(fecha_nacimiento);
-  const dia = fecha.getUTCDate(); // Usar UTC para evitar errores de zona horaria
-  const mes = fecha.getUTCMonth() + 1;
-  const año = fecha.getUTCFullYear();
+  // --- MEJORA: Usar Luxon para extraer datos en zona Colombia ---
+  const dt = DateTime.fromJSDate(new Date(fecha_nacimiento)).setZone("America/Bogota");
+  const dia = dt.day; 
+  const mes = dt.month;
+  const año = dt.year;
 
   const reducir = (num) => {
     if ([11, 22, 33].includes(num)) return num;
@@ -86,7 +88,6 @@ function calcularCaminoDeVida(fecha_nacimiento) {
 
 export const generarlecturaprincipal = async (req, res) => {
   try {
-    // Usamos el ID que viene de los params, pero validamos con el middleware de JWT
     const { usuarioId } = req.params;
     const resultado = await lecturaPrincipal(usuarioId);
 
@@ -147,17 +148,54 @@ export const generarlecturaprincipal = async (req, res) => {
   }
 };
 
-// Helper para obtener la fecha actual en formato Bogotá (YYYY-MM-DD)
 const obtenerFechaBogota = () => {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Bogota",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
+  return DateTime.now().setZone("America/Bogota").toFormat("yyyy-MM-dd");
 };
 
-// Generación masiva de lecturas diarias (Cron Job)
+// --- GENERACIÓN MANUAL PARA UN USUARIO (Ej: Tras pago exitoso) ---
+export const generarLecturaDiariaUsuario = async (usuarioId) => {
+  console.log(`🚀 Generando lectura diaria bajo demanda para usuario: ${usuarioId}`);
+  const hoyBogota = obtenerFechaBogota();
+
+  try {
+    const usuario = await Usuario.findById(usuarioId);
+    if (!usuario || usuario.estado !== 1) return { success: false, msg: "Usuario no apto" };
+
+    const repo = await lecturaDiaria(usuarioId);
+    
+    // 1. Verificar si ya tiene la de hoy (evitar duplicados)
+    const lecturaHoy = await repo.obtenerLecturaDiariaHoy(usuarioId, hoyBogota);
+    if (lecturaHoy) return { success: true, msg: "Ya tiene lectura de hoy" };
+
+    // 2. Obtener lectura principal para base
+    const principal = await repo.obtenerLecturaPrincipal(usuarioId);
+    if (!principal) return { success: false, msg: "Sin lectura principal" };
+
+    // 3. Generar con IA
+    const prompt = `Actúa como un numerólogo experto. Basado en esta lectura principal: ${principal.contenido}, genera una lectura diaria para hoy ${hoyBogota}.
+    Devuelve SOLO un JSON con este formato: {"fecha": "${hoyBogota}", "mensaje": "...", "energia": "...", "motivacion": "..."}`;
+
+    const contenidoIA = await respuestaIA(prompt);
+    const contenidoJSON = extraerJSON(contenidoIA);
+
+    if (contenidoJSON) {
+      contenidoJSON.estado = "activo";
+      await repo.crear(usuario._id, "diaria", JSON.stringify(contenidoJSON), hoyBogota);
+      
+      // Opcional: Enviar correo
+      if (usuario.email) {
+        enviarCorreoNotificacion(usuario.email, usuario.nombre).catch(e => console.error("Email Error:", e.message));
+      }
+      return { success: true };
+    }
+    return { success: false, msg: "Error IA" };
+
+  } catch (error) {
+    console.error(`❌ Error en generación bajo demanda (${usuarioId}):`, error.message);
+    return { success: false, error: error.message };
+  }
+};
+
 export const procesoGeneracionDiaria = async () => {
   console.log("🚀 Iniciando proceso de generación de lecturas diarias...");
   const hoyBogota = obtenerFechaBogota();
@@ -189,7 +227,6 @@ export const procesoGeneracionDiaria = async () => {
           contenidoJSON.estado = "activo";
           
           try {
-            // Se pasa hoyBogota como fechaReferencia
             await repo.crear(usuario._id, "diaria", JSON.stringify(contenidoJSON), hoyBogota);
             
             if (usuario.email) {
@@ -198,7 +235,7 @@ export const procesoGeneracionDiaria = async () => {
             generadas++;
           } catch (dbError) {
             if (dbError.code === 11000) {
-              console.log(`⚠️ Duplicado detectado para ${usuario.email} en la fecha ${hoyBogota}, saltando...`);
+              console.log(`⚠️ Duplicado detectado para ${usuario.email}, saltando...`);
             } else {
               throw dbError;
             }
@@ -216,9 +253,8 @@ export const procesoGeneracionDiaria = async () => {
   }
 };
 
-// Registro del Cron Job para las 07:00 AM
 export const generarlecturadiaria = () => {
-  cron.schedule("00 09 * * *", async () => {
+  cron.schedule("00 05 * * *", async () => {
     await procesoGeneracionDiaria();
   }, {
     scheduled: true,
@@ -226,7 +262,6 @@ export const generarlecturadiaria = () => {
   });
 };
 
-// Activación externa del proceso de lecturas (Trigger)
 export const triggerLecturasDiarias = async (req, res) => {
   const { token } = req.query;
   
@@ -234,13 +269,13 @@ export const triggerLecturasDiarias = async (req, res) => {
     return res.status(401).json({ msg: "Token de activación inválido" });
   }
 
-  // Responder de inmediato para evitar timeouts de Render y Cron-Job.org
+  const ahoraColombia = DateTime.now().setZone("America/Bogota").toISO();
+
   res.status(202).json({ 
     msg: "🚀 Proceso de generación diaria iniciado en segundo plano", 
-    timestamp: new Date().toISOString()
+    timestamp: ahoraColombia
   });
 
-  // Ejecutar el proceso pesado sin await para no bloquear la respuesta HTTP
   procesoGeneracionDiaria().catch(error => {
     console.error("❌ Fallo en ejecución de lecturas en segundo plano:", error.message);
   });
@@ -293,13 +328,11 @@ export const enviarLecturaPorEmail = async (req, res) => {
       return res.status(400).json({ msg: "Email y lectura son obligatorios" });
     }
 
-    // DISPARAR EL ENVÍO EN SEGUNDO PLANO (sin await)
     enviarLecturaPrincipalCorreo(email, nombre, lectura).catch(err => {
       console.error("❌ Fallo tardío de envío de email:", err.message);
     });
 
-    // Responder de inmediato
-    res.status(200).json({ msg: "Las estrellas están enviando tu mensaje... ✨ (Revisa tu correo en unos instantes)" });
+    res.status(200).json({ msg: "Las estrellas están enviando tu mensaje... ✨" });
   } catch (error) {
     console.error("❌ Error en el controlador de email:", error.message);
     res.status(500).json({ msg: "Error al procesar la solicitud", error: error.message });

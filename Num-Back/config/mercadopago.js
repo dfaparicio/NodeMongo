@@ -1,14 +1,13 @@
-import mercadopago from "mercadopago";
+import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
 import dotenv from "dotenv";
 dotenv.config();
 
-const configureMercadoPago = () => {
-  const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
-  if (!accessToken) {
-    console.error("MERCADOPAGO_ACCESS_TOKEN no definido");
-  }
-  mercadopago.configure({ access_token: accessToken });
-  return mercadopago;
-};
+const client = new MercadoPagoConfig({ 
+  accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || '',
+  options: { timeout: 5000 } 
+});
 
-export { configureMercadoPago, mercadopago };
+const preference = new Preference(client);
+const payment = new Payment(client);
+
+export { client, preference, payment };

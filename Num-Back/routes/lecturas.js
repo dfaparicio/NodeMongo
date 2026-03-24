@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { check } from "express-validator";
 import {
   generarlecturaprincipal,
   generarlecturadiaria,
@@ -12,68 +11,37 @@ import {
 import validarJWT from "../middlewares/validar-jwt.js";
 import { esAdminRole } from "../middlewares/validar-rol.js";
 
-import { validarCampos } from "../middlewares/validarCampos.js";
+import {
+  validarUsuarioId,
+  validarIdLectura,
+  validarEnviarEmailLectura
+} from "../middlewares/validarLecturas.js";
+
 import {
   verificarLecturaPrincipal,
 } from "../middlewares/verificarLecturas.js";
 
 const router = Router();
 
+// GET ALL (ADMIN)
 router.get("/", [validarJWT, esAdminRole], obtenerTodasLasLecturas);
 
-router.post(
-  "/principal/:usuarioId",
-  [
-    check("usuarioId", "El usuarioId es obligatorio").notEmpty(),
-    check("usuarioId", "ID inválido de MongoDB").isMongoId(),
-    validarCampos,
-  ],
-  verificarLecturaPrincipal,
-  generarlecturaprincipal,
-);
+// GENERAR PRINCIPAL
+router.post("/principal/:usuarioId", [validarUsuarioId, verificarLecturaPrincipal], generarlecturaprincipal);
 
-router.post(
-  "/diaria/:usuarioId",
-  [
-    check("usuarioId", "El usuarioId es obligatorio").notEmpty(),
-    check("usuarioId", "ID inválido de MongoDB").isMongoId(),
-    validarCampos,
-  ],
-  generarlecturadiaria,
-);
+// GENERAR DIARIA
+router.post("/diaria/:usuarioId", [validarUsuarioId], generarlecturadiaria);
 
-router.get(
-  "/usuario/:usuarioId",
-  [
-    check("usuarioId", "El usuarioId es obligatorio").notEmpty(),
-    check("usuarioId", "ID inválido de MongoDB").isMongoId(),
-    validarCampos,
-  ],
-  obtenerlecturasdeunusuario,
-);
+// GET BY USUARIO
+router.get("/usuario/:usuarioId", [validarUsuarioId], obtenerlecturasdeunusuario);
 
-// Ruta para despertar el servidor y generar lecturas (usada por cron-job.org)
+// CRON JOB / TRIGGER
 router.get("/generar-diarias-sistema", triggerLecturasDiarias);
 
-router.get(
-  "/:id",
-  [
-    check("id", "El ID es obligatorio").notEmpty(),
-    check("id", "ID inválido de MongoDB").isMongoId(),
-    validarCampos,
-  ],
-  obtenerlecturaporid,
-);
+// GET BY ID
+router.get("/:id", [validarIdLectura], obtenerlecturaporid);
 
-router.post(
-  "/enviar-email",
-  [
-    validarJWT,
-    check("email", "El email es obligatorio").isEmail(),
-    check("lectura", "La lectura es obligatoria").notEmpty(),
-    validarCampos,
-  ],
-  enviarLecturaPorEmail,
-);
+// ENVIAR EMAIL
+router.post("/enviar-email", [validarJWT, validarEnviarEmailLectura], enviarLecturaPorEmail);
 
 export default router;

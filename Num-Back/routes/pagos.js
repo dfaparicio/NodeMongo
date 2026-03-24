@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { check } from "express-validator"; // Importación necesaria
 import {
   getPagos,
   getPagoUsuario,
@@ -9,34 +8,31 @@ import {
   enviarFactura
 } from "../controllers/pagos.js";
 
-import { validarCampos } from "../middlewares/validarCampos.js";
+import {
+  validarIdPago,
+  validarPostPago
+} from "../middlewares/validarPagos.js";
+
 import { verificarPagoExiste } from "../middlewares/verificarPagoExiste.js";
-import { validarIdMongo } from "../middlewares/validarUsuarios.js";
 
 const router = Router();
 
+// GET ALL
 router.get("/", getPagos);
-router.get("/:id", [validarIdMongo, validarCampos], getPagoUsuario);
-router.get("/estado/:id", [validarIdMongo, validarCampos], getEstadoUsuario);
 
+// GET BY ID (USUARIO)
+router.get("/:id", [validarIdPago], getPagoUsuario);
 
-router.post(
-  "/",
-  [
-    check("usuarioId", "El ID del usuario es obligatorio").isMongoId(),
-    check("monto", "El monto debe ser un número positivo").isNumeric(),
-    validarCampos,
-  ],
-  postNuevoPago
-);
+// GET STATUS (USUARIO)
+router.get("/estado/:id", [validarIdPago], getEstadoUsuario);
 
+// CREATE NEW PAYMENT
+router.post("/", [validarPostPago], postNuevoPago);
+
+// SEND INVOICE
 router.post('/enviar-factura', enviarFactura);
 
-router.delete(
-  "/:id", 
-  [validarIdMongo, validarCampos, verificarPagoExiste], 
-  deletePago
-);
-
+// DELETE PAYMENT
+router.delete("/:id", [validarIdPago, verificarPagoExiste], deletePago);
 
 export default router;

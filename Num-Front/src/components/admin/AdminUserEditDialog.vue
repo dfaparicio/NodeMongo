@@ -32,7 +32,6 @@
             <q-input
               v-model="form.nombre"
               dark outlined color="amber"
-              placeholder="Ej. Orión Celeste"
               dense
               class="cosmic-input"
             >
@@ -48,7 +47,6 @@
             <q-input
               v-model="form.email"
               dark outlined color="amber"
-              placeholder="buscador@cosmos.com"
               type="email"
               dense
               class="cosmic-input"
@@ -130,7 +128,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import { useQuasar } from 'quasar';
+import { showNotify } from '../../utils/notify.js';
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
@@ -139,7 +137,6 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'guardar']);
 
-const $q = useQuasar();
 const saving = ref(false);
 
 const form = ref({
@@ -166,7 +163,7 @@ watch(() => props.modelValue, (isOpen) => {
 
 const onGuardar = () => {
   if (!form.value.nombre?.trim()) {
-    $q.notify({ type: 'warning', message: 'El nombre es obligatorio', position: 'top' });
+    showNotify.warning('Campo Requerido', 'El nombre es obligatorio para la sincronización.');
     return;
   }
 

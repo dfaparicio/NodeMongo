@@ -56,7 +56,7 @@
                 class="block text-7 font-serif text-bold tracking-widest text-indigo-3 text-uppercase q-mb-md group-focus-within-gold">
                 Registered Email Address
               </label>
-              <q-input v-model="email" dark placeholder="cosmos@universe.com" class="input-monolith" type="email"
+              <q-input v-model="email" dark class="input-monolith" type="email"
                 borderless :rules="[val => !!val || 'El email es necesario para la restauración']">
                 <template v-slot:prepend>
                   <q-icon name="alternate_email" class="q-ml-md" />
@@ -99,16 +99,15 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { postData } from '../services/services.js';
-import { useNotifications } from '../composables/notify.js';
+import { showNotify } from '../utils/notify.js';
 
 const email = ref("");
 const loading = ref(false);
-const { success, error: notifyError } = useNotifications();
 const router = useRouter();
 
 const handleRestore = async () => {
   if (!email.value) {
-    notifyError("Campo Requerido", "Por favor ingresa tu dirección de correo electrónico.");
+    showNotify.info("Campo Requerido", "Por favor ingresa tu dirección de correo electrónico.");
     return;
   }
 
@@ -116,7 +115,7 @@ const handleRestore = async () => {
   try {
     await new Promise(resolve => setTimeout(resolve, 800));
     await postData("auth/recuperar-password", { email: email.value });
-    success("Enlace Enviado", "Hemos enviado la llave de restauración a tu correo celestial.");
+    showNotify.success("Enlace Enviado", "Hemos enviado la llave de restauración a tu correo celestial.");
     // Opcional: Redirigir al login después de un momento
     setTimeout(() => {
       router.push('/login');
@@ -124,7 +123,7 @@ const handleRestore = async () => {
   } catch (error) {
     console.error(error);
     const msg = error.response?.data?.error || "No pudimos encontrar ese rastro en el cosmos.";
-    notifyError("Error de Conexión", msg);
+    showNotify.error("Error de Conexión", msg);
   } finally {
     loading.value = false;
   }

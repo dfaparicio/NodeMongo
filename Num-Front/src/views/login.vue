@@ -62,8 +62,8 @@
             <label
               class="block text-caption text-uppercase tracking-widest text-primary text-weight-bold q-ml-xs q-mb-xs">Correo
               Electrónico</label>
-            <q-input v-model="email" dark outlined color="primary" placeholder="buscador@cosmos.com" type="email"
-              :rules="[val => !!val || 'El correo es necesario para conectar']">
+            <q-input v-model="email" dark outlined color="primary" type="email"
+              :rules="[val => (val && val.trim().length > 0) || 'El correo es necesario para conectar']">
               <template v-slot:prepend>
                 <q-icon name="alternate_email" />
               </template>
@@ -73,8 +73,8 @@
           <div>
             <label
               class="block text-caption text-uppercase tracking-widest text-primary text-weight-bold q-ml-xs q-mb-xs">Contraseña</label>
-            <q-input v-model="password" dark outlined color="primary" placeholder="••••••••"
-              :type="showpassword ? 'text' : 'password'" :rules="[val => !!val || 'La contraseña es requerida']">
+            <q-input v-model="password" dark outlined color="primary"
+              :type="showpassword ? 'text' : 'password'" :rules="[val => (val && val.trim().length > 0) || 'La contraseña es requerida']">
               <template v-slot:prepend>
                 <q-icon name="lock_outline" />
               </template>
@@ -118,10 +118,8 @@ import { RouterLink, useRouter } from 'vue-router';
 import { postData, getData } from '../services/services.js';
 import { useAuthStore } from '../store/auth.js';
 import PrimaryButton from '../components/primaryButton.vue';
-import { useNotifications } from '../composables/notify.js';
 import { converFecha, resetearHoras } from '../utils/functions.js'
-
-const { success, error: notifyerror } = useNotifications();
+import { showNotify } from '../utils/notify.js';
 
 const email = ref("");
 const password = ref("");
@@ -137,7 +135,14 @@ const avatars = [
 ];
 
 const login = async () => {
-  if (!email.value || !password.value) return;
+  // --- LIMPIEZA DE ESPACIOS ---
+  email.value = email.value.trim();
+  password.value = password.value.trim();
+
+  if (!email.value || !password.value) {
+    showNotify.info('Datos Requeridos', 'Por favor, introduce tus credenciales.');
+    return;
+  }
   loading.value = true;
 
   try {
@@ -185,13 +190,20 @@ const login = async () => {
     }
 
     await nextTick();
-    success("Conexión establecida", "Bienvenido de vuelta");
+    showNotify.success("Conexión Establecida", "Bienvenido de vuelta al camino estelar.");
     router.push('/perfil');
 
   } catch (error) {
     console.error("Detalle del error:", error.response?.data || error.message);
-    const errormsg = error.response?.data?.msg || error.response?.data?.error || "Credenciales incorrectas";
-    notifyerror("Error de acceso", errormsg);
+    
+    // Mensaje general cuando hay errores (credenciales incorrectas, etc.)
+    let errormsg = "Credenciales incorrectas. Por favor, revisa tu correo y contraseña.";
+    
+    if (error.response?.data?.error || error.response?.data?.msg) {
+        errormsg = error.response.data.error || error.response.data.msg;
+    }
+
+    showNotify.error("Error de Acceso", errormsg);
 
   } finally {
     loading.value = false;

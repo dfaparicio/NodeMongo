@@ -43,7 +43,6 @@
         :columns="columns"
         :rows="rows"
         :has-actions="false"
-        search-placeholder="Buscar usuario o tipo..."
       >
         <template #actions-header>
           <q-btn unelevated color="deep-purple-4" label="Refrescar" icon="refresh" class="rounded-pill no-caps" @click="fetchData" />

@@ -112,6 +112,62 @@
 
 .white-5 { background: rgba(255, 255, 255, 0.05); }
 
+.soul-reading-page { background: #0b0c0e; min-height: 100vh; }
+.max-w-lg-container { max-width: 950px; }
+
+/* NÚMERO MAESTRO GLOW SOFT */
+.master-number-glow-soft {
+  font-size: 7.5rem;
+  line-height: 1;
+  animation: cosmic-glow-soft 5s infinite ease-in-out;
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+}
+
+@keyframes cosmic-glow-soft {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.03); opacity: 1; text-shadow: 0 0 50px rgba(212, 175, 55, 0.4); }
+}
+
+/* PANELES SUAVES */
+.glass-panel-premium-soft {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 28px;
+  transition: all 0.4s ease;
+}
+
+.glass-panel-premium-soft:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(212, 175, 55, 0.1);
+}
+
+.text-talent-box-soft {
+  background: rgba(212, 175, 55, 0.03);
+  border-left: 2px solid rgba(212, 175, 55, 0.3);
+  border-radius: 0 16px 16px 0;
+}
+
+.line-height-2 { line-height: 2; }
+.line-height-extra { line-height: 1.8; }
+
+.text-gradient-gold-soft {
+  background: linear-gradient(45deg, #fff, #d4af37, #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.9;
+}
+
+.text-gold-soft { color: rgba(212, 175, 55, 0.6); }
+
+.geometry-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.animate-pulse-slow { animation: pulse 4s infinite ease-in-out; }
+@keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+
 /* --- Responsive Helpers --- */
 @media (min-width: 1024px) {
   .text-right-md { text-align: right; }

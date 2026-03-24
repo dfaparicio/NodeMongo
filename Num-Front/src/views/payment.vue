@@ -1,63 +1,104 @@
 <template>
-  <q-layout view="lHh Lpr lFf" class="cosmic-checkout font-display text-white overflow-x-hidden">
-    <!-- Fondo Cósmico -->
+  <q-layout view="lHh Lpr lFf" class="soul-reading-page font-display text-white overflow-x-hidden">
+    <!-- FONDO CÓSMICO DINÁMICO -->
     <div class="fixed-full z-behind">
-      <div class="absolute-full bg-cosmic-main"></div>
-      <div class="glow-orb top-left bg-primary-10"></div>
-      <div class="glow-orb bottom-right bg-primary-5"></div>
-      <div class="stars-overlay"></div>
+      <div class="absolute-full nebula-soft-glow"></div>
+      <div class="absolute-full geometry-grid-soft opacity-20"></div>
     </div>
 
     <q-page-container>
       <q-page class="flex flex-center q-pa-md">
-        <q-card flat class="glass-panel-light q-pa-xl text-center shadow-2xl rounded-2xl max-width-form mx-auto">
-          
-          <!-- Encabezado de Resumen -->
-          <div class="q-mb-xl">
-            <q-icon name="shopping_cart" color="primary" size="4em" class="q-mb-md" />
-            <h1 class="text-h4 text-bold text-white q-mb-sm">Resumen de tu Pedido</h1>
-            <p class="text-grey-5">Estás a un paso de desbloquear tu destino cósmico.</p>
-          </div>
-
-          <!-- Detalles del Plan -->
-          <div class="order-details q-pa-lg q-mb-xl border-primary-10 rounded-xl bg-primary-5">
-            <div class="row justify-between items-center q-mb-md">
-              <span class="text-grey-4 text-subtitle1">Plan Seleccionado:</span>
-              <span class="text-white text-h6 text-bold">{{ tituloPlan }}</span>
-            </div>
-            <q-separator dark class="q-my-md opacity-20" />
-            <div class="row justify-between items-center">
-              <span class="text-grey-4 text-h6">Total a Pagar:</span>
-              <span class="text-primary text-h4 text-bold">${{ monto }}</span>
-            </div>
-          </div>
-
-          <!-- Botón de Mercado Pago -->
-          <div class="q-gutter-y-md">
-            <q-btn 
-              unelevated 
-              class="full-width checkout-btn q-py-lg group" 
-              rounded 
-              :loading="loading" 
-              @click="iniciarPago"
-            >
-              <div class="row items-center q-gutter-x-md">
-                <q-icon name="payments" size="sm" />
-                <span class="text-h6 text-bold text-uppercase tracking-wide">Pagar con Mercado Pago</span>
+        
+        <!-- OVERLAY DE SINCRONIZACIÓN (POLLING) -->
+        <transition appear enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
+          <div v-if="pagoIniciado" class="fixed-full z-max flex flex-center checkout-overlay-premium">
+            <div class="text-center q-pa-xl glass-panel-premium-soft rounded-3xl shadow-2xl border-gold-glow max-width-small">
+              <q-spinner-orbit color="primary" size="6em" />
+              <h2 class="text-h4 font-serif text-white q-mt-xl q-mb-md tracking-widest">TRANSMITIENDO FRECUENCIA</h2>
+              <p class="text-grey-4 text-subtitle1 q-mb-xl font-light">
+                Hemos abierto el Portal de Pago en una <span class="text-gold text-bold">nueva pestaña</span>.<br>
+                Completa la transacción para activar tu conexión.
+              </p>
+              
+              <div class="q-gutter-y-md">
+                <div class="loader-bar-container-premium">
+                  <div class="loader-bar-progress-gold"></div>
+                </div>
+                <p class="text-caption text-grey-6 italic">Sincronizando con los astros... No cierres esta ventana.</p>
+                
+                <q-btn 
+                  flat 
+                  color="grey-5" 
+                  label="¿Cerraste la ventana? Haz clic aquí para reintentar" 
+                  @click="pagoIniciado = false"
+                  class="q-mt-lg opacity-50 hover-opacity-100"
+                  no-caps
+                />
               </div>
-            </q-btn>
-
-            <p class="text-caption text-grey-7 q-mt-md">
-              <q-icon name="lock" color="positive" class="q-mr-xs" />
-              Serás redirigido a la plataforma segura de Mercado Pago.
-            </p>
+            </div>
           </div>
+        </transition>
 
-          <!-- Enlace para volver -->
-          <div class="q-mt-xl">
-            <q-btn flat color="grey-5" label="Cambiar de plan" to="/planes" no-caps />
+        <!-- TARJETA DE CONFIRMACIÓN PRINCIPAL -->
+        <q-card v-if="!pagoIniciado" flat class="glass-panel-premium-soft q-pa-none shadow-2xl rounded-3xl max-width-large mx-auto overflow-hidden animate-fade-in">
+          <div class="row items-stretch min-h-500">
+            
+            <!-- SECCIÓN ESTÉTICA (IZQUIERDA) -->
+            <div class="col-12 col-md-6 q-pa-xl bg-gold-opacity-5 flex flex-center column border-right-glass">
+              <div class="text-center">
+                <div class="plan-icon-master q-mb-xl mx-auto">
+                  <q-icon name="auto_awesome" color="primary" size="4em" class="animate-pulse-slow" />
+                </div>
+                <h1 class="text-h4 font-serif text-white q-ma-none tracking-widest">TU DESTINO AGUARDA</h1>
+                <p class="text-grey-5 q-mt-md font-light text-subtitle2">Preparando activación para el plan:</p>
+                
+                <div class="q-mt-xl plan-name-display q-pa-lg">
+                  <div class="text-overline text-gold-soft tracking-widest">FRECUENCIA ELEGIDA</div>
+                  <div class="text-h4 font-serif text-white text-bold">{{ tituloPlan.toUpperCase() }}</div>
+                </div>
+
+                <div class="row justify-center q-mt-xl opacity-60">
+                  <div class="row items-center q-gutter-x-md">
+                    <q-icon name="verified" color="primary" size="xs" />
+                    <span class="text-caption tracking-widest">ACCESO TOTAL INMEDIATO</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECCIÓN DE ACCIÓN (DERECHA) -->
+            <div class="col-12 col-md-6 q-pa-xl flex flex-center column bg-glass-dark">
+              <div class="full-width text-center">
+                <div class="text-subtitle1 text-grey-5 q-mb-xs tracking-widest">INVERSIÓN TOTAL</div>
+                <div class="text-h2 font-serif text-white text-bold q-mb-xl text-shadow-gold">{{ formatoPesos(monto) }}</div>
+
+                <div class="q-gutter-y-lg">
+                  <q-btn 
+                    unelevated 
+                    class="full-width btn-checkout-master q-py-lg" 
+                    rounded 
+                    :loading="loading" 
+                    @click="procesarPago"
+                  >
+                    <div class="row items-center justify-center q-gutter-x-md">
+                      <q-icon name="payment" size="sm" />
+                      <span class="text-h6 text-bold text-uppercase tracking-widest">PAGAR</span>
+                    </div>
+                  </q-btn>
+
+                  <div class="row items-center justify-center q-gutter-x-sm q-mt-md text-grey-7">
+                    <q-icon name="security" size="xs" />
+                    <span class="text-caption font-light">Pago Encriptado y Seguro vía Mercado Pago</span>
+                  </div>
+                </div>
+
+                <div class="q-mt-xl">
+                  <q-btn flat color="grey-6" label="CAMBIAR FRECUENCIA" to="/planes" no-caps icon="arrow_back" class="opacity-70 hover-opacity-100" />
+                </div>
+              </div>
+            </div>
+
           </div>
-
         </q-card>
       </q-page>
     </q-page-container>
@@ -65,62 +106,70 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { crearPreferenciaPago } from '../services/mercadopago.js';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { crearPreferenciaPago, consultarEstadoPago } from '../services/mercadopago.js';
 import { useAuthStore } from '../store/auth.js';
+import { formatoPesos, converFecha } from '../utils/functions.js';
+import { showNotify } from '../utils/notify.js';
 
 const route = useRoute();
-const authStore = useAuthStore();
+const router = useRouter();
 const loading = ref(false);
+const pagoIniciado = ref(false);
 const monto = ref(0);
 const tituloPlan = ref('Cargando plan...');
+const authStore = useAuthStore();
+let pollingInterval = null;
 
 onMounted(() => {
+  if (authStore.user?.estado === 1) {
+    showNotify.warning('Conexión Activa', 'Ya posees una alineación estelar vigente.');
+    router.push('/perfil');
+    return;
+  }
   if (route.query.monto) monto.value = Number(route.query.monto);
   if (route.query.titulo) tituloPlan.value = route.query.titulo;
 });
 
-const iniciarPago = async () => {
+onUnmounted(() => { if (pollingInterval) clearInterval(pollingInterval); });
+
+const iniciarSondeo = (preferenceId) => {
+  if (pollingInterval) clearInterval(pollingInterval);
+  pollingInterval = setInterval(async () => {
+    try {
+      const res = await consultarEstadoPago(preferenceId);
+      if (res.success && res.estado === 'aprobado') {
+        clearInterval(pollingInterval);
+        pagoIniciado.value = false;
+        showNotify.success('Frecuencia Alineada', '¡Transmisión completada con éxito! ✨');
+        router.push({ path: '/pagos/exito', query: { payment_id: res.pagoId, status: 'approved' } });
+      } 
+      else if (res.success && res.estado === 'rechazado') {
+        clearInterval(pollingInterval);
+        pagoIniciado.value = false;
+        showNotify.error('Transmisión Fallida', 'Los astros no pudieron completar la transacción. Intenta de nuevo.');
+      }
+    } catch (e) { console.error("Sondeo error:", e); }
+  }, 3000); 
+};
+
+const procesarPago = async () => {
   loading.value = true;
   try {
     const response = await crearPreferenciaPago(monto.value, tituloPlan.value);
-    
-    if (response.success) {
-      // ACTIVACIÓN LOCAL INSTANTÁNEA
-      if (authStore.user) {
-        authStore.user.estado = 1;
-        console.log("✅ Estado de usuario actualizado localmente a 1");
-      }
-
-      const redirectUrl = response.sandbox_init_point || response.init_point;
-      if (redirectUrl) {
-        window.location.href = redirectUrl;
-      }
+    if (response.success && response.id) {
+      pagoIniciado.value = true;
+      const checkoutUrl = response.init_point;
+      window.open(checkoutUrl, '_blank');
+      iniciarSondeo(response.id);
     }
   } catch (error) {
-    console.error("Error al iniciar pago:", error);
-  } finally {
-    loading.value = false;
-  }
+    showNotify.error('Algo salió mal', 'No se pudo contactar con el Oráculo de Pago.');
+  } finally { loading.value = false; }
 };
 </script>
 
 <style scoped>
 @import url('../styles/payment.css');
-
-.order-details {
-  background: rgba(var(--q-primary), 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.checkout-btn {
-  background: linear-gradient(45deg, #009ee3, #007eb5);
-  transition: all 0.3s ease;
-}
-
-.checkout-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 158, 227, 0.3);
-}
 </style>

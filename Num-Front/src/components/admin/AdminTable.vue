@@ -14,7 +14,6 @@
             dense
             borderless
             dark
-            :placeholder="searchPlaceholder"
             class="search-input"
             style="min-width: 220px"
           />
@@ -131,7 +130,6 @@ const props = defineProps({
   columns: { type: Array, default: () => [] }, // [{ key, label, type, align, class, badgeMap, statusMap }]
   rows: { type: Array, default: () => [] },
   hasActions: { type: Boolean, default: true },
-  searchPlaceholder: { type: String, default: 'Buscar...' },
   perPage: { type: Number, default: 8 }
 });
 
