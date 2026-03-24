@@ -5,7 +5,7 @@ import { enviarEmail } from './nodemailer.js';
  */
 export const enviarCorreoNotificacion = async (emailDestino, nombreUsuario) => {
     try {
-        const frontendURL = process.env.URL_FRONT || 'https://numerologiaastral.jagsnexus.site';
+        const frontendURL = process.env.URL_FRONT || 'https://numerologia-astral.devscenter.online';
         const html = `
         <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #0b0c0e; color: #ffffff; margin: 0; padding: 40px 0;">
             <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #1a1c20; border-radius: 12px; overflow: hidden; border: 1px solid #2d2f36;">
@@ -149,5 +149,86 @@ export const enviarLecturaPrincipalCorreo = async (emailDestino, nombreUsuario, 
     } catch (error) {
         console.error('❌ Error enviando lectura principal:', error.message);
         throw error;
+    }
+};
+
+/**
+ * Aviso de que el plan vencerá en 5 días
+ */
+export const enviarAvisoExpiracion = async (emailDestino, nombreUsuario, fechaVencimiento) => {
+    try {
+        const frontendURL = process.env.URL_FRONT || 'https://numerologia-astral.devscenter.online';
+        const fechaFormateada = new Date(fechaVencimiento).toLocaleDateString('es-CO', { day: 'numeric', month: 'long' });
+        
+        const html = `
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #0b0c0e; color: #ffffff; margin: 0; padding: 40px 0;">
+            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #1a1c20; border-radius: 12px; overflow: hidden; border: 1px solid rgba(212, 175, 55, 0.3);">
+                <tr>
+                    <td style="padding: 40px 20px; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+                        <h1 style="color: #d4af37; margin: 0; font-size: 28px; letter-spacing: 4px; font-weight: 300;">NUMERIS</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 40px 30px; text-align: center;">
+                        <h2 style="color: #ffffff; font-size: 22px; margin-bottom: 20px; font-weight: 400;">Tu Conexión se debilita, ${nombreUsuario} ⏳</h2>
+                        <p style="color: #b0b3b8; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+                            Los astros nos indican que tu acceso premium al portal expirará el próximo <strong>${fechaFormateada}</strong> (en 5 días). 
+                            No permitas que tu flujo de sabiduría diaria se interrumpa.
+                        </p>
+                        <div style="text-align: center;">
+                            <a href="${frontendURL}/#/planes" style="background-color: #d4af37; color: #0b0c0e; padding: 16px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block; letter-spacing: 1px;">RENOVAR MI ALINEACIÓN</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 20px; text-align: center; background-color: rgba(212, 175, 55, 0.05);">
+                        <p style="font-size: 12px; color: #6b6f76; margin: 0;">&copy; 2026 Numeris Astral. Evita que tu luz se apague.</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        `;
+        await enviarEmail(emailDestino, '⏳ Aviso Importante: Tu plan Numeris vence pronto', html);
+    } catch (error) {
+        console.error('❌ Error enviando aviso expiración:', error.message);
+    }
+};
+
+/**
+ * Notificación de plan finalizado (Inactivo)
+ */
+export const enviarPlanFinalizado = async (emailDestino, nombreUsuario) => {
+    try {
+        const frontendURL = process.env.URL_FRONT || 'https://numerologia-astral.devscenter.online';
+        const html = `
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #0b0c0e; color: #ffffff; margin: 0; padding: 40px 0;">
+            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #1a1c20; border-radius: 12px; overflow: hidden; border: 1px solid #ff4444;">
+                <tr>
+                    <td style="padding: 40px 20px; text-align: center; border-bottom: 1px solid rgba(255, 68, 68, 0.2);">
+                        <h1 style="color: #ff4444; margin: 0; font-size: 28px; letter-spacing: 4px; font-weight: 300;">NUMERIS</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 40px 30px; text-align: center;">
+                        <h2 style="color: #ffffff; font-size: 22px; margin-bottom: 20px; font-weight: 400;">Tu Ciclo Premium ha concluido ✨</h2>
+                        <p style="color: #b0b3b8; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+                            Hola ${nombreUsuario}, tu acceso al portal ha regresado al nivel básico. Tus lecturas profundas y mensajes avanzados han sido pausados hasta tu próxima alineación.
+                        </p>
+                        <div style="text-align: center;">
+                            <a href="${frontendURL}/#/planes" style="border: 1px solid #d4af37; color: #d4af37; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block; letter-spacing: 1px;">VOLVER A ACTIVARME</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 20px; text-align: center; background-color: rgba(255, 68, 68, 0.05);">
+                        <p style="font-size: 12px; color: #6b6f76; margin: 0;">Tu camino sigue, pero tu guía premium te espera.</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        `;
+        await enviarEmail(emailDestino, '✨ Tu ciclo en Numeris ha concluido', html);
+    } catch (error) {
+        console.error('❌ Error enviando correo fin plan:', error.message);
     }
 };

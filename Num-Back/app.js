@@ -17,16 +17,23 @@ import pagosRoute from "./routes/pagos.js";
 import authRoute from "./routes/auth.js";
 import mercadopagoRoute from "./routes/mercadopago.js";
 
+// 0. IMPORTAR TAREAS AUTOMÁTICAS (CRON)
+import { generarlecturadiaria } from "./controllers/lecturas.js";
+import { tareaVerificarExpiracion } from "./controllers/usuario.js";
+
 const app = express();
 
 // 2. CONECTAR A MONGODB
 conectarMongo();
 
+// ACTIVAR AUTOMATIZACIONES
+generarlecturadiaria(); // Lecturas a las 5:00 AM
+tareaVerificarExpiracion(); // Expiraciones a las 8:30 AM
+
 // 3. CONFIGURACIÓN DE CORS
 const whitelist = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
-  'https://numerologiaastral.jagsnexus.site',
   'https://numerologia-astral.devscenter.online',
   'https://nodemongo-ihx8.onrender.com'
 ];

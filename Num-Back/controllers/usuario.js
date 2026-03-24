@@ -1,6 +1,61 @@
 import Usuario from "../models/usuario.js"
 import bcrypt from "bcryptjs"
 import { enviarBienvenida } from "../helpers/nodemailer.js"
+import { enviarAvisoExpiracion, enviarPlanFinalizado } from "../helpers/mailer.js"
+import cron from "node-cron";
+
+// ... (resto de funciones existentes)
+
+/**
+ * TAREA AUTOMÁTICA: Verificación de expiración de planes
+ * Se ejecuta todos los días a las 08:30 AM (Bogotá)
+ */
+export const tareaVerificarExpiracion = () => {
+    cron.schedule("30 08 * * *", async () => {
+        console.log("🔍 Iniciando verificación diaria de expiración de planes...");
+        
+        try {
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+
+            // 1. AVISO DE 5 DÍAS: Buscar usuarios activos que vencen en exactamente 5 días
+            const fechaAviso = new Date(hoy);
+            fechaAviso.setDate(hoy.getDate() + 5);
+            
+            const finAviso = new Date(fechaAviso);
+            finAviso.setHours(23, 59, 59, 999);
+
+            const usuariosVencenPronto = await Usuario.find({
+                estado: 1,
+                fechaExpiracion: { $gte: fechaAviso, $lte: finAviso }
+            });
+
+            for (const u of usuariosVencenPronto) {
+                await enviarAvisoExpiracion(u.email, u.nombre, u.fechaExpiracion);
+                console.log(`⏳ Aviso de 5 días enviado a: ${u.email}`);
+            }
+
+            // 2. EXPIRACIÓN REAL: Buscar usuarios activos cuya fecha ya pasó
+            const usuariosExpirados = await Usuario.find({
+                estado: 1,
+                fechaExpiracion: { $lt: hoy }
+            });
+
+            for (const u of usuariosExpirados) {
+                await Usuario.findByIdAndUpdate(u._id, { estado: 0 });
+                await enviarPlanFinalizado(u.email, u.nombre);
+                console.log(`🛑 Plan finalizado e inactivado para: ${u.email}`);
+            }
+
+            console.log("✨ Verificación de expiración completada.");
+        } catch (error) {
+            console.error("❌ Error en tareaVerificarExpiracion:", error.message);
+        }
+    }, {
+        scheduled: true,
+        timezone: "America/Bogota"
+    });
+};
 
 export const getUsuario = async (req, res) => {
     try {
