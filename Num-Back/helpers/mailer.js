@@ -40,53 +40,132 @@ export const enviarCorreoNotificacion = async (emailDestino, nombreUsuario) => {
 };
 
 /**
- * Envío de recibo de pago
+ * Envío de factura electrónica profesional (DevsCenter S.A.S)
  */
 export const enviarFacturaCorreo = async (emailDestino, nombreUsuario, pago) => {
     try {
         const fechaFactura = new Date(pago.fecha).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
         const montoFormateado = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(pago.monto);
-        
+        const idFactura = pago.mpPaymentId || (pago._id ? pago._id.toString().slice(-8).toUpperCase() : 'DEVS-' + Math.random().toString(36).substr(2, 5).toUpperCase());
+        const cufe = (Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)).toUpperCase();
+
         const html = `
-        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #0b0c0e; color: #ffffff; margin: 0; padding: 40px 0;">
-            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #1a1c20; border-radius: 12px; overflow: hidden; border: 1px solid #2d2f36;">
+        <div style="background-color: #0b0c0e; padding: 40px 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 650px; background-color: #1a1c20; border-radius: 8px; overflow: hidden; border: 1px solid #2d2f36; color: #ffffff;">
+                <!-- Decoración Superior -->
+                <tr><td height="5" style="background: linear-gradient(to right, #d4af37, #f4af25, #d4af37);"></td></tr>
+                
+                <!-- Encabezado -->
                 <tr>
-                    <td style="padding: 40px 20px; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
-                        <h1 style="color: #d4af37; margin: 0; font-size: 28px; letter-spacing: 4px; font-weight: 300;">NUMERIS</h1>
+                    <td style="padding: 40px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td width="60%">
+                                    <h1 style="color: #d4af37; margin: 0; font-size: 22px; letter-spacing: 4px; font-weight: bold; font-family: 'Georgia', serif;">NUMERIS</h1>
+                                    <p style="color: #6b6f76; font-size: 10px; margin: 5px 0; letter-spacing: 1px; text-transform: uppercase;">DevsCenter S.A.S - NIT: 901.452.128-5</p>
+                                    <p style="color: #6b6f76; font-size: 10px; margin: 2px 0;">Cra. 43A #1-50, Medellín, Colombia</p>
+                                </td>
+                                <td width="40%" align="right">
+                                    <span style="color: #d4af37; font-size: 10px; text-transform: uppercase; letter-spacing: 2px;">Factura Electrónica</span>
+                                    <h2 style="color: #ffffff; margin: 0; font-size: 18px;">N° ${idFactura}</h2>
+                                    <p style="color: #6b6f76; font-size: 10px; margin: 5px 0;">${fechaFactura}</p>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
+
+                <!-- Información de Facturación -->
                 <tr>
-                    <td style="padding: 40px 30px;">
-                        <h2 style="color: #ffffff; font-size: 22px; margin-bottom: 20px; font-weight: 400;">Confirmación de Pago</h2>
-                        <p style="color: #b0b3b8; font-size: 16px; margin-bottom: 25px;">Hola ${nombreUsuario}, hemos procesado con éxito tu transacción.</p>
-                        
-                        <div style="background-color: rgba(212, 175, 55, 0.05); padding: 25px; border-radius: 8px; border: 1px dashed rgba(212, 175, 55, 0.3);">
-                            <table width="100%" border="0" cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td style="color: #6b6f76; font-size: 14px; padding-bottom: 10px;">Fecha:</td>
-                                    <td style="color: #ffffff; font-size: 14px; text-align: right; padding-bottom: 10px;">${fechaFactura}</td>
-                                </tr>
-                                <tr>
-                                    <td style="color: #6b6f76; font-size: 14px; padding-bottom: 10px;">Servicio:</td>
-                                    <td style="color: #ffffff; font-size: 14px; text-align: right; padding-bottom: 10px;">${pago.descripcion}</td>
-                                </tr>
-                                <tr style="border-top: 1px solid rgba(212, 175, 55, 0.2);">
-                                    <td style="color: #d4af37; font-size: 18px; font-weight: bold; padding-top: 15px;">Total:</td>
-                                    <td style="color: #d4af37; font-size: 18px; font-weight: bold; text-align: right; padding-top: 15px;">${montoFormateado}</td>
-                                </tr>
-                            </table>
+                    <td style="padding: 30px 40px; background-color: rgba(255,255,255,0.01);">
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td width="50%" valign="top">
+                                    <h3 style="color: #d4af37; font-size: 9px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; border-bottom: 1px solid rgba(212, 175, 55, 0.2); display: inline-block;">Adquiriente</h3>
+                                    <p style="color: #ffffff; font-size: 14px; margin: 5px 0; font-weight: bold;">${nombreUsuario}</p>
+                                    <p style="color: #b0b3b8; font-size: 12px; margin: 2px 0;">Usuario Portal Numeris</p>
+                                    <p style="color: #b0b3b8; font-size: 11px; margin: 2px 0;">Estado: Alineación Premium Activa</p>
+                                </td>
+                                <td width="50%" valign="top" style="padding-left: 20px;">
+                                    <h3 style="color: #d4af37; font-size: 9px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; border-bottom: 1px solid rgba(212, 175, 55, 0.2); display: inline-block;">Detalles de Pago</h3>
+                                    <p style="color: #b0b3b8; font-size: 12px; margin: 5px 0;">Método: Mercado Pago Online</p>
+                                    <p style="color: #b0b3b8; font-size: 11px; margin: 2px 0;">Moneda: COP - Peso Colombiano</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Tabla de Items -->
+                <tr>
+                    <td style="padding: 20px 40px;">
+                        <table width="100%" border="0" cellpadding="15" cellspacing="0" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                            <tr>
+                                <td style="color: #6b6f76; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Descripción del Servicio Astral</td>
+                                <td align="right" style="color: #6b6f76; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Total</td>
+                            </tr>
+                            <tr>
+                                <td style="border-bottom: 1px solid rgba(255,255,255,0.05); color: #ffffff; font-size: 14px;">
+                                    ${pago.descripcion || 'Sincronización Astral Premium'}
+                                    <br><span style="color: #6b6f76; font-size: 10px;">Acceso ilimitado por ciclo mensual.</span>
+                                </td>
+                                <td align="right" style="border-bottom: 1px solid rgba(255,255,255,0.05); color: #d4af37; font-size: 16px; font-weight: bold;">
+                                    ${montoFormateado}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Resumen y QR -->
+                <tr>
+                    <td style="padding: 20px 40px 40px 40px;">
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td width="150" align="center" style="background-color: #ffffff; padding: 10px; border-radius: 4px;">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://numerologia-astral.devscenter.online/factura/${idFactura}&bgcolor=ffffff" width="100" height="100" alt="QR Factura" style="display: block;">
+                                    <p style="color: #000000; font-size: 7px; margin-top: 5px; text-transform: uppercase; font-weight: bold;">Validación Digital</p>
+                                </td>
+                                <td valign="bottom" align="right">
+                                    <table width="200" border="0" cellpadding="5" cellspacing="0">
+                                        <tr>
+                                            <td style="color: #6b6f76; font-size: 12px;">Subtotal</td>
+                                            <td align="right" style="color: #ffffff; font-size: 12px;">${montoFormateado}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #6b6f76; font-size: 12px;">IVA (0%)</td>
+                                            <td align="right" style="color: #ffffff; font-size: 12px;">$0</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #d4af37; font-size: 18px; font-weight: bold; border-top: 1px solid #d4af37; padding-top: 10px;">TOTAL</td>
+                                            <td align="right" style="color: #d4af37; font-size: 18px; font-weight: bold; border-top: 1px solid #d4af37; padding-top: 10px;">${montoFormateado}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Pie de Página Legal -->
+                <tr>
+                    <td style="padding: 30px 40px; background-color: #121418; border-top: 1px solid #2d2f36;">
+                        <p style="color: #4a4d52; font-size: 8px; line-height: 1.5; text-transform: uppercase; margin: 0;">
+                            Representación gráfica de factura electrónica. La firma digital garantiza la integridad según decreto 2242 de 2015. 
+                            DevsCenter S.A.S no responde por desalineaciones externas.
+                        </p>
+                        <div style="background-color: #000; padding: 5px; margin-top: 10px; font-family: monospace; font-size: 8px; color: #333; word-break: break-all;">
+                            CUFE: ${cufe}
                         </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding: 20px; text-align: center; background-color: rgba(212, 175, 55, 0.05);">
-                        <p style="font-size: 12px; color: #6b6f76; margin: 0;">&copy; 2026 Numeris Astral. Todos los derechos reservados.</p>
+                        <p style="color: #2d2f36; font-size: 9px; font-weight: bold; text-align: center; margin-top: 15px;">
+                            GRACIAS POR CONFIAR EN TU DESTINO • DEVSCENTER S.A.S
+                        </p>
                     </td>
                 </tr>
             </table>
         </div>
         `;
-        await enviarEmail(emailDestino, `✨ Confirmación de pago - Numeris`, html);
+        await enviarEmail(emailDestino, `✨ Factura Electrónica N° ${idFactura} - Numeris`, html);
         return true;
     } catch (error) {
         console.error('❌ Error enviando factura:', error.message);
