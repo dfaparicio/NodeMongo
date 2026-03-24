@@ -86,61 +86,41 @@ function calcularCaminoDeVida(fecha_nacimiento) {
   return reducir(diaReducido + mesReducido + añoReducido);
 }
 
+// --- FUNCIÓN INTERNA PARA GENERAR LECTURA PRINCIPAL (USADA POR PAGOS O API) ---
+export const generarLecturaPrincipalInterna = async (usuarioId) => {
+  const resultado = await lecturaPrincipal(usuarioId);
+  if (!resultado.usuario) throw new Error("Usuario no encontrado");
+  
+  if (resultado.lecturaExistente) {
+    return {
+      id: resultado.lecturaExistente._id,
+      contenido: JSON.parse(resultado.lecturaExistente.contenido),
+      yaExistia: true
+    };
+  }
+
+  const numeroCamino = calcularCaminoDeVida(resultado.usuario.fechanacimiento);
+  const prompt = `Actúa como un numerólogo experto. Genera un JSON para un Camino de Vida ${numeroCamino}. 
+  Nombre del usuario: ${resultado.usuario.nombre}.
+  Devuelve SOLO este formato JSON: {"numero": ${numeroCamino}, "descripcion": "...", "talentos": "...", "mensaje": "..."}`;
+
+  const contenidoIA = await respuestaIA(prompt);
+  const contenidoJSON = extraerJSON(contenidoIA);
+
+  if (!contenidoJSON) throw new Error("Error generando contenido IA");
+
+  const idLectura = await resultado.crear(usuarioId, "principal", JSON.stringify(contenidoJSON));
+  
+  return { id: idLectura, contenido: contenidoJSON, yaExistia: false };
+};
+
 export const generarlecturaprincipal = async (req, res) => {
   try {
     const { usuarioId } = req.params;
-    const resultado = await lecturaPrincipal(usuarioId);
-
-    if (!resultado.usuario) {
-      return res.status(404).json({ msg: "Usuario no encontrado" });
-    }
-
-    if (resultado.usuario.estado !== 0 && resultado.usuario.estado !== 1) {
-      return res.status(403).json({ msg: "Usuario no autorizado para generar lecturas." });
-    }
-
-    if (resultado.lecturaExistente) {
-      return res.status(200).json({
-        msg: "Lectura principal ya existe",
-        id: resultado.lecturaExistente._id,
-        contenido: JSON.parse(resultado.lecturaExistente.contenido),
-      });
-    }
-
-    const numeroCamino = calcularCaminoDeVida(
-      resultado.usuario.fechanacimiento,
-    );
-
-    const prompt = `Actúa como un numerólogo experto. Genera un JSON para un Camino de Vida ${numeroCamino}. 
-    Nombre del usuario: ${resultado.usuario.nombre}.
-    Devuelve SOLO este formato JSON: {"numero": ${numeroCamino}, "descripcion": "...", "talentos": "...", "mensaje": "..."}`;
-
-    let contenidoIA;
-    try {
-      contenidoIA = await respuestaIA(prompt);
-    } catch (iaError) {
-      console.error("❌ Fallo de IA:", iaError.message);
-      return res.status(503).json({ error: iaError.message });
-    }
-
-    const contenidoJSON = extraerJSON(contenidoIA);
-
-    if (!contenidoJSON) {
-      return res
-        .status(500)
-        .json({ error: "Error generando el contenido de la IA" });
-    }
-
-    const idLectura = await resultado.crear(
-      usuarioId,
-      "principal",
-      JSON.stringify(contenidoJSON),
-    );
-
-    res.status(201).json({
-      msg: "Lectura principal generada con éxito",
-      id: idLectura,
-      contenido: contenidoJSON,
+    const result = await generarLecturaPrincipalInterna(usuarioId);
+    res.status(result.yaExistia ? 200 : 201).json({
+      msg: result.yaExistia ? "Lectura principal ya existe" : "Lectura principal generada con éxito",
+      ...result
     });
   } catch (error) {
     console.error("❌ Error en lectura principal:", error.message);
