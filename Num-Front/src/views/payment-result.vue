@@ -35,7 +35,7 @@
                 </p>
                 
                 <div class="row q-gutter-x-sm justify-center q-mt-xl">
-                  <q-btn unelevated label="ENTRAR AL PANEL" class="btn-success-action col" @click="cerrarVentana" />
+                  <q-btn unelevated label="ENTRAR AL PANEL" class="btn-success-action col" @click="irAlPanel" />
                 </div>
               </div>
 
@@ -81,7 +81,7 @@
             <p class="text-grey-5 q-mt-md">No se pudo procesar la transacción.</p>
             <div class="row q-gutter-x-md q-mt-xl">
               <q-btn unelevated label="REINTENTAR" class="btn-error-action col" to="/planes" />
-              <q-btn flat label="VOLVER" color="grey-6" class="col" @click="cerrarVentana" />
+              <q-btn flat label="VOLVER" color="grey-6" class="col" @click="irAlPanel" />
             </div>
           </div>
         </div>
@@ -93,20 +93,20 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { verificarPago } from '../services/mercadopago.js';
 import { useAuthStore } from '../store/auth.js';
 import { converFecha, formatoPesos, generarFactura } from '../utils/functions.js';
 
 const route = useRoute();
+const router = useRouter();
 const authStore = useAuthStore();
 const loading = ref(true);
 const status = ref('');
 const paymentDetails = ref({ id: '', monto: 0, fecha: '', descripcion: '', fechaExpiracion: '' });
 
-const cerrarVentana = () => {
-  window.close();
-  setTimeout(() => { window.location.href = '/#/perfil'; }, 500);
+const irAlPanel = () => {
+  router.push('/perfil');
 };
 
 const onDownloadInvoice = () => {
@@ -134,6 +134,13 @@ onMounted(async () => {
         if (res.usuario) authStore.user = res.usuario;
         if (res.lecturas) authStore.lecturasguardadas = res.lecturas;
         if (res.pagos) authStore.pagosUsuario = res.pagos;
+
+        // REDIRECCIÓN AUTOMÁTICA AL PERFIL DESPUÉS DE 6 SEGUNDOS
+        setTimeout(() => {
+          if (status.value === 'approved') {
+            irAlPanel();
+          }
+        }, 6000);
       }
     } catch (e) {
       status.value = 'error';
