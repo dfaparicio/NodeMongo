@@ -57,16 +57,16 @@
             </div>
           </div>
 
-          <!-- PLAN MENSUAL -->
+          <!-- PLAN BÁSICO (Antes Mensual) -->
           <div class="col-12 col-sm-6 col-md-3">
-            <div class="plan-card-premium column q-pa-lg h-full" :class="{ 'plan-active-color': esPlanActual(50000), 'plan-inactive-gray': tienePlanPago && !esPlanActual(50000) }">
+            <div class="plan-card-premium column q-pa-lg h-full" :class="{ 'plan-active-color': esPlanActual(2000), 'plan-inactive-gray': tienePlanPago && !esPlanActual(2000) }">
               <div class="text-center">
                 <div class="plan-icon-wrapper q-mb-md mx-auto">
-                  <q-icon :name="esPlanActual(50000) ? 'stars' : 'bolt'" size="32px" :color="esPlanActual(50000) ? 'primary' : 'grey-7'" />
+                  <q-icon :name="esPlanActual(2000) ? 'stars' : 'bolt'" size="32px" :color="esPlanActual(2000) ? 'primary' : 'grey-7'" />
                 </div>
                 <div class="text-overline tracking-widest q-mb-xs">SINTONÍA</div>
-                <h2 class="text-h5 font-serif text-white q-ma-none">MENSUAL</h2>
-                <div class="text-h4 font-serif q-my-md">{{ formatoPesos(50000) }}</div>
+                <h2 class="text-h5 font-serif text-white q-ma-none">PLAN BÁSICO</h2>
+                <div class="text-h4 font-serif q-my-md">{{ formatoPesos(2000) }}</div>
               </div>
               <q-separator dark class="q-my-md opacity-10" />
               <q-list dense dark class="q-gutter-y-sm q-py-md">
@@ -76,25 +76,25 @@
                 </q-item>
               </q-list>
               <q-space />
-              <q-btn v-if="!tienePlanPago" unelevated label="ACTIVAR FRECUENCIA" class="btn-plan-action full-width" @click="seleccionarPlan(50000, 'Suscripción Mensual')" />
-              <div v-else-if="esPlanActual(50000)" class="status-label-bot text-center q-pt-md">
+              <q-btn v-if="!tienePlanPago" unelevated label="ACTIVAR FRECUENCIA" class="btn-plan-action full-width" @click="seleccionarPlan(2000, 'Plan Básico')" />
+              <div v-else-if="esPlanActual(2000)" class="status-label-bot text-center q-pt-md">
                 <span class="text-primary text-bold text-caption tracking-widest animate-pulse">FRECUENCIA ACTUAL</span>
               </div>
               <q-btn v-else flat icon="lock" label="BLOQUEADO" class="full-width opacity-40" disabled />
             </div>
           </div>
 
-          <!-- PLAN SEMESTRAL -->
+          <!-- PLAN MEDIO (Antes Semestral) -->
           <div class="col-12 col-sm-6 col-md-3">
-            <div class="plan-card-premium column q-pa-lg h-full" :class="{ 'plan-active-color': esPlanActual(240000), 'plan-inactive-gray': tienePlanPago && !esPlanActual(240000) }">
+            <div class="plan-card-premium column q-pa-lg h-full" :class="{ 'plan-active-color': esPlanActual(3000), 'plan-inactive-gray': tienePlanPago && !esPlanActual(3000) }">
               <div class="plan-badge-top" v-if="!tienePlanPago">AHORRA 20%</div>
               <div class="text-center">
                 <div class="plan-icon-wrapper q-mb-md mx-auto">
-                  <q-icon :name="esPlanActual(240000) ? 'diamond' : 'bolt'" size="32px" :color="esPlanActual(240000) ? 'primary' : 'grey-7'" />
+                  <q-icon :name="esPlanActual(3000) ? 'diamond' : 'bolt'" size="32px" :color="esPlanActual(3000) ? 'primary' : 'grey-7'" />
                 </div>
                 <div class="text-overline tracking-widest q-mb-xs">CONSOLIDACIÓN</div>
-                <h2 class="text-h5 font-serif text-white q-ma-none">SEMESTRAL</h2>
-                <div class="text-h4 font-serif q-my-md">{{ formatoPesos(240000) }}</div>
+                <h2 class="text-h5 font-serif text-white q-ma-none">PLAN MEDIO</h2>
+                <div class="text-h4 font-serif q-my-md">{{ formatoPesos(3000) }}</div>
               </div>
               <q-separator dark class="q-my-md opacity-10" />
               <q-list dense dark class="q-gutter-y-sm q-py-md">
@@ -104,25 +104,25 @@
                 </q-item>
               </q-list>
               <q-space />
-              <q-btn v-if="!tienePlanPago" unelevated label="ACTIVAR FRECUENCIA" class="btn-plan-action full-width" @click="seleccionarPlan(240000, 'Suscripción Semestral')" />
-              <div v-else-if="esPlanActual(240000)" class="status-label-bot text-center q-pt-md">
+              <q-btn v-if="!tienePlanPago" unelevated label="ACTIVAR FRECUENCIA" class="btn-plan-action full-width" @click="seleccionarPlan(3000, 'Plan Medio')" />
+              <div v-else-if="esPlanActual(3000)" class="status-label-bot text-center q-pt-md">
                 <span class="text-primary text-bold text-caption tracking-widest animate-pulse">FRECUENCIA ACTUAL</span>
               </div>
               <q-btn v-else flat icon="lock" label="BLOQUEADO" class="full-width opacity-40" disabled />
             </div>
           </div>
 
-          <!-- PLAN ANUAL -->
+          <!-- PLAN PREMIUM (Antes Anual) -->
           <div class="col-12 col-sm-6 col-md-3">
-            <div class="plan-card-premium plan-highlighted column q-pa-lg h-full" :class="{ 'plan-active-color': esPlanActual(420000), 'plan-inactive-gray': tienePlanPago && !esPlanActual(420000) }">
+            <div class="plan-card-premium plan-highlighted column q-pa-lg h-full" :class="{ 'plan-active-color': esPlanActual(5000), 'plan-inactive-gray': tienePlanPago && !esPlanActual(5000) }">
               <div class="plan-badge-top" v-if="!tienePlanPago">FRECUENCIA MAESTRA</div>
               <div class="text-center">
                 <div class="plan-icon-wrapper highlighted-icon q-mb-md mx-auto">
-                  <q-icon :name="esPlanActual(420000) ? 'auto_awesome' : 'bolt'" size="32px" :color="esPlanActual(420000) ? 'gold' : 'grey-7'" />
+                  <q-icon :name="esPlanActual(5000) ? 'auto_awesome' : 'bolt'" size="32px" :color="esPlanActual(5000) ? 'gold' : 'grey-7'" />
                 </div>
                 <div class="text-overline tracking-widest q-mb-xs">PREMIUM TOTAL</div>
-                <h2 class="text-h5 font-serif text-white q-ma-none">ANUAL</h2>
-                <div class="text-h4 font-serif q-my-md">{{ formatoPesos(420000) }}</div>
+                <h2 class="text-h5 font-serif text-white q-ma-none">PLAN PREMIUM</h2>
+                <div class="text-h4 font-serif q-my-md">{{ formatoPesos(5000) }}</div>
               </div>
               <q-separator dark class="q-my-md opacity-20" />
               <q-list dense dark class="q-gutter-y-sm q-py-md">
@@ -132,8 +132,8 @@
                 </q-item>
               </q-list>
               <q-space />
-              <q-btn v-if="!tienePlanPago" unelevated label="ELEVAR AL MÁXIMO" class="btn-plan-highlight full-width" @click="seleccionarPlan(420000, 'Suscripción Anual')" />
-              <div v-else-if="esPlanActual(420000)" class="status-label-bot text-center q-pt-md">
+              <q-btn v-if="!tienePlanPago" unelevated label="ELEVAR AL MÁXIMO" class="btn-plan-highlight full-width" @click="seleccionarPlan(5000, 'Plan Premium')" />
+              <div v-else-if="esPlanActual(5000)" class="status-label-bot text-center q-pt-md">
                 <span class="text-primary text-bold text-caption tracking-widest animate-pulse">FRECUENCIA ACTUAL</span>
               </div>
               <q-btn v-else flat icon="lock" label="BLOQUEADO" class="full-width opacity-40" disabled />
@@ -192,8 +192,8 @@ const esPlanActual = (montoPlan) => {
   const ultimoPagoAprobado = pagosOrdenados.find(p => p.estado === 'aprobado');
   
   if (!ultimoPagoAprobado) {
-    // Si tiene estado 1 pero no hay pagos registrados, por defecto asumimos el mensual si el monto coincide
-    return montoPlan === 50000; 
+    // Si tiene estado 1 pero no hay pagos registrados, por defecto asumimos el básico si el monto coincide
+    return montoPlan === 2000; 
   }
 
   // Comparamos el monto del último pago con el monto del plan de la tarjeta

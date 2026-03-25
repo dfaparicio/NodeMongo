@@ -80,14 +80,14 @@ const procesarResultadoPago = async (paymentData) => {
   console.log(`✅ Registrando pago real en la base de datos...`);
 
   let diasAAgregar = 30;
-  let descripcionPlan = "Suscripción Mensual";
+  let descripcionPlan = "Plan Básico";
 
-  if (montoPagado >= 420000) {
+  if (montoPagado >= 5000) {
     diasAAgregar = 365;
-    descripcionPlan = "Suscripción Anual";
-  } else if (montoPagado >= 240000) {
+    descripcionPlan = "Plan Premium";
+  } else if (montoPagado >= 3000) {
     diasAAgregar = 180;
-    descripcionPlan = "Suscripción Semestral";
+    descripcionPlan = "Plan Medio";
   }
 
   const infoPago = {
@@ -229,7 +229,7 @@ export const consultarEstadoPago = async (req, res) => {
       const paymentData = pagosEncontrados.find(p => {
         const fechaPago = new Date(p.date_created);
         return p.status === 'approved' && 
-               (p.preference_id === preference_id || (fechaPago > haceDosMinutos && Math.round(p.transaction_amount) >= 50000));
+               (p.preference_id === preference_id || (fechaPago > haceDosMinutos && Math.round(p.transaction_amount) >= 2000));
       });
 
       if (paymentData) {
