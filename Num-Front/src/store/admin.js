@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { getData, putData } from "../services/services.js";
+import { getData, putData, deleteData } from "../services/services.js";
 
 export const useAdminStore = defineStore(
     "admin",
@@ -8,8 +8,9 @@ export const useAdminStore = defineStore(
         const usuarios = ref([]);
         const lecturas = ref([]);
         const pagos = ref([]);
+        const loading = ref(false);
 
-        // Mapeo rápido de IDs a Nombres
+        // Mapeo rápido de IDs a Nombres para mostrar en tablas de pagos/lecturas
         const usuariosMap = computed(() => {
             const mapa = {};
             usuarios.value.forEach((u) => { mapa[u._id] = u.nombre; });
@@ -17,58 +18,72 @@ export const useAdminStore = defineStore(
         });
 
         // --- ESTADÍSTICAS INTELIGENTES (KPIs) ---
-        
         const stats = computed(() => {
-            const totalPagos = pagos.value.reduce((acc, p) => acc + (p.monto || 0), 0);
+            const totalPagos = pagos.value.reduce((acc, p) => acc + (Number(p.monto) || 0), 0);
             const usuariosActivos = usuarios.value.filter(u => u.estado === 1).length;
-            const usuariosInactivos = usuarios.value.filter(u => u.estado === 0).length;
             
             // Lecturas por tipo
             const lPrincipales = lecturas.value.filter(l => l.tipo === 'principal').length;
             const lDiarias = lecturas.value.filter(l => l.tipo === 'diaria').length;
 
-            // Crecimiento mensual (usuarios registrados en los últimos 30 días)
-            const hace30Dias = new Date();
-            hace30Dias.setDate(hace30Dias.getDate() - 30);
-            // Nota: Asumimos que el _id de Mongo tiene la fecha embebida o que el backend devuelve timestamps
-            // Para mayor precisión, si el modelo tiene createdAt lo usaríamos. 
-            // Por ahora simulamos con los que tenemos si hay fecha de nacimiento (aunque no es lo mismo)
-            // O simplemente contamos los últimos registros.
-            const nuevosUsuarios = usuarios.value.slice(-5).length; 
-
             return {
                 ingresosTotales: totalPagos,
                 usuariosActivos,
-                usuariosInactivos,
                 totalUsuarios: usuarios.value.length,
                 lecturasPrincipales: lPrincipales,
                 lecturasDiarias: lDiarias,
                 totalLecturas: lecturas.value.length,
-                nuevosUsuarios
+                pagosPendientes: pagos.value.filter(p => p.estado === 'pendiente').length
             };
         });
 
         const fetchUsuarios = async () => {
-            const resp = await getData("/usuario");
-            usuarios.value = resp.usuarios || [];
+            try {
+                const resp = await getData("/usuario");
+                usuarios.value = resp.usuarios || (Array.isArray(resp) ? resp : []);
+            } catch (error) {
+                console.error("Error fetching usuarios:", error);
+                usuarios.value = [];
+            }
         };
 
         const fetchLecturas = async () => {
-            const resp = await getData("/lectura");
-            lecturas.value = resp.lecturas || [];
+            try {
+                const resp = await getData("/lectura");
+                lecturas.value = resp.lecturas || (Array.isArray(resp) ? resp : []);
+            } catch (error) {
+                console.error("Error fetching lecturas:", error);
+                lecturas.value = [];
+            }
         };
 
         const fetchPagos = async () => {
-            const resp = await getData("/pago");
-            pagos.value = Array.isArray(resp) ? resp : [];
+            try {
+                const resp = await getData("/pago");
+                pagos.value = resp.pagos || (Array.isArray(resp) ? resp : []);
+            } catch (error) {
+                console.error("Error fetching pagos:", error);
+                pagos.value = [];
+            }
         };
 
         const fetchAll = async () => {
-            await Promise.all([fetchUsuarios(), fetchLecturas(), fetchPagos()]);
+            loading.value = true;
+            try {
+                await Promise.all([fetchUsuarios(), fetchLecturas(), fetchPagos()]);
+            } finally {
+                loading.value = false;
+            }
         };
 
         const updateUsuario = async (id, datos) => {
             const resp = await putData(`/usuario/${id}`, datos);
+            await fetchUsuarios();
+            return resp;
+        };
+
+        const deleteUsuario = async (id) => {
+            const resp = await deleteData(`/usuario/${id}`);
             await fetchUsuarios();
             return resp;
         };
@@ -86,6 +101,7 @@ export const useAdminStore = defineStore(
             usuarios,
             lecturas,
             pagos,
+            loading,
             usuariosMap,
             stats,
             fetchUsuarios,
@@ -93,6 +109,7 @@ export const useAdminStore = defineStore(
             fetchPagos,
             fetchAll,
             updateUsuario,
+            deleteUsuario,
             toggleUsuarioEstado,
         };
     },

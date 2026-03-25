@@ -1,305 +1,190 @@
 <template>
-  <div class="q-animate-fade-in">
-    <!-- Loading & Error -->
-    <div v-if="loading" class="flex flex-center q-py-xl column">
-      <q-spinner-orbit color="primary" size="64px" />
-      <span class="text-caption text-primary tracking-widest q-mt-md uppercase opacity-60">Sintonizando Crónicas...</span>
+  <div class="admin-readings q-gutter-y-xl q-pa-md">
+    <!-- Summary Row -->
+    <div class="row q-col-gutter-lg q-mb-xl">
+      <div class="col-12 col-md-4">
+        <q-card class="glass-panel no-border text-center q-pa-lg">
+          <div class="text-caption text-gold tracking-widest uppercase q-mb-sm">Total de Registros</div>
+          <div class="text-h3 text-weight-bold">{{ adminStore.stats.totalLecturas }}</div>
+        </q-card>
+      </div>
+      <div class="col-12 col-md-4">
+        <q-card class="glass-panel no-border text-center q-pa-lg">
+          <div class="text-caption text-gold tracking-widest uppercase q-mb-sm">Misiones Estelares (Principales)</div>
+          <div class="text-h3 text-weight-bold text-primary">{{ adminStore.stats.lecturasPrincipales }}</div>
+        </q-card>
+      </div>
+      <div class="col-12 col-md-4">
+        <q-card class="glass-panel no-border text-center q-pa-lg">
+          <div class="text-caption text-gold tracking-widest uppercase q-mb-sm">Guías Diarias</div>
+          <div class="text-h3 text-weight-bold text-secondary">{{ adminStore.stats.lecturasDiarias }}</div>
+        </q-card>
+      </div>
     </div>
 
-    <div v-else-if="error" class="text-center q-py-xl glass-panel border-error q-ma-lg">
-      <q-icon name="history_edu" size="48px" color="red-4" class="q-mb-md opacity-50" />
-      <p class="text-h6 text-white">{{ error }}</p>
-      <q-btn outline color="red-4" label="Reintentar Sintonía" @click="fetchData" class="rounded-lg" />
+    <!-- Header with quick filter -->
+    <div class="row justify-between items-center q-mb-md">
+      <div class="text-h5 text-gold tracking-widest uppercase font-serif">Bitácora General</div>
+      <q-input 
+        v-model="filter" 
+        placeholder="Buscar frecuencias..." 
+        dark 
+        dense 
+        outlined 
+        class="search-input rounded-lg"
+        style="width: 300px"
+      >
+        <template v-slot:append>
+          <q-icon name="search" color="primary" />
+        </template>
+      </q-input>
     </div>
 
-    <template v-else>
-      <!-- ACTIVITY DASHBOARD (KPIs) -->
-      <div class="row q-col-gutter-lg q-mb-xl">
-        <div class="col-12 col-sm-4">
-          <div class="kpi-card-professional border-primary">
-            <div class="row items-center justify-between">
+    <!-- Readings Table -->
+    <q-card class="glass-panel no-border overflow-hidden">
+      <q-table
+        :rows="adminStore.lecturas"
+        :columns="columns"
+        row-key="_id"
+        dark
+        flat
+        :filter="filter"
+        :loading="adminStore.loading"
+        class="bg-transparent"
+      >
+        <!-- User ID to Name Mapping -->
+        <template v-slot:body-cell-usuarioId="props">
+          <q-td :props="props">
+            <div class="row items-center q-gutter-x-sm">
+              <q-avatar size="32px" color="primary" text-color="black">
+                {{ getUserName(props.value).charAt(0).toUpperCase() }}
+              </q-avatar>
               <div>
-                <div class="text-overline text-primary opacity-70">Lecturas Procesadas</div>
-                <div class="text-h3 text-white text-bold">{{ totalLecturas }}</div>
-              </div>
-              <q-icon name="auto_stories" size="48px" color="primary" class="opacity-30" />
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-sm-4">
-          <div class="kpi-card-professional border-gold">
-            <div class="row items-center justify-between">
-              <div>
-                <div class="text-overline text-gold opacity-70">Esencias Principales</div>
-                <div class="text-h3 text-white text-bold">{{ totalPrincipales }}</div>
-              </div>
-              <q-icon name="stars" size="48px" color="gold" class="opacity-30" />
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-sm-4">
-          <div class="kpi-card-professional border-silver">
-            <div class="row items-center justify-between">
-              <div>
-                <div class="text-overline text-grey-5 opacity-70">Registros Diarios</div>
-                <div class="text-h3 text-white text-bold">{{ totalDiarias }}</div>
-              </div>
-              <q-icon name="history" size="48px" color="white" class="opacity-30" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SEARCH & TABLE -->
-      <div class="row items-center justify-between q-mb-lg">
-        <div class="text-h5 text-white text-weight-light">Bitácora de <span class="text-bold text-primary">Lecturas AI</span></div>
-        <q-input 
-          v-model="filter" 
-          placeholder="Filtrar por buscador o contenido..." 
-          dark 
-          outlined 
-          dense
-          style="width: 350px"
-          class="search-professional"
-        >
-          <template v-slot:prepend><q-icon name="search" color="primary" /></template>
-        </q-input>
-      </div>
-
-      <div class="glass-panel-dark overflow-hidden">
-        <q-table
-          :rows="filteredRows"
-          :columns="columns"
-          row-key="_id"
-          flat
-          dark
-          class="bg-transparent table-professional"
-          :pagination="{ rowsPerPage: 10 }"
-        >
-          <template v-slot:header="props">
-            <q-tr :props="props">
-              <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-primary text-bold">
-                {{ col.label }}
-              </q-th>
-              <q-th class="text-right text-primary text-bold q-pr-lg">Acción</q-th>
-            </q-tr>
-          </template>
-
-          <template v-slot:body="props">
-            <q-tr :props="props" class="row-professional">
-              <q-td key="tipo" :props="props" align="center">
-                <q-badge :color="props.row.tipo === 'principal' ? 'gold-9' : 'blue-10'" 
-                         :class="props.row.tipo === 'principal' ? 'text-gold border-gold' : 'text-blue-2 border-blue'"
-                         class="q-px-md q-py-xs text-bold uppercase badge-astral">
-                  {{ props.row.tipo === 'principal' ? 'Misión' : 'Diaria' }}
-                </q-badge>
-              </q-td>
-              <q-td key="nombre" :props="props">
-                <div class="text-white text-weight-bold">{{ props.row.usuario }}</div>
-              </q-td>
-              <q-td key="fecha" :props="props">
-                <div class="column">
-                  <span class="text-white font-mono text-caption">{{ props.row.fecha }}</span>
-                  <span class="text-grey-6 text-mini">{{ props.row.hora }}</span>
+                <div class="text-weight-medium">
+                  {{ getUserName(props.value) }}
                 </div>
-              </q-td>
-              <q-td key="preview" :props="props" class="text-grey-5 italic" style="max-width: 400px;">
-                <div class="truncate-2-lines">{{ props.row.preview }}</div>
-              </q-td>
-              <q-td class="text-right q-pr-md">
-                <q-btn flat round dense icon="visibility" color="primary" @click="verLectura(props.row)" class="action-btn">
-                  <q-tooltip>Expandir Registro</q-tooltip>
-                </q-btn>
-              </q-td>
-            </q-tr>
-          </template>
-        </q-table>
-      </div>
-    </template>
-
-    <!-- MODAL DE LECTURA DETALLADA -->
-    <q-dialog v-model="modalDetalle" transition-show="scale" transition-hide="scale">
-      <q-card class="modal-astral-detail glass-panel-dark text-white">
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6 text-primary text-bold uppercase tracking-widest">
-            <q-icon name="auto_awesome" class="q-mr-sm" /> 
-            Detalle de la Lectura
-          </div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
-
-        <q-card-section class="q-pa-xl">
-          <div class="row q-col-gutter-lg">
-            <div class="col-12 col-md-4">
-              <div class="info-label">Buscador</div>
-              <div class="info-value">{{ lecturaSeleccionada.usuario }}</div>
-              
-              <div class="info-label q-mt-md">Tipo de Esencia</div>
-              <q-badge :label="lecturaSeleccionada.tipo" color="primary" />
-              
-              <div class="info-label q-mt-md">Fecha y Hora</div>
-              <div class="text-caption opacity-70">{{ lecturaSeleccionada.fecha }} - {{ lecturaSeleccionada.hora }}</div>
-            </div>
-            
-            <div class="col-12 col-md-8">
-              <div class="reading-content-box shadow-inner">
-                <div class="info-label q-mb-sm">Mensaje Transmitido</div>
-                <p class="text-body1 text-grey-3 line-height-relaxed">{{ lecturaSeleccionada.preview }}</p>
+                <div class="text-caption opacity-50">{{ typeof props.value === 'string' ? props.value : 'Usuario Info' }}</div>
               </div>
             </div>
-          </div>
-        </q-card-section>
+          </q-td>
+        </template>
 
-        <q-card-actions align="right" class="q-pa-md">
-          <q-btn flat label="Cerrar Registro" color="grey-5" v-close-popup />
-          <q-btn unelevated label="Copiar Contenido" color="primary" @click="copiarLectura" />
-        </q-card-actions>
+        <!-- Type Badge con Animación -->
+        <template v-slot:body-cell-tipo="props">
+          <q-td :props="props">
+            <div class="row items-center justify-center q-gutter-x-sm">
+              <div :class="props.value === 'principal' ? 'status-orb-principal' : 'status-orb-diaria'"></div>
+              <span 
+                class="text-weight-bold tracking-widest uppercase" 
+                style="font-size: 11px;"
+                :class="props.value === 'principal' ? 'text-primary' : 'text-positive'"
+              >
+                {{ props.value === 'principal' ? 'BASE (PRINCIPAL)' : 'SUSCRIPCIÓN (DIARIA)' }}
+              </span>
+            </div>
+          </q-td>
+        </template>
+
+        <!-- Content Preview (JSON parse) -->
+        <template v-slot:body-cell-contenido="props">
+          <q-td :props="props">
+            <div class="ellipsis" style="max-width: 300px">
+              {{ formatContent(props.value) }}
+            </div>
+          </q-td>
+        </template>
+        
+        <!-- Actions -->
+        <template v-slot:body-cell-acciones="props">
+          <q-td :props="props">
+            <q-btn flat round dense icon="visibility" color="primary" @click="viewDetail(props.row)">
+              <q-tooltip>Ver Detalles Completos</q-tooltip>
+            </q-btn>
+          </q-td>
+        </template>
+      </q-table>
+    </q-card>
+
+    <!-- Detail Dialog -->
+    <q-dialog v-model="showDetail" persistent backdrop-filter="blur(15px)">
+      <q-card class="glass-panel no-border q-pa-md" style="min-width: 600px; max-width: 90vw;">
+        <q-card-section class="row items-center q-pb-md border-bottom-glass q-mb-md">
+          <div class="text-h5 text-gold font-serif tracking-widest">Detalle del Registro Celeste</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup class="text-grey-5 hover-gold" />
+        </q-card-section>
+        <q-card-section class="q-pa-md scroll" style="max-height: 65vh">
+          <pre class="text-grey-4 font-mono line-height-2" style="white-space: pre-wrap; font-size: 14px;">{{ JSON.stringify(JSON.parse(selectedReading.contenido), null, 3) }}</pre>
+        </q-card-section>
       </q-card>
     </q-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useAdminStore } from '../../store/admin.js';
-import { showNotify } from '../../utils/notify.js';
-import { copyToClipboard } from 'quasar';
 
 const adminStore = useAdminStore();
-const loading = ref(false);
-const error = ref(null);
 const filter = ref('');
-const modalDetalle = ref(false);
-const lecturaSeleccionada = ref({});
+const showDetail = ref(false);
+const selectedReading = ref(null);
 
-const fetchData = async () => {
-  loading.value = true;
-  error.value = null;
+const columns = [
+  { name: 'fechaLectura', align: 'left', label: 'FECHA', field: 'fechaLectura', sortable: true, format: val => new Date(val).toLocaleDateString() },
+  { name: 'usuarioId', align: 'left', label: 'ALMA', field: 'usuarioId', sortable: true },
+  { name: 'tipo', align: 'center', label: 'TIPO', field: 'tipo', sortable: true },
+  { name: 'contenido', align: 'left', label: 'RESUMEN DEL MENSAJE', field: 'contenido' },
+  { name: 'acciones', align: 'right', label: 'ACCIONES' }
+];
+
+const formatContent = (content) => {
   try {
-    await adminStore.fetchLecturas();
-    await adminStore.fetchUsuarios();
-  } catch (err) {
-    error.value = "Error al sintonizar con los registros centrales.";
-  } finally {
-    loading.value = false;
+    const json = JSON.parse(content);
+    return json.mensaje || json.descripcion || content;
+  } catch (e) {
+    return content;
   }
 };
 
-fetchData();
-
-const columns = [
-  { name: 'tipo', label: 'Tipo', field: 'tipo', align: 'center' },
-  { name: 'nombre', label: 'Buscador', field: 'usuario', align: 'left' },
-  { name: 'fecha', label: 'Fecha y Hora', field: 'fecha', align: 'left' },
-  { name: 'preview', label: 'Mensaje Generado', field: 'preview', align: 'left' },
-];
-
-function extraerPreview(contenido) {
-  try {
-    const obj = typeof contenido === 'string' ? JSON.parse(contenido) : contenido;
-    return obj.mensaje || obj.descripcion || obj.motivacion || 'Sin contenido disponible';
-  } catch { return 'Contenido no procesable'; }
-}
-
-const rows = computed(() =>
-  adminStore.lecturas.map(l => {
-    const d = new Date(l.fechaLectura);
-    return {
-      ...l,
-      usuario: adminStore.usuariosMap[l.usuarioId] || 'Anónimo',
-      fecha: d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' }),
-      hora: d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }),
-      preview: extraerPreview(l.contenido),
-    };
-  })
-);
-
-const filteredRows = computed(() => {
-  if (!filter.value) return rows.value;
-  const s = filter.value.toLowerCase();
-  return rows.value.filter(r => 
-    r.usuario.toLowerCase().includes(s) || 
-    r.preview.toLowerCase().includes(s)
-  );
-});
-
-const totalLecturas = computed(() => adminStore.lecturas.length);
-const totalPrincipales = computed(() => adminStore.lecturas.filter(l => l.tipo === 'principal').length);
-const totalDiarias = computed(() => totalLecturas.value - totalPrincipales.value);
-
-const verLectura = (row) => {
-  lecturaSeleccionada.value = row;
-  modalDetalle.value = true;
+const getUserName = (val) => {
+  if (val && typeof val === 'object' && val.nombre) return val.nombre;
+  return adminStore.usuariosMap[val] || 'Usuario Desconocido';
 };
 
-const copiarLectura = () => {
-  copyToClipboard(lecturaSeleccionada.value.preview);
-  showNotify.success('Copiado', 'El mensaje ha sido copiado al portapapeles.');
+const viewDetail = (reading) => {
+  selectedReading.value = reading;
+  showDetail.value = true;
 };
 </script>
 
 <style scoped>
-.kpi-card-professional {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 24px;
-  backdrop-filter: blur(10px);
+.search-input :deep(.q-field__control) {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.glass-panel-dark {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
+.status-orb-principal {
+  width: 10px; height: 10px; border-radius: 50%;
+  background-color: #d4af37; /* gold/primary */
+  box-shadow: 0 0 10px #d4af37;
+  animation: pulse-gold 3s infinite alternate; /* Animación calmada y única */
 }
 
-.table-professional :deep(.q-table__card) { background: transparent; }
-.table-professional :deep(th) { text-transform: uppercase; letter-spacing: 1.5px; font-size: 10px; }
-
-.row-professional:hover {
-  background: rgba(59, 130, 246, 0.02) !important;
+.status-orb-diaria {
+  width: 10px; height: 10px; border-radius: 50%;
+  background-color: #21ba45; /* positive/green */
+  box-shadow: 0 0 10px #21ba45;
+  animation: pulse-green 2s infinite; /* Representa que el pago activo fluye */
 }
 
-.badge-astral { letter-spacing: 1px; border: 1px solid transparent; }
-.border-gold { border-color: rgba(212, 175, 55, 0.3) !important; }
-.border-blue { border-color: rgba(59, 130, 246, 0.3) !important; }
-
-.search-professional :deep(.q-field__control) {
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.5);
+@keyframes pulse-gold {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+  100% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(212, 175, 55, 0); }
 }
 
-.truncate-2-lines {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;  
-  overflow: hidden;
-  line-height: 1.4;
+@keyframes pulse-green {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(33, 186, 69, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(33, 186, 69, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(33, 186, 69, 0); }
 }
-
-.modal-astral-detail {
-  width: 800px;
-  max-width: 90vw;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-.info-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #3b82f6; font-weight: 800; }
-.info-value { font-size: 18px; font-weight: 700; color: #fff; }
-
-.reading-content-box {
-  background: rgba(0,0,0,0.2);
-  padding: 20px;
-  border-radius: 12px;
-  border-left: 4px solid #3b82f6;
-}
-
-.text-mini { font-size: 10px; }
-.line-height-relaxed { line-height: 1.8; }
-
-.border-primary { border-bottom: 3px solid #3b82f6; }
-.border-gold { border-bottom: 3px solid #d4af37; }
-.border-silver { border-bottom: 3px solid #94a3b8; }
-
-.action-btn:hover { background: rgba(59, 130, 246, 0.1); }
 </style>

@@ -1,59 +1,42 @@
 <template>
-  <div class="profile-card cursor-pointer relative-position">
-    <q-item class="q-pa-sm">
-      <q-item-section avatar>
-        <div class="avatar-container">
-          <q-icon name="person_outline" size="24px" />
-          <div class="status-indicator"></div>
+  <div class="admin-profile-menu q-pa-sm">
+    <q-btn flat no-caps class="full-width rounded-lg glass-button q-pa-sm">
+      <div class="row items-center no-wrap full-width">
+        <q-avatar size="42px" class="q-mr-md border-gold">
+          <img src="https://cdn.quasar.dev/img/avatar2.jpg" alt="Admin Avatar" />
+        </q-avatar>
+        <div class="column items-start text-left">
+          <div class="text-weight-bold text-white">{{ authStore.user?.nombre || 'Arquitecto' }}</div>
+          <div class="text-caption text-gold opacity-60 uppercase tracking-widest" style="font-size: 8px;">Administrador</div>
         </div>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label class="profile-name">{{ authStore.user?.nombre || 'Administrador' }}</q-item-label>
-        <q-item-label caption class="profile-role">
-          {{ authStore.user?.rol === 'ADMIN_ROLE' ? 'Administrador del Sistema' : 'Usuario' }}
-        </q-item-label>
-      </q-item-section>
-    </q-item>
+        <q-space />
+        <q-icon name="more_vert" color="grey-5" />
+      </div>
 
-    <q-menu 
-      anchor="top right" 
-      self="bottom right" 
-      class="bg-sidebar no-border glass-menu"
-      transition-show="jump-up"
-      transition-hide="jump-down"
-    >
-      <q-list style="min-width: 180px" class="q-pa-xs">
-        <q-item clickable v-ripple @click="goTo('/perfil')" class="menu-item rounded-pill">
-          <q-item-section avatar>
-            <q-icon name="account_circle" size="20px" />
-          </q-item-section>
-          <q-item-section>Mi Perfil</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple @click="goTo('/lecturas/principal')" class="menu-item rounded-pill">
-          <q-item-section avatar>
-            <q-icon name="star" size="20px" />
-          </q-item-section>
-          <q-item-section>Lectura Principal</q-item-section>
-        </q-item>
-
-        <q-item clickable v-ripple @click="goTo('/lecturas/diaria')" class="menu-item rounded-pill">
-          <q-item-section avatar>
-            <q-icon name="sunny" size="20px" />
-          </q-item-section>
-          <q-item-section>Lectura Diaria</q-item-section>
-        </q-item>
-
-        <q-separator dark class="q-my-xs opacity-10" />
-
-        <q-item clickable v-ripple @click="logout" class="menu-item logout-item rounded-pill">
-          <q-item-section avatar>
-            <q-icon name="logout" size="20px" color="red-4" />
-          </q-item-section>
-          <q-item-section class="text-red-4">Cerrar Sesión</q-item-section>
-        </q-item>
-      </q-list>
-    </q-menu>
+      <q-menu dark persistent class="glass-panel no-border" transition-show="scale" transition-hide="scale">
+        <q-list style="min-width: 200px">
+          <q-item clickable v-ripple v-close-popup @click="goToProfile">
+            <q-item-section avatar>
+              <q-icon name="manage_accounts" color="primary" />
+            </q-item-section>
+            <q-item-section>Mi Perfil Astral</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple v-close-popup @click="goToSettings">
+            <q-item-section avatar>
+              <q-icon name="settings" color="primary" />
+            </q-item-section>
+            <q-item-section>Configuración</q-item-section>
+          </q-item>
+          <q-separator dark />
+          <q-item clickable v-ripple v-close-popup class="text-negative" @click="logout">
+            <q-item-section avatar>
+              <q-icon name="logout" color="negative" />
+            </q-item-section>
+            <q-item-section>Cerrar Portal (Salir)</q-item-section>
+          </q-item>
+        </q-list>
+      </q-menu>
+    </q-btn>
   </div>
 </template>
 
@@ -66,107 +49,36 @@ const authStore = useAuthStore();
 const router = useRouter();
 const $q = useQuasar();
 
-const goTo = (path) => {
-  router.push(path);
+const goToProfile = () => {
+  $q.notify({ message: 'Redirigiendo al perfil...', color: 'info' });
+};
+
+const goToSettings = () => {
+  $q.notify({ message: 'Abriendo configuración del cosmos...', color: 'info' });
 };
 
 const logout = () => {
-  $q.dialog({
-    title: 'Cerrar Sesión',
-    message: '¿Estás seguro de que deseas salir del sistema?',
-    cancel: true,
-    persistent: true,
-    dark: true,
-    ok: {
-      flat: true,
-      color: 'red-4',
-      label: 'Sí, Salir'
-    }
-  }).onOk(() => {
-    authStore.token = "";
-    authStore.user = null;
-    router.push('/login');
+  authStore.logout();
+  router.push('/login');
+  $q.notify({
+    message: 'Has cerrado el portal. ¡Vuelve pronto! ✨',
+    color: 'primary',
+    position: 'bottom'
   });
 };
 </script>
 
 <style scoped>
-.profile-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
+.glass-button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
-
-.profile-card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(242, 169, 0, 0.2);
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--q-primary);
 }
-
-.avatar-container {
-  width: 44px;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.status-indicator {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 10px;
-  height: 10px;
-  background: #4caf50;
-  border: 2px solid #0b0c0e;
-  border-radius: 50%;
-}
-
-.profile-name {
-  font-weight: 700;
-  font-size: 14px;
-  color: #ffffff;
-}
-
-.profile-role {
-  font-size: 11px;
-  color: #f2a900;
-  opacity: 0.8;
-}
-
-.glass-menu {
-  background: rgba(11, 12, 14, 0.9) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-.menu-item {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
-  font-weight: 500;
-  margin: 2px 0;
-  transition: all 0.2s ease;
-}
-
-.menu-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-}
-
-.logout-item:hover {
-  background: rgba(239, 83, 80, 0.1);
-}
-
-.rounded-pill {
-  border-radius: 10px;
-}
-
-.opacity-10 {
-  opacity: 0.1;
+.border-gold {
+  border: 2px solid var(--q-primary);
 }
 </style>

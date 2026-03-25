@@ -8,12 +8,16 @@
       <div class="absolute-full geometry-grid opacity-10"></div>
     </div>
 
-    <!-- NAVEGACIÓN Y CARRUSEL INTEGRADO -->
     <header class="absolute-top z-top full-width q-px-xl q-py-lg flex justify-between items-center">
       <div class="flex items-center q-gutter-x-lg">
-        <div class="column">
-          <span class="text-caption text-uppercase tracking-widest text-gold-soft" style="font-size: 10px; letter-spacing: 5px;">Numeris Astral</span>
-          <span class="text-h6 font-serif opacity-80">GUÍA DIARIA</span>
+        <div class="row items-center gap-md">
+          <q-avatar size="54px">
+            <img src="../assets/Logo.png" alt="Logo" />
+          </q-avatar>
+          <div class="column">
+            <span class="text-caption text-uppercase tracking-widest text-gold-soft" style="font-size: 10px; letter-spacing: 5px;">Numeris Astral</span>
+            <span class="text-h6 font-serif opacity-80">GUÍA DIARIA</span>
+          </div>
         </div>
         
         <div class="row items-center glass-panel-premium-soft q-px-md q-py-xs" style="border-radius: 100px;">

@@ -15,7 +15,9 @@
 
       <div class="relative-position fit column justify-between q-pa-xl z-top">
         <div class="row items-center q-gutter-sm opacity-80">
-          <q-icon name="auto_awesome" color="primary" size="md" />
+          <q-avatar size="42px">
+            <img src="../assets/Logo.png" alt="Logo" />
+          </q-avatar>
           <span class="text-h6 text-weight-bold text-uppercase tracking-widest text-primary">NUMERIS</span>
         </div>
 

@@ -11,9 +11,11 @@
 
         <q-header class="bg-transparent text-white q-py-md" style="z-index: 9999;">
             <div class="row justify-between items-center max-w-7xl mx-auto q-px-lg">
-                <div class="row items-center q-gutter-sm cursor-pointer nav-group">
+                <div class="row items-center q-gutter-md cursor-pointer nav-group" @click="$router.push('/')">
                     <div class="relative-position flex flex-center">
-                        <q-icon name="pentagon" color="primary" size="sm" class="nav-icon transition-transform" />
+                        <q-avatar size="42px">
+                            <img src="../assets/Logo.png" alt="Logo" />
+                        </q-avatar>
                         <div class="absolute-full bg-primary blur-glow rounded-full opacity-20"></div>
                     </div>
                     <span

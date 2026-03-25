@@ -9,7 +9,9 @@
     <!-- NAVEGACIÓN SUPERIOR -->
     <nav class="relative-position z-top full-width q-px-xl q-py-lg flex justify-between items-center shrink-0">
       <div class="flex items-center q-gutter-x-md">
-        <q-icon name="auto_awesome" color="primary" size="24px" class="opacity-50" />
+        <q-avatar size="32px">
+          <img src="../assets/Logo.png" alt="Logo" />
+        </q-avatar>
         <span class="text-caption text-uppercase tracking-widest text-white-50" style="letter-spacing: 4px;">Numeris Astral</span>
       </div>
       <q-btn flat no-caps color="grey-5" to="/perfil" class="btn-back-ethereal">

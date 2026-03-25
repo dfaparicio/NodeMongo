@@ -442,3 +442,27 @@
     height: 1px;
     background: linear-gradient(to right, rgba(244, 175, 37, 0.5), transparent);
 }
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVIDAD CENTRALIZADA - PÁGINA INICIO
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .hero-title { font-size: 3rem !important; }
+  .hero-subtitle { font-size: 1rem; }
+  .p-8 { padding: 1.5rem; }
+  .hero-circles { transform: scale(0.8); height: 15rem; }
+}
+
+@media (max-width: 600px) {
+  .hero-title { font-size: 2.2rem !important; line-height: 1.1; }
+  .hero-subtitle { font-size: 0.85rem; padding: 0 15px; }
+  .hero-circles { transform: scale(0.65); margin-bottom: -40px !important; }
+  .trust-bar { flex-direction: column; gap: 15px; border-radius: 20px; }
+  .nav-text { display: none; }
+  .pt-12 { padding-top: 40px !important; }
+  
+  /* Feature cards stack naturally due to Flexbox/Grid in Quasar, 
+     just ensuring paddings are consistent */
+  .q-px-xl { padding-left: 16px !important; padding-right: 16px !important; }
+}

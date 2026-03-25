@@ -1,126 +1,113 @@
 <template>
-  <div class="q-animate-fade-in">
-    <!-- FILA DE ESTADO GENERAL Y MÉTRICAS -->
-    <div class="row q-col-gutter-lg q-mb-xl">
-      <div class="col-12 col-md-4">
-        <div class="kpi-card-professional border-emerald pulse-glow-emerald">
-          <div class="row items-center justify-between">
-            <div>
-              <div class="text-overline text-emerald opacity-70">Estado del Sistema</div>
-              <div class="text-h4 text-white text-bold">OPERATIVO</div>
-            </div>
-            <div class="status-indicator-wrap large">
-              <div class="pulse-dot active"></div>
-            </div>
-          </div>
-          <div class="text-caption text-grey-5 q-mt-md">Sincronización Astral en Tiempo Real</div>
-        </div>
-      </div>
+  <div class="admin-dashboard q-gutter-y-xl q-pa-md">
+    <!-- Título Principal -->
+    <div class="row items-center q-mb-md">
+      <h2 class="text-h5 text-gold tracking-widest uppercase font-serif q-ma-none">Reporte Astral</h2>
+    </div>
 
-      <div class="col-12 col-md-8">
-        <div class="row q-col-gutter-lg">
-          <div class="col-6 col-sm-3">
-            <div class="stat-box">
-              <div class="text-h5 text-white text-bold font-mono">{{ formatoPesos(stats.ingresosTotales) }}</div>
-              <div class="text-mini text-gold">Ingresos</div>
+    <!-- KPI Cards (Totales) -->
+    <div class="row q-col-gutter-lg">
+      <div class="col-12 col-sm-6 col-md-3" v-for="card in kpiCards" :key="card.title">
+        <q-card class="kpi-card glass-panel no-border overflow-hidden q-py-sm">
+          <q-card-section class="row items-center no-wrap">
+            <div class="col">
+              <div class="text-caption text-uppercase tracking-widest opacity-60 text-gold q-mb-xs" style="font-size: 10px;">{{ card.title }}</div>
+              <div class="text-h4 text-weight-bold">{{ card.value }}</div>
             </div>
-          </div>
-          <div class="col-6 col-sm-3">
-            <div class="stat-box">
-              <div class="text-h5 text-white text-bold">{{ stats.usuariosActivos }}</div>
-              <div class="text-mini text-emerald">Activos</div>
+            <div class="col-auto">
+              <q-icon :name="card.icon" size="38px" :color="card.color" class="opacity-40" />
             </div>
-          </div>
-          <div class="col-6 col-sm-3">
-            <div class="stat-box">
-              <div class="text-h5 text-white text-bold">{{ stats.totalLecturas }}</div>
-              <div class="text-mini text-primary">Lecturas</div>
-            </div>
-          </div>
-          <div class="col-6 col-sm-3">
-            <div class="stat-box">
-              <div class="text-h5 text-white text-bold">+{{ stats.nuevosUsuarios }}</div>
-              <div class="text-mini text-grey-4">Nuevos</div>
-            </div>
-          </div>
-        </div>
+          </q-card-section>
+          <div class="card-glow" :style="{ background: `radial-gradient(circle at center, ${card.glowColor} 0%, transparent 70%)` }"></div>
+        </q-card>
       </div>
     </div>
 
-    <div class="row q-col-gutter-lg">
-      <!-- Actividad Reciente (Usuarios) -->
-      <div class="col-12 col-md-7">
-        <div class="glass-panel-dark q-pa-xl full-height border-glass overflow-hidden shadow-24">
-          <div class="row items-center justify-between q-mb-xl">
-            <div>
-              <h3 class="text-h5 text-weight-bold text-white no-margin">Auditoría de Almas</h3>
-              <p class="text-caption text-grey-5 no-margin">Últimas sincronizaciones en el portal</p>
-            </div>
-            <q-btn unelevated color="primary" label="Gestionar Usuarios" icon-right="chevron_right" no-caps @click="$emit('setView', 'usuarios')" class="rounded-lg" />
-          </div>
-
-          <q-markup-table flat class="bg-transparent text-white table-professional-mini">
-            <thead>
-              <tr class="text-primary text-bold text-uppercase text-caption letter-spacing-2">
-                <th class="text-left">Identidad</th>
-                <th class="text-left">Canal</th>
-                <th class="text-right">Alineación</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="user in ultimosUsuarios" :key="user._id" class="row-professional-mini">
-                <td>
-                  <div class="row items-center gap-sm">
-                    <q-avatar size="28px" color="primary-opacity" text-color="primary" class="text-bold">
-                      {{ user.nombre.charAt(0) }}
-                    </q-avatar>
-                    <span class="text-weight-bold">{{ user.nombre }}</span>
-                  </div>
-                </td>
-                <td class="text-grey-5 font-mono text-caption">{{ user.email }}</td>
-                <td class="text-right">
-                  <div class="row items-center justify-end gap-sm">
-                    <div class="pulse-dot-mini" :class="user.estado === 1 ? 'active' : 'inactive'"></div>
-                    <span :class="user.estado === 1 ? 'text-emerald' : 'text-red-4'" class="text-mini text-bold">
-                      {{ user.estado === 1 ? 'ACTIVE' : 'IDLE' }}
-                    </span>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
-        </div>
-      </div>
-
-      <!-- Pagos Recientes -->
+    <!-- Promedios Generales y Últimos Registros -->
+    <div class="row q-col-gutter-lg q-mt-md">
+      
+      <!-- Desgloses y Estadísticas -->
       <div class="col-12 col-md-5">
-        <div class="glass-panel-dark q-pa-xl full-height border-glass shadow-24">
-          <div class="row items-center justify-between q-mb-xl">
-            <div>
-              <h3 class="text-h5 text-weight-bold text-white no-margin">Flujo Financiero</h3>
-              <p class="text-caption text-grey-5 no-margin">Últimas transacciones</p>
-            </div>
-            <q-btn unelevated color="gold" label="Tesorería" icon-right="account_balance_wallet" no-caps @click="$emit('setView', 'pagos')" class="rounded-lg text-black" />
-          </div>
+        <q-card class="glass-panel no-border full-height">
+          <q-card-section class="q-pa-lg">
+            <div class="text-h6 text-gold tracking-widest font-serif q-mb-xl text-center uppercase">Desglose del Cosmos</div>
+            
+            <div class="column q-gutter-y-lg q-px-md">
+              
+              <!-- Desglose Usuarios -->
+              <div>
+                <div class="row justify-between q-mb-xs">
+                  <span class="text-caption text-gold uppercase tracking-widest opacity-80">Almas Activas</span>
+                  <span class="text-weight-bold">{{ stats.usuariosActivos }} / {{ stats.totalUsuarios }}</span>
+                </div>
+                <q-linear-progress dark :value="tasaUsuarios" color="primary" class="rounded-borders" style="height: 8px" />
+                <div class="text-right text-grey-5 q-mt-xs" style="font-size: 10px;">{{ Math.round(tasaUsuarios * 100) }}% con frecuencia activa</div>
+              </div>
 
-          <div class="q-gutter-y-lg">
-            <div v-for="pago in ultimosPagos" :key="pago._id" class="transaction-card-mini flex items-center justify-between">
-              <div class="row items-center gap-md">
-                <div class="icon-wrap bg-gold-opacity">
-                  <q-icon name="receipt" color="gold" size="sm" />
+              <q-separator dark class="opacity-10 q-my-sm" />
+              
+              <!-- Desglose Lecturas -->
+              <div>
+                <div class="row justify-between q-mb-xs">
+                  <span class="text-caption text-info uppercase tracking-widest opacity-80">Misiones Principales</span>
+                  <span class="text-weight-bold">{{ stats.lecturasPrincipales }} / {{ stats.totalLecturas }}</span>
                 </div>
-                <div>
-                  <div class="text-subtitle1 text-white text-bold">{{ adminStore.usuariosMap[pago.usuarioId] || 'Buscador' }}</div>
-                  <div class="text-caption text-grey-6">{{ converFecha(pago.fecha) }}</div>
+                <q-linear-progress dark :value="tasaLecturas" color="info" class="rounded-borders" style="height: 8px" />
+                <div class="text-right text-grey-5 q-mt-xs" style="font-size: 10px;">{{ stats.lecturasDiarias }} Guías Diarias generadas</div>
+              </div>
+
+              <q-separator dark class="opacity-10 q-my-sm" />
+              
+              <!-- Desglose Pagos -->
+              <div>
+                <div class="row justify-between q-mb-xs">
+                  <span class="text-caption text-positive uppercase tracking-widest opacity-80">Abundancia Aprobada</span>
+                  <span class="text-weight-bold">{{ pagosAprobados }} / {{ totalPagosRegistrados }}</span>
                 </div>
+                <q-linear-progress dark :value="tasaPagos" color="positive" class="rounded-borders" style="height: 8px" />
+                <div class="text-right text-grey-5 q-mt-xs" style="font-size: 10px;">{{ stats.pagosPendientes }} pagos pendientes / fallidos</div>
               </div>
-              <div class="text-h6 text-gold text-weight-bolder font-mono">
-                {{ formatoPesos(pago.monto) }}
-              </div>
+
             </div>
-          </div>
-        </div>
+          </q-card-section>
+        </q-card>
       </div>
+
+      <!-- Recent Users -->
+      <div class="col-12 col-md-7">
+        <q-card class="glass-panel no-border full-height">
+          <q-card-section class="row items-center justify-between q-pa-lg border-bottom-glass q-mb-sm">
+            <div class="text-h6 text-gold tracking-widest font-serif uppercase">Últimas Almas</div>
+            <q-btn flat dense color="primary" label="Ver Directorio" @click="$emit('setView', 'usuarios')" no-caps class="tracking-widest" />
+          </q-card-section>
+          
+          <q-card-section class="q-pa-none">
+            <q-list separator dark>
+              <q-item v-for="user in recentUsers" :key="user._id" class="q-py-md q-px-lg hover-gold-subtle">
+                <q-item-section avatar>
+                  <q-avatar color="primary" text-color="black" size="40px">
+                    {{ (user.nombre || 'U').charAt(0).toUpperCase() }}
+                  </q-avatar>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-weight-bold tracking-wide" style="font-size: 15px;">{{ user.nombre || 'Desconocido' }}</q-item-label>
+                  <q-item-label caption class="text-grey-5">{{ user.email || 'Sin email' }}</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-badge :color="user.estado === 1 ? 'positive' : 'grey-7'" outline class="q-px-sm q-py-xs rounded-lg text-weight-bold">
+                    {{ user.estado === 1 ? 'ACTIVO' : 'INACTIVO' }}
+                  </q-badge>
+                </q-item-section>
+              </q-item>
+              
+              <q-item v-if="recentUsers.length === 0" class="text-center q-pa-xl opacity-40">
+                <q-item-section>El universo espacial aún está vacío.</q-item-section>
+              </q-item>
+            </q-list>
+          </q-card-section>
+        </q-card>
+      </div>
+      
     </div>
   </div>
 </template>
@@ -128,120 +115,89 @@
 <script setup>
 import { computed } from 'vue';
 import { useAdminStore } from '../../store/admin.js';
-import { formatoPesos, converFecha } from '../../utils/functions.js';
+import { useQuasar } from 'quasar';
 
 const adminStore = useAdminStore();
+const $q = useQuasar();
+
 const stats = computed(() => adminStore.stats);
 
-const ultimosUsuarios = computed(() => adminStore.usuarios.slice(-6).reverse());
-const ultimosPagos = computed(() => adminStore.pagos.slice(-6).reverse());
+// Cálculos para las barras de progreso
+const tasaUsuarios = computed(() => {
+  if (!stats.value.totalUsuarios) return 0;
+  return stats.value.usuariosActivos / stats.value.totalUsuarios;
+});
 
-defineEmits(['setView']);
+const tasaLecturas = computed(() => {
+  if (!stats.value.totalLecturas) return 0;
+  return stats.value.lecturasPrincipales / stats.value.totalLecturas;
+});
+
+const totalPagosRegistrados = computed(() => adminStore.pagos.length);
+const pagosAprobados = computed(() => adminStore.pagos.filter(p => ['aprobado', 'approved'].includes(p.estado?.toLowerCase())).length);
+
+const tasaPagos = computed(() => {
+  if (!totalPagosRegistrados.value) return 0;
+  return pagosAprobados.value / totalPagosRegistrados.value;
+});
+
+const kpiCards = computed(() => [
+  {
+    title: 'Ingresos Totales',
+    value: `$${stats.value.ingresosTotales.toLocaleString()}`,
+    icon: 'payments',
+    color: 'positive',
+    glowColor: 'rgba(33, 186, 69, 0.2)'
+  },
+  {
+    title: 'Almas Activas',
+    value: stats.value.usuariosActivos,
+    icon: 'auto_awesome',
+    color: 'primary',
+    glowColor: 'rgba(212, 175, 55, 0.2)'
+  },
+  {
+    title: 'Crónicas Totales',
+    value: stats.value.totalLecturas,
+    icon: 'history_edu',
+    color: 'info',
+    glowColor: 'rgba(49, 204, 239, 0.2)'
+  },
+  {
+    title: 'Nuevas Almas',
+    value: adminStore.usuarios.slice(-5).length,
+    icon: 'person_add',
+    color: 'secondary',
+    glowColor: 'rgba(38, 166, 154, 0.2)'
+  }
+]);
+
+const recentUsers = computed(() => {
+  return [...adminStore.usuarios].reverse().slice(0, 5);
+});
 </script>
 
 <style scoped>
-.kpi-card-professional {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 30px;
-  backdrop-filter: blur(15px);
+.kpi-card {
   position: relative;
-  overflow: hidden;
+  transition: transform 0.3s ease;
 }
-
-.pulse-glow-emerald {
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.05);
-}
-
-.stat-box {
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  padding: 20px;
-  border-radius: 16px;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.stat-box:hover {
-  background: rgba(15, 23, 42, 0.6);
-  border-color: rgba(59, 130, 246, 0.2);
+.kpi-card:hover {
   transform: translateY(-5px);
 }
-
-.glass-panel-dark {
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 24px;
-}
-
-/* Pulsing Dots */
-.status-indicator-wrap.large {
-  padding: 10px;
-}
-
-.pulse-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  position: relative;
-}
-.pulse-dot.active { background: #10b981; }
-.pulse-dot.inactive { background: #f43f5e; }
-
-.pulse-dot::after {
-  content: '';
+.card-glow {
   position: absolute;
+  top: -50%;
+  right: -50%;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-  opacity: 0.6;
+  pointer-events: none;
 }
-.pulse-dot.active::after { border: 6px solid #10b981; }
-.pulse-dot.inactive::after { border: 6px solid #f43f5e; }
-
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 0.8; }
-  100% { transform: scale(3.5); opacity: 0; }
-}
-
-.pulse-dot-mini {
+.status-dot-active {
   width: 8px;
   height: 8px;
+  background: #21ba45;
   border-radius: 50%;
+  box-shadow: 0 0 10px #21ba45;
 }
-.pulse-dot-mini.active { background: #10b981; box-shadow: 0 0 10px #10b981; }
-.pulse-dot-mini.inactive { background: #f43f5e; box-shadow: 0 0 10px #f43f5e; }
-
-.table-professional-mini { background: transparent; }
-.table-professional-mini th { letter-spacing: 2px; opacity: 0.6; padding-bottom: 20px; }
-.row-professional-mini td { padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-
-.transaction-card-mini {
-  padding: 15px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.02);
-  transition: all 0.2s ease;
-}
-.transaction-card-mini:hover {
-  background: rgba(212, 175, 55, 0.04);
-  transform: translateX(5px);
-}
-
-.icon-wrap {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bg-gold-opacity { background: rgba(212, 175, 55, 0.1); }
-.primary-opacity { background: rgba(59, 130, 246, 0.1); }
-
-.text-mini { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-.border-emerald { border-left: 5px solid #10b981; }
-.letter-spacing-2 { letter-spacing: 2px; }
 </style>

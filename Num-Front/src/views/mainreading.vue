@@ -8,10 +8,11 @@
       <div class="absolute-full ambient-vignette"></div>
     </div>
 
-    <!-- NAVEGACIÓN PREMIUM -->
     <nav class="relative-position z-top full-width q-px-xl q-py-xl flex justify-between items-center">
-      <div class="flex items-center gap-sm">
-        <q-icon name="auto_awesome" color="primary" size="32px" class="animate-pulse-slow opacity-70" />
+      <div class="flex items-center gap-md">
+        <q-avatar size="42px">
+          <img src="../assets/Logo.png" alt="Logo" />
+        </q-avatar>
         <span class="font-serif text-h6 text-bold tracking-widest text-white-80 text-uppercase" style="letter-spacing: 6px;">Numeris Astral</span>
       </div>
       <div class="flex items-center q-gutter-x-lg">

@@ -10,7 +10,9 @@
         <!-- Logo Area -->
         <div class="q-px-lg q-py-xl column items-center">
           <div class="logo-wrapper q-mb-md">
-            <q-icon name="auto_awesome" color="gold" size="42px" class="animate-pulse-slow shadow-glow" />
+            <q-avatar size="64px">
+              <img src="../assets/Logo.png" alt="Logo" />
+            </q-avatar>
           </div>
           <div class="logo-text">NUMERIS <span>ADMIN</span></div>
           <div class="text-caption text-gold opacity-50 tracking-widest text-uppercase" style="font-size: 8px; letter-spacing: 4px;">Portal del Arquitecto</div>
