@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
   // Si estamos en desarrollo, usamos la URL local, si no, la de producción.
   // VITE_API_URL debería ser algo como "http://localhost:5040/api" en local
   // o "/api" si se sirve desde el mismo servidor Express.
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5040/api",
+  baseURL: import.meta.env.VITE_API_URL || "https://nodemongo-ihx8.onrender.com/api",
   headers: {
     "Content-Type": "application/json",
   },
