@@ -93,7 +93,7 @@
 
         <div class="q-pa-lg border-top-primary-20 bg-black-20 row justify-between items-center text-white-40">
           <div class="font-light">
-            Showing <span class="text-white">1-4</span> of <span class="text-white">12</span> transactions
+            Mostrando <span class="text-white">{{ transactions.length }}</span> registros de abundancia
           </div>
           <div class="row q-gutter-x-sm">
             <q-btn flat dense icon="chevron_left" class="nav-btn" disabled />
@@ -110,6 +110,29 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '../store/auth.js';
+import { computed } from 'vue';
+import { formatoPesos } from '../utils/functions.js';
+
+const authStore = useAuthStore();
+
+const transactions = computed(() => {
+  if (!authStore.pagosUsuario) return [];
+  // Ordenar por fecha descendente
+  return [...authStore.pagosUsuario]
+    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+    .map(p => ({
+      id: p._id,
+      date: new Date(p.fecha).toLocaleDateString(),
+      service: p.descripcion || 'Conexión Astral',
+      idCode: p.mpPaymentId || p._id.substring(0, 8),
+      amount: formatoPesos(p.monto),
+      status: p.estado === 'aprobado' ? 'Paid' : (p.estado === 'rechazado' ? 'Failed' : 'Pending'),
+      icon: 'auto_awesome',
+      iconColor: p.estado === 'aprobado' ? 'primary' : 'warning',
+      iconBg: p.estado === 'aprobado' ? 'bg-primary-10' : 'bg-warning-10'
+    }));
+});
 </script>
 
 <style scoped>

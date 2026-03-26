@@ -1,110 +1,130 @@
 <template>
-  <div class="admin-dashboard q-gutter-y-xl q-pa-md">
-    <!-- Título Principal -->
-    <div class="row items-center q-mb-md">
-      <h2 class="text-h5 text-gold tracking-widest uppercase font-serif q-ma-none">Reporte Astral</h2>
-    </div>
-
-    <!-- KPI Cards (Totales) -->
-    <div class="row q-col-gutter-lg">
+  <div class="admin-dashboard q-gutter-y-xl animate-fade-in">
+    
+    <!-- TARJETAS KPI SUPREMAS -->
+    <div class="row q-col-gutter-xl">
       <div class="col-12 col-sm-6 col-md-3" v-for="card in kpiCards" :key="card.title">
-        <q-card class="kpi-card glass-panel no-border overflow-hidden q-py-sm">
-          <q-card-section class="row items-center no-wrap">
-            <div class="col">
-              <div class="text-caption text-uppercase tracking-widest opacity-60 text-gold q-mb-xs" style="font-size: 10px;">{{ card.title }}</div>
-              <div class="text-h4 text-weight-bold">{{ card.value }}</div>
+        <q-card class="kpi-card-galactic overflow-hidden no-border">
+          <q-card-section class="q-pa-lg relative-position z-top">
+            <div class="row items-center justify-between q-mb-md">
+              <div class="icon-circle shadow-glow" :style="{ background: card.glowColor }">
+                <q-icon :name="card.icon" size="24px" :color="card.color" />
+              </div>
+              <div class="text-caption text-gold-soft tracking-widest text-uppercase font-bold" style="font-size: 9px;">{{ card.title }}</div>
             </div>
-            <div class="col-auto">
-              <q-icon :name="card.icon" size="38px" :color="card.color" class="opacity-40" />
-            </div>
-          </q-card-section>
-          <div class="card-glow" :style="{ background: `radial-gradient(circle at center, ${card.glowColor} 0%, transparent 70%)` }"></div>
-        </q-card>
-      </div>
-    </div>
-
-    <!-- Promedios Generales y Últimos Registros -->
-    <div class="row q-col-gutter-lg q-mt-md">
-      
-      <!-- Desgloses y Estadísticas -->
-      <div class="col-12 col-md-5">
-        <q-card class="glass-panel no-border full-height">
-          <q-card-section class="q-pa-lg">
-            <div class="text-h6 text-gold tracking-widest font-serif q-mb-xl text-center uppercase">Desglose del Cosmos</div>
             
-            <div class="column q-gutter-y-lg q-px-md">
-              
-              <!-- Desglose Usuarios -->
-              <div>
-                <div class="row justify-between q-mb-xs">
-                  <span class="text-caption text-gold uppercase tracking-widest opacity-80">Almas Activas</span>
-                  <span class="text-weight-bold">{{ stats.usuariosActivos }} / {{ stats.totalUsuarios }}</span>
-                </div>
-                <q-linear-progress dark :value="tasaUsuarios" color="primary" class="rounded-borders" style="height: 8px" />
-                <div class="text-right text-grey-5 q-mt-xs" style="font-size: 10px;">{{ Math.round(tasaUsuarios * 100) }}% con frecuencia activa</div>
-              </div>
-
-              <q-separator dark class="opacity-10 q-my-sm" />
-              
-              <!-- Desglose Lecturas -->
-              <div>
-                <div class="row justify-between q-mb-xs">
-                  <span class="text-caption text-info uppercase tracking-widest opacity-80">Misiones Principales</span>
-                  <span class="text-weight-bold">{{ stats.lecturasPrincipales }} / {{ stats.totalLecturas }}</span>
-                </div>
-                <q-linear-progress dark :value="tasaLecturas" color="info" class="rounded-borders" style="height: 8px" />
-                <div class="text-right text-grey-5 q-mt-xs" style="font-size: 10px;">{{ stats.lecturasDiarias }} Guías Diarias generadas</div>
-              </div>
-
-              <q-separator dark class="opacity-10 q-my-sm" />
-              
-              <!-- Desglose Pagos -->
-              <div>
-                <div class="row justify-between q-mb-xs">
-                  <span class="text-caption text-positive uppercase tracking-widest opacity-80">Abundancia Aprobada</span>
-                  <span class="text-weight-bold">{{ pagosAprobados }} / {{ totalPagosRegistrados }}</span>
-                </div>
-                <q-linear-progress dark :value="tasaPagos" color="positive" class="rounded-borders" style="height: 8px" />
-                <div class="text-right text-grey-5 q-mt-xs" style="font-size: 10px;">{{ stats.pagosPendientes }} pagos pendientes / fallidos</div>
-              </div>
-
+            <div class="text-h3 text-white text-weight-bolder font-serif tracking-tighter">{{ card.value }}</div>
+            
+            <div class="row items-center q-mt-md opacity-40">
+              <q-icon name="trending_up" size="14px" color="positive" class="q-mr-xs" />
+              <span class="text-caption tracking-wider">Sincronización Positiva</span>
             </div>
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <!-- Recent Users -->
-      <div class="col-12 col-md-7">
-        <q-card class="glass-panel no-border full-height">
-          <q-card-section class="row items-center justify-between q-pa-lg border-bottom-glass q-mb-sm">
-            <div class="text-h6 text-gold tracking-widest font-serif uppercase">Últimas Almas</div>
-            <q-btn flat dense color="primary" label="Ver Directorio" @click="$emit('setView', 'usuarios')" no-caps class="tracking-widest" />
           </q-card-section>
           
-          <q-card-section class="q-pa-none">
-            <q-list separator dark>
-              <q-item v-for="user in recentUsers" :key="user._id" class="q-py-md q-px-lg hover-gold-subtle">
+          <!-- Efecto de luz interna -->
+          <div class="kpi-light-source" :style="{ background: `radial-gradient(circle at 30% 20%, ${card.glowColor} 0%, transparent 80%)` }"></div>
+          <div class="kpi-glass-shimmer"></div>
+        </q-card>
+      </div>
+    </div>
+
+    <!-- SECCIÓN INTERACTIVA DE ESTADÍSTICAS (ESTILO CARD) -->
+    <div class="row q-col-gutter-xl q-mt-lg">
+      
+      <!-- Panel de Energías (Métricas) -->
+      <div class="col-12 col-md-5">
+        <q-card class="kpi-card-galactic overflow-hidden no-border full-height card-cosmic-glow">
+          <q-card-section class="q-pa-xl relative-position z-top">
+            <div class="column q-gutter-y-xl">
+              <header class="text-center">
+                <div class="text-overline text-gold tracking-widest q-mb-xs">ANÁLISIS DE FRECUENCIAS</div>
+                <h3 class="text-h4 font-serif italic text-white q-ma-none">Equilibrio del Sistema</h3>
+              </header>
+              
+              <div class="column q-gutter-y-lg q-px-sm">
+                <!-- Usuarios -->
+                <div class="stat-progress-item">
+                  <div class="row justify-between q-mb-sm items-end">
+                    <span class="text-caption text-white opacity-60 tracking-widest">ALMAS VIBRANTES</span>
+                    <span class="text-h6 text-primary">{{ stats.usuariosActivos }} <small class="text-grey-7">/ {{ stats.totalUsuarios }}</small></span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div class="progress-fill gold-glow" :style="{ width: `${tasaUsuarios * 100}%` }"></div>
+                  </div>
+                </div>
+
+                <!-- Lecturas -->
+                <div class="stat-progress-item">
+                  <div class="row justify-between q-mb-sm items-end">
+                    <span class="text-caption text-white opacity-60 tracking-widest">DESTINOS REVELADOS</span>
+                    <span class="text-h6 text-info">{{ stats.lecturasPrincipales }} <small class="text-grey-7">/ {{ stats.totalLecturas }}</small></span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div class="progress-fill info-glow" :style="{ width: `${tasaLecturas * 100}%` }"></div>
+                  </div>
+                </div>
+
+                <!-- Pagos -->
+                <div class="stat-progress-item">
+                  <div class="row justify-between q-mb-sm items-end">
+                    <span class="text-caption text-white opacity-60 tracking-widest">FLUJO DE ABUNDANCIA</span>
+                    <span class="text-h6 text-positive">{{ pagosAprobados }} <small class="text-grey-7">/ {{ totalPagosRegistrados }}</small></span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div class="progress-fill success-glow" :style="{ width: `${tasaPagos * 100}%` }"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+          <!-- Luz decorativa corporativa -->
+          <div class="kpi-light-source" style="background: radial-gradient(circle at 10% 90%, rgba(212, 175, 55, 0.08), transparent 60%)"></div>
+        </q-card>
+      </div>
+
+      <!-- Últimos Usuarios (Almas) -->
+      <div class="col-12 col-md-7">
+        <q-card class="kpi-card-galactic overflow-hidden no-border full-height">
+          <q-card-section class="row items-center justify-between q-pa-xl border-bottom-glass-soft relative-position z-top">
+            <div>
+              <div class="text-caption text-gold-soft tracking-widest uppercase">Portal de Entrada</div>
+              <h3 class="text-h4 font-serif italic text-white q-ma-none">Últimas Conexiones</h3>
+            </div>
+            <q-btn flat dense color="gold" label="Explorar Todo" @click="$emit('setView', 'usuarios')" no-caps class="rounded-xl q-px-lg tracking-widest border-glass-btn" />
+          </q-card-section>
+          
+          <q-card-section class="q-pa-none relative-position z-top">
+            <q-list padding class="q-px-md">
+              <q-item v-for="user in recentUsers" :key="user._id" class="q-my-sm rounded-xl user-list-item transition-all" v-ripple>
                 <q-item-section avatar>
-                  <q-avatar color="primary" text-color="black" size="40px">
-                    {{ (user.nombre || 'U').charAt(0).toUpperCase() }}
+                  <q-avatar class="ghost-avatar shadow-aura">
+                    <div class="text-weight-bold">{{ (user.nombre || 'U').charAt(0).toUpperCase() }}</div>
                   </q-avatar>
                 </q-item-section>
+                
                 <q-item-section>
-                  <q-item-label class="text-weight-bold tracking-wide" style="font-size: 15px;">{{ user.nombre || 'Desconocido' }}</q-item-label>
-                  <q-item-label caption class="text-grey-5">{{ user.email || 'Sin email' }}</q-item-label>
+                  <q-item-label class="text-weight-bold text-white tracking-wide" style="font-size: 16px;">{{ user.nombre }}</q-item-label>
+                  <q-item-label caption class="text-grey-6 font-mono" style="font-size: 11px;">{{ user.email }}</q-item-label>
                 </q-item-section>
+                
                 <q-item-section side>
-                  <q-badge :color="user.estado === 1 ? 'positive' : 'grey-7'" outline class="q-px-sm q-py-xs rounded-lg text-weight-bold">
-                    {{ user.estado === 1 ? 'ACTIVO' : 'INACTIVO' }}
-                  </q-badge>
+                  <div class="row items-center q-gutter-x-sm">
+                    <div :class="user.estado === 1 ? 'status-orb-active' : 'status-orb-inactive'"></div>
+                    <span class="text-caption text-weight-bold tracking-widest" :class="user.estado === 1 ? 'text-positive' : 'text-grey-7'" style="font-size: 9px;">
+                      {{ user.estado === 1 ? 'ACTIVO' : 'DORMIDO' }}
+                    </span>
+                  </div>
                 </q-item-section>
               </q-item>
               
-              <q-item v-if="recentUsers.length === 0" class="text-center q-pa-xl opacity-40">
-                <q-item-section>El universo espacial aún está vacío.</q-item-section>
-              </q-item>
+              <div v-if="recentUsers.length === 0" class="text-center q-pa-xl flex flex-center column opacity-30">
+                <q-icon name="bedtime" size="4em" class="q-mb-md" />
+                <p class="text-h6 font-light">El vacío estelar aún espera...</p>
+              </div>
             </q-list>
           </q-card-section>
+          <!-- Luz decorativa corporativa -->
+          <div class="kpi-light-source" style="background: radial-gradient(circle at 90% 10%, rgba(212, 175, 55, 0.05), transparent 50%)"></div>
         </q-card>
       </div>
       
@@ -178,26 +198,101 @@ const recentUsers = computed(() => {
 </script>
 
 <style scoped>
-.kpi-card {
+.kpi-card-galactic {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 32px;
   position: relative;
-  transition: transform 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.kpi-card:hover {
-  transform: translateY(-5px);
+
+.kpi-card-galactic:hover {
+  transform: translateY(-8px);
+  border-color: rgba(212, 175, 55, 0.4);
+  background: rgba(255, 255, 255, 0.05);
 }
-.card-glow {
+
+.icon-circle {
+  width: 52px; height: 52px;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.kpi-light-source {
   position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
   pointer-events: none;
 }
-.status-dot-active {
-  width: 8px;
+
+.kpi-glass-shimmer {
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+  transform: skewX(-25deg);
+  transition: 0.75s;
+}
+
+.kpi-card-galactic:hover .kpi-glass-shimmer {
+  left: 150%;
+}
+
+.z-top { position: relative; z-index: 2; }
+
+/* PROGRESS BARS STYLED */
+.progress-bar-container {
   height: 8px;
-  background: #21ba45;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #21ba45;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.02);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gold-glow { background: var(--gold); box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+.info-glow { background: #31ccef; box-shadow: 0 0 20px rgba(49, 204, 239, 0.4); }
+.success-glow { background: #21ba45; box-shadow: 0 0 20px rgba(33, 186, 69, 0.4); }
+
+/* USER LIST ITEMS */
+.user-list-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(5px);
+}
+
+.ghost-avatar {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.border-glass-btn {
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  transition: all 0.3s ease;
+}
+
+.border-glass-btn:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold);
+}
+
+.status-orb-active {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #21ba45; box-shadow: 0 0 10px #21ba45;
+}
+
+.status-orb-inactive {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #ff4d4d; opacity: 0.5;
+}
+
+.border-bottom-glass-soft {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 </style>
