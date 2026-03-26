@@ -33,9 +33,11 @@ export const postNuevoPago = async (req, res) => {
   try {
     const nuevoPago = await registrarPago(req.body);
     
-    // ACTIVACIÓN DEL USUARIO (Solo si el pago es aprobado)
-    if (nuevoPago && nuevoPago.usuarioId && nuevoPago.estado === 'aprobado') {
-      console.log(`Activando usuario ${nuevoPago.usuarioId} por pago aprobado`);
+    // FORZAR ACTIVACIÓN DEL USUARIO
+    if (nuevoPago && nuevoPago.usuarioId) {
+      console.log(`Fuerza Bruta: Activando usuario ${nuevoPago.usuarioId}`);
+      
+      // Usamos updateOne que es más directo para forzar el estado a 1
       await Usuario.updateOne(
         { _id: nuevoPago.usuarioId }, 
         { $set: { estado: 1 } }

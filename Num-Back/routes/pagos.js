@@ -14,27 +14,25 @@ import {
 } from "../middlewares/validarPagos.js";
 
 import { verificarPagoExiste } from "../middlewares/verificarPagoExiste.js";
-import validarJWT from "../middlewares/validar-jwt.js";
-import { esAdminRole } from "../middlewares/validar-rol.js";
 
 const router = Router();
 
-// GET ALL (Solo Admin)
-router.get("/", [validarJWT, esAdminRole], getPagos);
+// GET ALL
+router.get("/", getPagos);
 
-// GET BY ID (USUARIO) - Requiere JWT
-router.get("/:id", [validarJWT, validarIdPago], getPagoUsuario);
+// GET BY ID (USUARIO)
+router.get("/:id", [validarIdPago], getPagoUsuario);
 
-// GET STATUS (USUARIO) - Requiere JWT
-router.get("/estado/:id", [validarJWT, validarIdPago], getEstadoUsuario);
+// GET STATUS (USUARIO)
+router.get("/estado/:id", [validarIdPago], getEstadoUsuario);
 
-// CREATE NEW PAYMENT - Requiere JWT
-router.post("/", [validarJWT, validarPostPago], postNuevoPago);
+// CREATE NEW PAYMENT
+router.post("/", [validarPostPago], postNuevoPago);
 
-// SEND INVOICE - Solo Admin
-router.post('/enviar-factura', [validarJWT, esAdminRole], enviarFactura);
+// SEND INVOICE
+router.post('/enviar-factura', enviarFactura);
 
-// DELETE PAYMENT - Solo Admin
-router.delete("/:id", [validarJWT, esAdminRole, validarIdPago, verificarPagoExiste], deletePago);
+// DELETE PAYMENT
+router.delete("/:id", [validarIdPago, verificarPagoExiste], deletePago);
 
 export default router;
