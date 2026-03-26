@@ -1,11 +1,24 @@
 import axios from "axios";
 import { useAuthStore } from "../store/auth.js";
 
+// LÓGICA DE DETECCIÓN AUTOMÁTICA DE ENTORNO
+// Esto permite que el mismo código funcione en Local y en Producción (Hostinger/Render)
+const getBaseURL = () => {
+  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  
+  // Si estamos en local, usamos el puerto 5040 del backend local
+  if (isLocal) {
+    return "http://localhost:5040/api";
+  }
+  
+  // Si estamos en producción, usamos la URL del backend en Render
+  // Podríamos usar solo "/api" si el front se sirve desde el mismo servidor,
+  // pero usando la URL absoluta aseguramos que funcione desde Hostinger (Cross-domain).
+  return "https://nodemongo-ihx8.onrender.com/api";
+};
+
 const axiosInstance = axios.create({
-  // Si estamos en desarrollo, usamos la URL local, si no, la de producción.
-  // VITE_API_URL debería ser algo como "http://localhost:5040/api" en local
-  // o "/api" si se sirve desde el mismo servidor Express.
-  baseURL: import.meta.env.VITE_API_URL || "https://nodemongo-ihx8.onrender.com/api",
+  baseURL: getBaseURL(),
   headers: {
     "Content-Type": "application/json",
   },
@@ -24,15 +37,14 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// 2. Interceptor de Respuestas (Limpio y seguro)
+// 2. Interceptor de Respuestas
 axiosInstance.interceptors.response.use(
-  (response) => response, // Solo retornamos la respuesta tal cual
+  (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
       const authStore = useAuthStore();
       authStore.token = "";
       authStore.user = null;
-      // router.push('/login');
     }
     return Promise.reject(error);
   },
