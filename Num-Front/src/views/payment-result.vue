@@ -56,6 +56,22 @@
                       <span class="text-grey-6 text-caption tracking-wider">VENCE:</span>
                       <span class="text-gold text-weight-bold">{{ converFecha(paymentDetails.fechaExpiracion) }}</span>
                     </div>
+                    <div v-if="paymentDetails.metodoPago" class="row justify-between">
+                      <span class="text-grey-6 text-caption tracking-wider">MÉTODO:</span>
+                      <span class="text-white text-weight-bold">{{ formatearMetodoPago(paymentDetails.metodoPago) }}</span>
+                    </div>
+                    <div v-if="paymentDetails.bancoEmisor" class="row justify-between">
+                      <span class="text-grey-6 text-caption tracking-wider">BANCO:</span>
+                      <span class="text-white text-weight-bold">{{ paymentDetails.bancoEmisor }}</span>
+                    </div>
+                    <div v-if="paymentDetails.ultimosDigitos && paymentDetails.ultimosDigitos !== 'N/A'" class="row justify-between">
+                      <span class="text-grey-6 text-caption tracking-wider">TARJETA:</span>
+                      <span class="text-white text-weight-bold">**** {{ paymentDetails.ultimosDigitos }}</span>
+                    </div>
+                    <div v-if="paymentDetails.pagadorNombreCompleto" class="row justify-between">
+                      <span class="text-grey-6 text-caption tracking-wider">TITULAR:</span>
+                      <span class="text-white text-weight-bold">{{ paymentDetails.pagadorNombreCompleto }}</span>
+                    </div>
                     <q-separator dark class="q-my-sm opacity-10" />
                     <div class="row justify-between items-end q-mt-sm">
                       <span class="text-grey-6 text-caption tracking-wider">TOTAL:</span>
@@ -103,7 +119,18 @@ const router = useRouter();
 const authStore = useAuthStore();
 const loading = ref(true);
 const status = ref('');
-const paymentDetails = ref({ id: '', monto: 0, fecha: '', descripcion: '', fechaExpiracion: '' });
+const paymentDetails = ref({
+  id: '',
+  monto: 0,
+  fecha: '',
+  descripcion: '',
+  fechaExpiracion: '',
+  metodoPago: '',
+  bancoEmisor: '',
+  ultimosDigitos: '',
+  pagadorNombreCompleto: '',
+  fechaAprobacion: new Date()
+});
 
 const irAlPanel = () => {
   router.push('/perfil');
@@ -111,10 +138,14 @@ const irAlPanel = () => {
 
 const onDownloadInvoice = () => {
   generarFactura({
-    fecha: new Date(),
+    fecha: paymentDetails.value.fechaAprobacion || new Date(),
     monto: paymentDetails.value.monto,
     mpPaymentId: paymentDetails.value.id,
-    descripcion: paymentDetails.value.descripcion
+    descripcion: paymentDetails.value.descripcion,
+    metodoPago: paymentDetails.value.metodoPago,
+    bancoEmisor: paymentDetails.value.bancoEmisor,
+    ultimosDigitos: paymentDetails.value.ultimosDigitos,
+    pagadorNombreCompleto: paymentDetails.value.pagadorNombreCompleto
   }, authStore.user?.nombre);
 };
 
@@ -129,7 +160,12 @@ onMounted(async () => {
           id: paymentId,
           monto: res.detalles?.monto || 0,
           descripcion: res.pago?.descripcion || 'Suscripción Premium',
-          fechaExpiracion: res.usuario?.fechaExpiracion
+          fechaExpiracion: res.usuario?.fechaExpiracion,
+          metodoPago: res.detalles?.metodoPago || '',
+          bancoEmisor: res.detalles?.bancoEmisor || '',
+          ultimosDigitos: res.detalles?.ultimosDigitos || '',
+          pagadorNombreCompleto: res.detalles?.pagadorNombreCompleto || '',
+          fechaAprobacion: res.detalles?.fechaAprobacion || new Date()
         };
         if (res.usuario) authStore.user = res.usuario;
         if (res.lecturas) authStore.lecturasguardadas = res.lecturas;
@@ -152,6 +188,22 @@ onMounted(async () => {
     loading.value = false;
   }
 });
+
+// Función para formatear el nombre del método de pago
+const formatearMetodoPago = (metodo) => {
+  const metodos = {
+    'credit_card': 'Tarjeta de Crédito',
+    'debit_card': 'Tarjeta de Débito',
+    'pse': 'PSE',
+    'bank_transfer': 'Transferencia Bancaria',
+    'atm': 'Cajero Automático',
+    'ticket': 'Efectivo',
+    'pix': 'PIX',
+    'yape': 'Yape',
+    'mercadopagoaccount': 'Cuenta Mercado Pago'
+  };
+  return metodos[metodo] || metodo.toUpperCase();
+};
 </script>
 
 <style scoped>

@@ -94,14 +94,41 @@ const procesarResultadoPago = async (paymentData) => {
     usuarioId,
     monto: montoPagado,
     descripcion: descripcionPlan,
-    estado: status === "approved" ? "aprobado" : "en_proceso",
+    estado: status === "approved" ? "aprobado" : status === "in_process" ? "en_proceso" : "pendiente",
+    moneda: paymentData.currency_id || "COP",
+
+    // Estado del pago
+    estadoDetalle: paymentData.status_detail || "",
+    operationType: paymentData.operation_type || "",
+
+    // Fechas de Mercado Pago
+    fecha: paymentData.date_approved || new Date(),
+    fechaCreacion: paymentData.date_created || null,
+    fechaAprobacion: paymentData.date_approved || null,
+    fechaLiberacion: paymentData.money_release_date || null,
+    fechaUltimoMovimiento: paymentData.date_last_updated || null,
+
+    // IDs de Mercado Pago
     mpPaymentId: paymentId,
     mpPreferenceId: preferenceId || "",
+
+    // Información del método de pago
     metodoPago: paymentData.payment_method_id || "",
     tipoPago: paymentData.payment_type_id || "",
+
+    // Información de la tarjeta (si aplica)
     ultimosDigitos: paymentData.card?.last_four_digits || "N/A",
-    estadoDetalle: paymentData.status_detail,
-    fecha: paymentData.date_approved || new Date()
+    nombreTarjeta: paymentData.card?.holder?.name || "",
+    bancoEmisor: paymentData.card?.issuer?.name || "",
+    primerosDigitos: paymentData.card?.first_six_digits || "",
+
+    // Información del pagador
+    pagadorEmail: paymentData.payer?.email || "",
+    pagadorNombre: paymentData.payer?.first_name || "",
+    pagadorApellido: paymentData.payer?.last_name || "",
+    pagadorNombreCompleto: paymentData.payer?.name || "",
+    tipoDocumento: paymentData.payer?.identification?.type || "",
+    numeroDocumento: paymentData.payer?.identification?.number || "",
   };
 
   const nuevoPago = await new Pago(infoPago).save();
@@ -161,13 +188,28 @@ export const verificarPago = async (req, res) => {
         return obj;
       });
 
-      return res.json({ 
-        success: true, 
-        status: resultado.status, 
+      // Información adicional del pago para el frontend
+      const paymentDetails = {
+        monto: paymentData.transaction_amount || 0,
+        id: payment_id,
+        fechaAprobacion: paymentData.date_approved || new Date(),
+        metodoPago: paymentData.payment_method_id || "",
+        tipoPago: paymentData.payment_type_id || "",
+        bancoEmisor: paymentData.card?.issuer?.name || "",
+        ultimosDigitos: paymentData.card?.last_four_digits || "N/A",
+        pagadorEmail: paymentData.payer?.email || "",
+        pagadorNombreCompleto: paymentData.payer?.name || "",
+        tipoDocumento: paymentData.payer?.identification?.type || "",
+        numeroDocumento: paymentData.payer?.identification?.number || "",
+      };
+
+      return res.json({
+        success: true,
+        status: resultado.status,
         usuario: usuarioActualizado,
         lecturas,
         pagos,
-        detalles: { monto: paymentData.transaction_amount, id: payment_id }
+        detalles: paymentDetails
       });
     }
     res.json({ success: false, status: resultado.status });

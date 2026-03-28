@@ -68,6 +68,22 @@ export const obtenerEstadoLectura = (lectura, fechaSeleccionada, hoy) => {
   return 'no_generada_hoy';
 };
 
+// --- FUNCIÓN PARA FORMATEAR MÉTODO DE PAGO ---
+const formatearMetodoPago = (metodo) => {
+  const metodos = {
+    'credit_card': 'Tarjeta de Crédito',
+    'debit_card': 'Tarjeta de Débito',
+    'pse': 'PSE',
+    'bank_transfer': 'Transferencia Bancaria',
+    'atm': 'Cajero Automático',
+    'ticket': 'Efectivo',
+    'pix': 'PIX',
+    'yape': 'Yape',
+    'mercadopagoaccount': 'Cuenta Mercado Pago'
+  };
+  return metodos[metodo] || metodo?.toUpperCase() || 'Mercado Pago';
+};
+
 // --- DISEÑO DE FACTURA ELECTRÓNICA PROFESIONAL (DEVSCENTER) ---
 export const generarFactura = (pago, nombreUsuario = 'Buscador') => {
   const fechaFactura = converFecha(pago.fecha);
@@ -301,15 +317,20 @@ export const generarFactura = (pago, nombreUsuario = 'Buscador') => {
         <div class="billing-grid">
           <div class="bill-to">
             <h3>Adquiriente</h3>
-            <p><strong>${nombreUsuario}</strong></p>
+            <p><strong>${pago.pagadorNombreCompleto || nombreUsuario}</strong></p>
             <p>Usuario del Portal Numeris</p>
+            ${pago.numeroDocumento ? `<p>Documento: ${pago.tipoDocumento || ''} ${pago.numeroDocumento}</p>` : ''}
             <p>Estado: Alineación Premium Activa</p>
           </div>
           <div class="payment-details">
             <h3>Información de Pago</h3>
-            <p>Método: Mercado Pago Online</p>
+            <p>Método: ${formatearMetodoPago(pago.metodoPago) || 'Mercado Pago Online'}</p>
+            ${pago.bancoEmisor ? `<p>Banco Emisor: ${pago.bancoEmisor}</p>` : ''}
+            ${pago.ultimosDigitos && pago.ultimosDigitos !== 'N/A' ? `<p>Tarjeta: **** ${pago.ultimosDigitos}</p>` : ''}
+            ${pago.pagadorNombreCompleto ? `<p>Titular: ${pago.pagadorNombreCompleto}</p>` : ''}
             <p>Transacción: ${pago.mpPaymentId || 'DEVS-'+idFactura}</p>
             <p>Moneda: COP - Peso Colombiano</p>
+            ${pago.fecha ? `<p>Fecha Aprobación: ${fechaFactura}</p>` : ''}
           </div>
         </div>
 
