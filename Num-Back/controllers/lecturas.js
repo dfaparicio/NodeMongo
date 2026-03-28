@@ -19,7 +19,11 @@ import "dotenv/config";
 // Tal como dice la doc: El cliente obtiene la API key de la variable de entorno `GEMINI_API_KEY`
 const ai = new GoogleGenAI({});
 
-async function respuestaIA(prompt) {
+// Constantes para reintentos de IA
+const MAX_REINTENTOS_IA = 3;
+const TIEMPO_ESPERA_MS = 20000; // 20 segundos
+
+async function respuestaIA(prompt, intento = 1) {
   try {
     // Estructura exacta de la documentación de AI Studio 2026
     const response = await ai.models.generateContent({
@@ -31,10 +35,17 @@ async function respuestaIA(prompt) {
     return response.text;
 
   } catch (error) {
-    console.error("❌ Error de Gemini:", JSON.stringify(error.message || error));
+    console.error(`❌ Error de Gemini (intento ${intento}):`, JSON.stringify(error.message || error));
 
-    if (error.message?.includes("503") || error.message?.includes("UNAVAILABLE")) {
-      throw new Error("IA_SATURADA: El modelo preview está en alta demanda. Intenta más tarde.");
+    // Verificar si es error de saturación de la IA (503 o UNAVAILABLE)
+    if ((error.message?.includes("503") || error.message?.includes("UNAVAILABLE") || error.message?.includes("IA_SATURADA") || error.message?.includes("quota"))) {
+      if (intento < MAX_REINTENTOS_IA) {
+        console.log(`🔄 [IA] IA saturada, reintentando en ${TIEMPO_ESPERA_MS / 1000} segundos... (intento ${intento + 1}/${MAX_REINTENTOS_IA})`);
+        await new Promise(resolve => setTimeout(resolve, TIEMPO_ESPERA_MS));
+        return respuestaIA(prompt, intento + 1);
+      } else {
+        throw new Error("IA_SATURADA_MAX_REINTENTOS: El modelo está saturado después de " + MAX_REINTENTOS_IA + " reintentos.");
+      }
     }
 
     throw new Error("GEMINI_ERROR: " + (error.message || "Error desconocido"));

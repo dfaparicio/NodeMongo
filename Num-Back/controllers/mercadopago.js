@@ -139,23 +139,45 @@ const procesarResultadoPago = async (paymentData) => {
     nuevaExpiracion.setDate(hoy.getDate() + diasAAgregar);
 
     // Actualizamos y obtenemos el usuario fresco
-    const usuario = await Usuario.findByIdAndUpdate(usuarioId, { 
-      $set: { estado: 1, fechaExpiracion: nuevaExpiracion } 
-    }, { new: true });
+    const usuario = await Usuario.findByIdAndUpdate(usuarioId,
+      { $set: { estado: 1, fechaExpiracion: nuevaExpiracion } },
+      { new: true }
+    );
 
-    console.log(`🎉 Usuario ${usuario.email} activado por ${diasAAgregar} días.`);
-    
+    console.log(`🎉 [PAGO APROBADO] Usuario ${usuario.email} activado por ${diasAAgregar} días.`);
+    console.log(`🎉 [PAGO APROBADO] Fecha de expiración: ${nuevaExpiracion.toISOString()}`);
+
     // 1. Enviar Factura Profesional (Sin await para no bloquear el flujo de MP)
     if (usuario && usuario.email) {
       enviarFacturaCorreo(usuario.email, usuario.nombre, infoPago)
-        .catch(e => console.error("❌ Error factura automática:", e.message));
+        .catch(e => console.error("❌ [PAGO] Error factura automática:", e.message));
     }
 
     // 2. Generar Lectura Principal (el correo se envía automáticamente desde la función interna)
-    generarLecturaPrincipalInterna(usuarioId).catch(e => console.error("❌ Error generando lectura post-pago:", e.message));
+    try {
+      console.log(`📖 [PAGO] Generando lectura principal para usuario ${usuarioId}...`);
+      await generarLecturaPrincipalInterna(usuarioId);
+      console.log(`✅ [PAGO] Lectura principal generada exitosamente.`);
+    } catch (e) {
+      console.error("❌ [PAGO] Error generando lectura post-pago:", e.message);
+      console.error("❌ [PAGO] Stack:", e.stack);
+    }
 
-    // 3. Generar Lectura Diaria
-    generarLecturaDiariaUsuario(usuarioId).catch(e => console.error("❌ Error diaria automática:", e.message));
+    // 3. Generar Lectura Diaria (con await explícito para asegurar ejecución)
+    try {
+      console.log(`📖 [PAGO] Generando lectura diaria para usuario ${usuarioId}...`);
+      const resultadoDiaria = await generarLecturaDiariaUsuario(usuarioId);
+      if (resultadoDiaria.success) {
+        console.log(`✅ [PAGO] Lectura diaria generada exitosamente:`, resultadoDiaria.msg);
+      } else {
+        console.log(`ℹ️ [PAGO] Lectura diaria:`, resultadoDiaria.msg || "No se generó lectura diaria");
+      }
+    } catch (e) {
+      console.error("❌ [PAGO] Error generando lectura diaria post-pago:", e.message);
+      console.error("❌ [PAGO] Stack:", e.stack);
+    }
+
+    console.log(`✅ [PAGO APROBADO] Flujo de pago completado para usuario ${usuarioId}`);
   }
 
   return { success: true, status, pago: nuevoPago };

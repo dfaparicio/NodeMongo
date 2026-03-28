@@ -165,9 +165,12 @@ const iniciarPolling = async (prefId) => {
       if (resultado.success && resultado.estado === 'aprobado') {
         clearInterval(pollingInterval);
         pagoIniciado.value = false;
-        // Redirigir a la página de resultado con el payment_id
+
+        // Redirigir AMBAS ventanas a la página de resultado usando window.location.href
+        // Esto asegura que tanto la página principal como la ventana nueva del pago se redirijan
         if (resultado.paymentId) {
-          router.push({ path: '/pagos/exito', query: { payment_id: resultado.paymentId } });
+          console.log('✅ Pago aprobado, redirigiendo a resultado en todas las ventanas...');
+          window.location.href = `/#/pagos/exito?payment_id=${resultado.paymentId}`;
         }
       }
     } catch (error) {
