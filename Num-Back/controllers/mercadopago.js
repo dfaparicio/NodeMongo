@@ -2,8 +2,8 @@ import { preference, payment } from "../config/mercadopago.js";
 import Pago from "../models/pagos.js";
 import Usuario from "../models/usuario.js";
 import Lectura from "../models/lecturas.js";
-import { generarLecturaDiariaUsuario } from "./lecturas.js";
-import { enviarFacturaCorreo, enviarLecturaPrincipalCorreo } from "../helpers/mailer.js";
+import { generarLecturaDiariaUsuario, generarLecturaPrincipalInterna } from "./lecturas.js";
+import { enviarFacturaCorreo } from "../helpers/mailer.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -124,16 +124,8 @@ const procesarResultadoPago = async (paymentData) => {
         .catch(e => console.error("❌ Error factura automática:", e.message));
     }
 
-    // 2. Generar y Enviar Lectura Principal si no existe
-    try {
-      const resultLectura = await generarLecturaPrincipalInterna(usuarioId);
-      if (usuario && usuario.email) {
-        enviarLecturaPrincipalCorreo(usuario.email, usuario.nombre, resultLectura)
-          .catch(e => console.error("❌ Error email lectura automática:", e.message));
-      }
-    } catch (e) {
-      console.error("❌ Error generando lectura post-pago:", e.message);
-    }
+    // 2. Generar Lectura Principal (el correo se envía automáticamente desde la función interna)
+    generarLecturaPrincipalInterna(usuarioId).catch(e => console.error("❌ Error generando lectura post-pago:", e.message));
 
     // 3. Generar Lectura Diaria
     generarLecturaDiariaUsuario(usuarioId).catch(e => console.error("❌ Error diaria automática:", e.message));

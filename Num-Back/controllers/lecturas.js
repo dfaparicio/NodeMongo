@@ -90,7 +90,7 @@ function calcularCaminoDeVida(fecha_nacimiento) {
 export const generarLecturaPrincipalInterna = async (usuarioId) => {
   const resultado = await lecturaPrincipal(usuarioId);
   if (!resultado.usuario) throw new Error("Usuario no encontrado");
-  
+
   if (resultado.lecturaExistente) {
     return {
       id: resultado.lecturaExistente._id,
@@ -100,7 +100,7 @@ export const generarLecturaPrincipalInterna = async (usuarioId) => {
   }
 
   const numeroCamino = calcularCaminoDeVida(resultado.usuario.fechanacimiento);
-  const prompt = `Actúa como un numerólogo experto. Genera un JSON para un Camino de Vida ${numeroCamino}. 
+  const prompt = `Actúa como un numerólogo experto. Genera un JSON para un Camino de Vida ${numeroCamino}.
   Nombre del usuario: ${resultado.usuario.nombre}.
   Devuelve SOLO este formato JSON: {"numero": ${numeroCamino}, "descripcion": "...", "talentos": "...", "mensaje": "..."}`;
 
@@ -110,7 +110,13 @@ export const generarLecturaPrincipalInterna = async (usuarioId) => {
   if (!contenidoJSON) throw new Error("Error generando contenido IA");
 
   const idLectura = await resultado.crear(usuarioId, "principal", JSON.stringify(contenidoJSON));
-  
+
+  // Enviar correo automáticamente cuando se genera una nueva lectura principal
+  if (resultado.usuario && resultado.usuario.email) {
+    enviarLecturaPrincipalCorreo(resultado.usuario.email, resultado.usuario.nombre, { contenido: contenidoJSON })
+      .catch(e => console.error("❌ Error enviando correo de lectura principal automático:", e.message));
+  }
+
   return { id: idLectura, contenido: contenidoJSON, yaExistia: false };
 };
 
