@@ -263,50 +263,136 @@ export const consultarEstadoPago = async (req, res) => {
   if (!preference_id) return res.status(400).json({ success: false });
 
   try {
+    console.log(`🔍 [Polling] Consultando estado para preference_id: ${preference_id}, usuario: ${usuarioId}`);
+
     // 1. Miramos si ya se registró en nuestra DB (por Webhook o Redirección)
     let pago = await Pago.findOne({ mpPreferenceId: preference_id }).sort({ fecha: -1 });
 
-    // 2. Si no está en DB (común en LOCALHOST), preguntamos a la API de MP con FILTRO DE TIEMPO ESTRICTO
-    if (!pago) {
-      console.log(`🔍 [Polling Local] Consultando API de Mercado Pago...`);
-      const searchResult = await payment.search({ 
-        qs: { 
-          external_reference: usuarioId.toString(), 
-          sort: 'date_created', 
-          criteria: 'desc' 
-        } 
-      });
+    if (pago) {
+      console.log(`📋 [Polling] Pago encontrado en DB: estado=${pago.estado}, mpPaymentId=${pago.mpPaymentId}`);
 
-      const pagosEncontrados = searchResult.results || [];
-      
-      // REGLA DE ORO: Solo aceptamos pagos de los últimos 2 MINUTOS
-      const haceDosMinutos = new Date(Date.now() - 2 * 60 * 1000);
+      // Si el pago está en proceso, informar al frontend
+      if (pago.estado === "en_proceso") {
+        return res.json({
+          success: false,
+          estado: "en_proceso",
+          message: "El pago está siendo procesado por el banco (común en PSE)"
+        });
+      }
 
-      const paymentData = pagosEncontrados.find(p => {
-        const fechaPago = new Date(p.date_created);
-        return p.status === 'approved' && 
-               (p.preference_id === preference_id || (fechaPago > haceDosMinutos && Math.round(p.transaction_amount) >= 2000));
-      });
+      // Si el pago está aprobado, devolver éxito
+      if (pago.estado === "aprobado") {
+        return res.json({
+          success: true,
+          estado: "aprobado",
+          pagoId: pago.mpPaymentId
+        });
+      }
 
-      if (paymentData) {
-        console.log(`✅ [Polling Local] Pago detectado en API. Registrando...`);
-        const resultado = await procesarResultadoPago(paymentData);
-        if (resultado.success) pago = resultado.pago;
+      // Si el pago fue rechazado o cancelado
+      if (pago.estado === "rechazado" || pago.estado === "cancelado") {
+        return res.json({
+          success: false,
+          estado: pago.estado,
+          message: `El pago fue ${pago.estado === "rechazado" ? "rechazado" : "cancelado"}`
+        });
       }
     }
 
-    if (pago && pago.estado === "aprobado") {
-      return res.json({ 
-        success: true, 
-        estado: "aprobado", 
-        pagoId: pago.mpPaymentId 
+    // 2. Si no está en DB, preguntamos a la API de MP
+    // Para PSE, necesitamos una ventana de tiempo más amplia porque el proceso puede tardar varios minutos
+    console.log(`🔍 [Polling] Consultando API de Mercado Pago...`);
+    const searchResult = await payment.search({
+      qs: {
+        external_reference: usuarioId.toString(),
+        sort: 'date_created',
+        criteria: 'desc'
+      }
+    });
+
+    const pagosEncontrados = searchResult.results || [];
+
+    if (pagosEncontrados.length > 0) {
+      console.log(`📋 [Polling] Se encontraron ${pagosEncontrados.length} pagos en MP para este usuario`);
+    }
+
+    // REGLA: Para tarjetas: últimos 2 minutos. Para PSE: últimos 15 minutos (tiempo más amplio)
+    // Primero buscamos pagos que coincidan exactamente con el preference_id
+    const paymentDataExact = pagosEncontrados.find(p => p.preference_id === preference_id);
+
+    // Si encontramos exacta, procesamos independientemente del tiempo
+    if (paymentDataExact) {
+      console.log(`✅ [Polling] Pago exacto encontrado: status=${paymentDataExact.status}, id=${paymentDataExact.id}`);
+
+      // Procesamos el pago independientemente de su estado
+      const resultado = await procesarResultadoPago(paymentDataExact);
+      if (resultado.success && resultado.pago) {
+        pago = resultado.pago;
+
+        if (pago.estado === "aprobado") {
+          return res.json({
+            success: true,
+            estado: "aprobado",
+            pagoId: pago.mpPaymentId
+          });
+        } else if (pago.estado === "en_proceso") {
+          return res.json({
+            success: false,
+            estado: "en_proceso",
+            message: "El pago está siendo procesado por el banco (común en PSE)"
+          });
+        }
+      }
+    }
+
+    // Si no encontramos exacta, buscamos por tiempo y monto (para casos donde el preference_id no coincide)
+    // Usamos 15 minutos para PSE (tiempo más amplio)
+    const haceQuinceMinutos = new Date(Date.now() - 15 * 60 * 1000);
+
+    const paymentData = pagosEncontrados.find(p => {
+      const fechaPago = new Date(p.date_created);
+      return p.status === 'approved' &&
+             (fechaPago > haceQuinceMinutos && Math.round(p.transaction_amount) >= 2000);
+    });
+
+    if (paymentData) {
+      console.log(`✅ [Polling] Pago detectado por tiempo/monto: id=${paymentData.id}, monto=${paymentData.transaction_amount}`);
+      const resultado = await procesarResultadoPago(paymentData);
+      if (resultado.success && resultado.pago) {
+        pago = resultado.pago;
+
+        if (pago.estado === "aprobado") {
+          return res.json({
+            success: true,
+            estado: "aprobado",
+            pagoId: pago.mpPaymentId
+          });
+        }
+      }
+    }
+
+    // Si no encontramos nada, verificar si hay pagos en proceso recientes
+    const paymentInProcess = pagosEncontrados.find(p => {
+      const fechaPago = new Date(p.date_created);
+      return (p.status === 'in_process' || p.status === 'pending') &&
+             fechaPago > haceQuinceMinutos &&
+             p.preference_id === preference_id;
+    });
+
+    if (paymentInProcess) {
+      console.log(`⏳ [Polling] Pago en proceso encontrado: id=${paymentInProcess.id}, status=${paymentInProcess.status}`);
+      return res.json({
+        success: false,
+        estado: "en_proceso",
+        message: "El pago está siendo procesado por el banco (común en PSE)"
       });
     }
 
+    console.log(`⏳ [Polling] No se encontró pago aprobado. Estado: pendiente`);
     res.json({ success: false, estado: "pendiente" });
 
   } catch (error) {
-    console.error("Error en consulta:", error.message);
+    console.error("❌ [Polling] Error en consulta:", error.message);
     res.status(500).json({ success: false });
   }
 };

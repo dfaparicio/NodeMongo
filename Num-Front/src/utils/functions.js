@@ -35,11 +35,12 @@ export const resetearHoras = (fecha) => {
 
 // Formato de moneda colombiana
 export const formatoPesos = (valor) => {
-  return new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: 'COP',
+  const formateador = new Intl.NumberFormat('es-CO', {
     minimumFractionDigits: 0
-  }).format(valor);
+  });
+  // Limpiamos cualquier espacio invisible que Intl pueda meter (espacios de no ruptura, etc)
+  const numeroFormateado = formateador.format(valor).replace(/\s| /g, '');
+  return `$${numeroFormateado}`;
 };
 
 // Generar rango de fechas para el carrusel de lectura diaria

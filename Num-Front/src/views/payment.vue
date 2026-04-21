@@ -14,10 +14,10 @@
           <div v-if="pagoIniciado" class="fixed-full z-max flex flex-center checkout-overlay-premium">
             <div class="text-center q-pa-xl glass-panel-premium-soft rounded-3xl shadow-2xl border-gold-glow max-width-small">
               <q-spinner-orbit color="primary" size="6em" />
-              <h2 class="text-h4 font-serif text-white q-mt-xl q-mb-md tracking-widest">TRANSMITIENDO FRECUENCIA</h2>
+              <h2 class="text-h4 font-serif text-white q-mt-xl q-mb-md tracking-widest">{{ pagoEstado === 'en_proceso' ? 'PROCESANDO PAGO' : 'TRANSMITIENDO FRECUENCIA' }}</h2>
               <p class="text-grey-4 text-subtitle1 q-mb-xl font-light">
                 Hemos abierto el Portal de Pago en una <span class="text-gold text-bold">nueva pestaña</span> o ventana.<br>
-                Completa la transacción para activar tu conexión.
+                {{ pagoEstado === 'en_proceso' ? 'El banco está procesando tu pago (común en PSE). Esto puede tomar unos minutos.' : 'Completa la transacción para activar tu conexión.' }}
               </p>
 
               <div class="q-gutter-y-md">
@@ -111,19 +111,28 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { crearPreferenciaPago, consultarEstadoPago } from '../services/mercadopago.js';
 import { useAuthStore } from '../store/auth.js';
-import { formatoPesos, converFecha } from '../utils/functions.js';
+import { formatoPesos } from '../utils/functions.js';
 import { showNotify } from '../utils/notify.js';
 
 const route = useRoute();
 const router = useRouter();
 const loading = ref(false);
 const pagoIniciado = ref(false);
+const pagoEstado = ref('pendiente'); // pendiente, en_proceso, aprobado, rechazado
 const monto = ref(0);
 const tituloPlan = ref('Cargando plan...');
 const authStore = useAuthStore();
 const preferenceId = ref('');
 const paymentUrl = ref(''); // Guardar el URL de pago
 let pollingInterval = null;
+let storageListener = null;
+
+// Constantes para localStorage
+const STORAGE_KEYS = {
+  PAYMENT_STATUS: 'num_payment_status',
+  PAYMENT_ID: 'num_payment_id',
+  PAYMENT_PREFERENCE: 'num_payment_preference'
+};
 
 onMounted(() => {
   if (authStore.user?.estado === 1) {
@@ -140,14 +149,50 @@ onMounted(() => {
     pagoIniciado.value = true;
     iniciarPolling(route.query.preference_id);
   }
+
+  // Escuchar cambios en localStorage para sincronización entre ventanas
+  storageListener = (event) => {
+    if (event.key === STORAGE_KEYS.PAYMENT_STATUS) {
+      const status = event.newValue;
+      console.log('🔄 Estado de pago actualizado desde otra ventana:', status);
+
+      if (status === 'approved') {
+        const paymentId = localStorage.getItem(STORAGE_KEYS.PAYMENT_ID);
+        if (paymentId) {
+          console.log('✅ Pago detectado como aprobado en otra ventana, redirigiendo...');
+          clearInterval(pollingInterval);
+          pagoIniciado.value = false;
+          router.push(`/pagos/exito?payment_id=${paymentId}`);
+        }
+      } else if (status === 'failed' || status === 'rejected') {
+        console.log('❌ Pago fallido detectado en otra ventana');
+        clearInterval(pollingInterval);
+        pagoIniciado.value = false;
+        router.push('/pagos/fallo');
+      } else if (status === 'pending') {
+        console.log('⏳ Pago pendiente detectado en otra ventana');
+        clearInterval(pollingInterval);
+        pagoIniciado.value = false;
+        router.push('/pagos/pendiente');
+      }
+    }
+  };
+
+  window.addEventListener('storage', storageListener);
 });
 
-onUnmounted(() => { if (pollingInterval) clearInterval(pollingInterval); });
+onUnmounted(() => {
+  if (pollingInterval) clearInterval(pollingInterval);
+  if (storageListener) window.removeEventListener('storage', storageListener);
+});
 
 // Función de polling para verificar el estado del pago
 const iniciarPolling = async (prefId) => {
   let intentos = 0;
-  const maxIntentos = 120; // 2 minutos máximo (1 segundo x 120)
+  const maxIntentos = 180; // 6 minutos máximo para PSE (30 segundos x 180)
+
+  // Guardar preferenceId en localStorage para sincronización
+  localStorage.setItem(STORAGE_KEYS.PAYMENT_PREFERENCE, prefId);
 
   pollingInterval = setInterval(async () => {
     intentos++;
@@ -155,6 +200,7 @@ const iniciarPolling = async (prefId) => {
     if (intentos > maxIntentos) {
       clearInterval(pollingInterval);
       pagoIniciado.value = false;
+      limpiarStoragePago();
       showNotify.warning('Tiempo Agotado', 'El pago está tomando más tiempo de lo esperado. Revisa tu correo.');
       router.push('/planes');
       return;
@@ -162,26 +208,52 @@ const iniciarPolling = async (prefId) => {
 
     try {
       const resultado = await consultarEstadoPago(prefId);
+
+      if (resultado.estado === 'en_proceso') {
+        // El pago está siendo procesado por el banco (común en PSE)
+        pagoEstado.value = 'en_proceso';
+        console.log('⏳ Pago en proceso, continuando polling...');
+        return;
+      }
+
       if (resultado.success && resultado.estado === 'aprobado') {
         clearInterval(pollingInterval);
         pagoIniciado.value = false;
 
-        // Redirigir AMBAS ventanas a la página de resultado usando window.location.href
-        // Esto asegura que tanto la página principal como la ventana nueva del pago se redirijan
+        // Actualizar localStorage para sincronizar con otras ventanas
+        localStorage.setItem(STORAGE_KEYS.PAYMENT_STATUS, 'approved');
+        localStorage.setItem(STORAGE_KEYS.PAYMENT_ID, resultado.paymentId);
+
         if (resultado.paymentId) {
-          console.log('✅ Pago aprobado, redirigiendo a resultado en todas las ventanas...');
-          window.location.href = `/#/pagos/exito?payment_id=${resultado.paymentId}`;
+          console.log('✅ Pago aprobado, redirigiendo a resultado...');
+          router.push(`/pagos/exito?payment_id=${resultado.paymentId}`);
         }
+      } else if (resultado.estado === 'rechazado' || resultado.estado === 'cancelado') {
+        clearInterval(pollingInterval);
+        pagoIniciado.value = false;
+        limpiarStoragePago();
+        showNotify.error('Pago Rechazado', resultado.message || 'El pago fue rechazado o cancelado por el banco.');
+        router.push('/pagos/fallo');
       }
     } catch (error) {
       console.error('Error en polling:', error);
     }
-  }, 2000); // Verificar cada 2 segundos
+  }, 3000); // Verificar cada 3 segundos (más tiempo entre consultas para PSE)
+};
+
+// Función para limpiar el localStorage de pago
+const limpiarStoragePago = () => {
+  localStorage.removeItem(STORAGE_KEYS.PAYMENT_STATUS);
+  localStorage.removeItem(STORAGE_KEYS.PAYMENT_ID);
+  localStorage.removeItem(STORAGE_KEYS.PAYMENT_PREFERENCE);
 };
 
 const procesarPago = async () => {
   loading.value = true;
   try {
+    // Limpiar cualquier estado de pago anterior
+    limpiarStoragePago();
+
     const response = await crearPreferenciaPago(monto.value, tituloPlan.value);
     if (response.success && response.id) {
       preferenceId.value = response.id;

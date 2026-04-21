@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npm test *)",
+      "Bash(npm run *)",
+      "Bash(rm \"c:/Users/USUARIO/Desktop/Proyectos/NodeMongo/Num-Front/__tests__/components/\"*)",
+      "Bash(rm \"c:/Users/USUARIO/Desktop/Proyectos/NodeMongo/Num-Front/__tests__/services/\"*)",
+      "Bash(rm \"c:/Users/USUARIO/Desktop/Proyectos/NodeMongo/Num-Front/__tests__/utils/\"*)"
+    ]
+  }
+}

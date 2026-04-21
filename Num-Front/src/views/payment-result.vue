@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { verificarPago } from '../services/mercadopago.js';
 import { useAuthStore } from '../store/auth.js';
@@ -131,6 +131,20 @@ const paymentDetails = ref({
   pagadorNombreCompleto: '',
   fechaAprobacion: new Date()
 });
+
+// Constantes para localStorage (deben coincidir con payment.vue)
+const STORAGE_KEYS = {
+  PAYMENT_STATUS: 'num_payment_status',
+  PAYMENT_ID: 'num_payment_id',
+  PAYMENT_PREFERENCE: 'num_payment_preference'
+};
+
+// Función para limpiar el localStorage de pago
+const limpiarStoragePago = () => {
+  localStorage.removeItem(STORAGE_KEYS.PAYMENT_STATUS);
+  localStorage.removeItem(STORAGE_KEYS.PAYMENT_ID);
+  localStorage.removeItem(STORAGE_KEYS.PAYMENT_PREFERENCE);
+};
 
 const irAlPanel = () => {
   router.push('/perfil');
@@ -171,21 +185,40 @@ onMounted(async () => {
         if (res.lecturas) authStore.lecturasguardadas = res.lecturas;
         if (res.pagos) authStore.pagosUsuario = res.pagos;
 
+        // 🔄 SINCRONIZACIÓN: Actualizar localStorage para que otras ventanas sepan que el pago fue aprobado
+        localStorage.setItem(STORAGE_KEYS.PAYMENT_STATUS, 'approved');
+        localStorage.setItem(STORAGE_KEYS.PAYMENT_ID, paymentId);
+
         // REDIRECCIÓN AUTOMÁTICA AL PERFIL DESPUÉS DE 6 SEGUNDOS
         setTimeout(() => {
           if (status.value === 'approved') {
             irAlPanel();
           }
         }, 6000);
+      } else if (res.status === 'pending') {
+        // 🔄 SINCRONIZACIÓN: Actualizar localStorage para estado pendiente
+        localStorage.setItem(STORAGE_KEYS.PAYMENT_STATUS, 'pending');
+      } else {
+        // 🔄 SINCRONIZACIÓN: Actualizar localStorage para estado fallido
+        localStorage.setItem(STORAGE_KEYS.PAYMENT_STATUS, 'failed');
       }
     } catch (e) {
       status.value = 'error';
+      localStorage.setItem(STORAGE_KEYS.PAYMENT_STATUS, 'error');
     } finally {
       loading.value = false;
     }
   } else {
     status.value = route.query.status || 'pending';
     loading.value = false;
+  }
+});
+
+onUnmounted(() => {
+  // Limpiar localStorage cuando se abandone la página de resultado
+  // Solo limpiamos si el pago fue exitoso y ya se ha procesado
+  if (status.value === 'approved') {
+    limpiarStoragePago();
   }
 });
 

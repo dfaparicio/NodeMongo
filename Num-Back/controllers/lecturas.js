@@ -172,20 +172,37 @@ export const generarLecturaDiariaUsuario = async (usuarioId) => {
     const prompt = `Actúa como un numerólogo experto. Basado en esta lectura principal: ${principal.contenido}, genera una lectura diaria para hoy ${hoyBogota}.
     Devuelve SOLO un JSON con este formato: {"fecha": "${hoyBogota}", "mensaje": "...", "energia": "...", "motivacion": "..."}`;
 
-    const contenidoIA = await respuestaIA(prompt);
-    const contenidoJSON = extraerJSON(contenidoIA);
+    let contenidoJSON = null;
+    try {
+      const contenidoIA = await respuestaIA(prompt);
+      contenidoJSON = extraerJSON(contenidoIA);
+    } catch (iaError) {
+      console.error(`⚠️ IA no disponible para usuario ${usuarioId}:`, iaError.message);
+    }
 
     if (contenidoJSON) {
       contenidoJSON.estado = "activo";
       await repo.crear(usuario._id, "diaria", JSON.stringify(contenidoJSON), hoyBogota);
-      
+
       // Opcional: Enviar correo
       if (usuario.email) {
         enviarCorreoNotificacion(usuario.email, usuario.nombre).catch(e => console.error("Email Error:", e.message));
       }
       return { success: true };
     }
-    return { success: false, msg: "Error IA" };
+
+    // FALLBACK: Si IA falla, guardar lectura genérica para que el usuario no quede sin lectura
+    console.log(`🔄 Usando lectura de respaldo para usuario ${usuarioId}`);
+    const contenidoFallback = {
+      fecha: hoyBogota,
+      mensaje: "Los astros están en silencio hoy. La energía cósmica se está reorganizando.",
+      energia: "Misterio",
+      motivacion: "Conéctate con tu interior y encuentra tu propia luz",
+      estado: "activo"
+    };
+    await repo.crear(usuario._id, "diaria", JSON.stringify(contenidoFallback), hoyBogota);
+
+    return { success: true, msg: "Lectura de respaldo generada" };
 
   } catch (error) {
     console.error(`❌ Error en generación bajo demanda (${usuarioId}):`, error.message);
@@ -217,25 +234,37 @@ export const procesoGeneracionDiaria = async () => {
         const prompt = `Actúa como un numerólogo experto. Basado en esta lectura principal: ${principal.contenido}, genera una lectura diaria para hoy ${hoyBogota}.
         Devuelve SOLO un JSON con este formato: {"fecha": "${hoyBogota}", "mensaje": "...", "energia": "...", "motivacion": "..."}`;
 
-        const contenidoIA = await respuestaIA(prompt);
-        const contenidoJSON = extraerJSON(contenidoIA);
+        let contenidoJSON = null;
+        try {
+          const contenidoIA = await respuestaIA(prompt);
+          contenidoJSON = extraerJSON(contenidoIA);
+        } catch (iaError) {
+          console.error(`⚠️ IA no disponible para ${usuario.email}:`, iaError.message);
+        }
 
-        if (contenidoJSON) {
-          contenidoJSON.estado = "activo";
-          
-          try {
-            await repo.crear(usuario._id, "diaria", JSON.stringify(contenidoJSON), hoyBogota);
-            
-            if (usuario.email) {
-              await enviarCorreoNotificacion(usuario.email, usuario.nombre);
-            }
-            generadas++;
-          } catch (dbError) {
-            if (dbError.code === 11000) {
-              console.log(`⚠️ Duplicado detectado para ${usuario.email}, saltando...`);
-            } else {
-              throw dbError;
-            }
+        // Usar contenido de IA si está disponible, si no usar fallback
+        const contenidoFinal = contenidoJSON || {
+          fecha: hoyBogota,
+          mensaje: "Los astros están en silencio hoy. La energía cósmica se está reorganizando.",
+          energia: "Misterio",
+          motivacion: "Conéctate con tu interior y encuentra tu propia luz",
+          estado: "activo"
+        };
+
+        contenidoFinal.estado = "activo";
+
+        try {
+          await repo.crear(usuario._id, "diaria", JSON.stringify(contenidoFinal), hoyBogota);
+
+          if (usuario.email) {
+            await enviarCorreoNotificacion(usuario.email, usuario.nombre);
+          }
+          generadas++;
+        } catch (dbError) {
+          if (dbError.code === 11000) {
+            console.log(`⚠️ Duplicado detectado para ${usuario.email}, saltando...`);
+          } else {
+            throw dbError;
           }
         }
       } catch (err) {
