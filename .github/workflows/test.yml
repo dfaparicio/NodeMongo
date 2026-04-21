@@ -16,6 +16,7 @@ jobs:
     env:
       NODE_ENV: test
       SECRETORPRIVATEKEY: test_secret_key_12345_for_testing_only
+      RESEND_API_KEY: re_test_dummy_key_for_testing
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

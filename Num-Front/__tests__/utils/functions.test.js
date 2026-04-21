@@ -98,7 +98,15 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
         const resultado = generarRangoFechas(centro, radio, stringHoy);
 
         expect(resultado).toHaveLength(3); // -1, 0, +1
+
+        // Verificar que exactamente un elemento es "hoy"
+        const hoyCount = resultado.filter(r => r.isHoy).length;
+        expect(hoyCount).toBe(1);
+
+        // Verificar que el elemento central es "hoy" (índice 1)
         expect(resultado[1].isHoy).toBe(true);
+
+        // Los demás no deben ser hoy
         expect(resultado[0].isHoy).toBe(false);
         expect(resultado[2].isHoy).toBe(false);
     });
@@ -177,6 +185,12 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
         const resultado = generarRangoFechas(centro, radio, stringHoy);
 
         expect(resultado).toHaveLength(5); // -2, -1, 0, +1, +2
+
+        // Verificar que exactamente un elemento es "hoy"
+        const hoyCount = resultado.filter(r => r.isHoy).length;
+        expect(hoyCount).toBe(1);
+
+        // El elemento central (índice 2) debe ser "hoy"
         expect(resultado[2].isHoy).toBe(true);
     });
 });
