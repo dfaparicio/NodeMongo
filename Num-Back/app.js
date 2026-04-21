@@ -23,12 +23,14 @@ import { tareaVerificarExpiracion } from "./controllers/usuario.js";
 
 const app = express();
 
-// 2. CONECTAR A MONGODB
-conectarMongo();
+if (process.env.NODE_ENV !== 'test') {
+  // 2. CONECTAR A MONGODB
+  conectarMongo();
 
-// ACTIVAR AUTOMATIZACIONES
-generarlecturadiaria(); // Lecturas a las 5:00 AM
-tareaVerificarExpiracion(); // Expiraciones a las 8:30 AM
+  // ACTIVAR AUTOMATIZACIONES
+  generarlecturadiaria(); // Lecturas a las 5:00 AM
+  tareaVerificarExpiracion(); // Expiraciones a las 8:30 AM
+}
 
 // 3. CONFIGURACIÓN DE CORS
 const whitelist = [
@@ -80,9 +82,13 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5040;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor numeris encendido: http://localhost:${PORT}`);
-  console.log(`✅ Base de datos cargada: ${!!process.env.MONGO_URL}`);
-  console.log(`✅ Token MP cargado: ${!!process.env.MERCADOPAGO_ACCESS_TOKEN}`);
-  console.log(`✅ JWT Secret cargado: ${!!process.env.SECRETORPRIVATEKEY}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor numeris encendido: http://localhost:${PORT}`);
+    console.log(`✅ Base de datos cargada: ${!!process.env.MONGO_URL}`);
+    console.log(`✅ Token MP cargado: ${!!process.env.MERCADOPAGO_ACCESS_TOKEN}`);
+    console.log(`✅ JWT Secret cargado: ${!!process.env.SECRETORPRIVATEKEY}`);
+  });
+}
+
+export default app;
