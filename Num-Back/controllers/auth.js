@@ -67,7 +67,7 @@ export const login = async (req, res) => {
             })
         }
         const validPassword = bcrypt.compareSync(password, usuario.password)
-        if (!validPassword) {
+        if (!validPasswor) {
             return res.status(401).json({
                 error: "Credenciales incorrectas"
             })
