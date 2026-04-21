@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Cache node modules
         uses: actions/cache@v4
@@ -38,7 +38,7 @@ jobs:
         timeout-minutes: 10
 
       - name: Run tests
-        run: npm test
+        run: npm test -- --verbose --no-coverage
         timeout-minutes: 15
         env:
           JEST_TIMEOUT: 30000
@@ -58,7 +58,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Cache node modules
         uses: actions/cache@v4
@@ -73,5 +73,5 @@ jobs:
         timeout-minutes: 10
 
       - name: Run tests
-        run: npm test
+        run: npm test -- --verbose --no-coverage
         timeout-minutes: 10
