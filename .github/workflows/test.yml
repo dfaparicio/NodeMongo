@@ -25,23 +25,22 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Cache node modules
-        uses: actions/cache@v4
-        with:
-          path: ./Num-Back/node_modules
-          key: ${{ runner.os }}-backend-${{ hashFiles('**/Num-Back/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-backend-
+      - name: List files in Num-Back
+        run: ls -la
+
+      - name: Check package.json
+        run: cat package.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
         timeout-minutes: 10
 
+      - name: List node_modules
+        run: ls node_modules | head -20
+
       - name: Run tests
-        run: npm test -- --verbose --no-coverage
+        run: npm test -- --verbose --no-coverage --detectOpenHandles
         timeout-minutes: 15
-        env:
-          JEST_TIMEOUT: 30000
 
   test-frontend:
     name: Frontend Tests
@@ -60,17 +59,18 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Cache node modules
-        uses: actions/cache@v4
-        with:
-          path: ./Num-Front/node_modules
-          key: ${{ runner.os }}-frontend-${{ hashFiles('**/Num-Front/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-frontend-
+      - name: List files in Num-Front
+        run: ls -la
+
+      - name: Check package.json
+        run: cat package.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
         timeout-minutes: 10
+
+      - name: List node_modules
+        run: ls node_modules | head -20
 
       - name: Run tests
         run: npm test -- --verbose --no-coverage
