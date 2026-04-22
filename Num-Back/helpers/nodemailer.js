@@ -2,18 +2,21 @@ import { Resend } from 'resend';
 import 'dotenv/config';
 
 // Configuración oficial de Resend con tu dominio profesional verificado
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-/**
- * REMITENTE PROFESIONAL: numerologia-astral.devscenter.online
- * Este es el correo que verán tus usuarios.
- */
 const FROM_EMAIL = 'Numeris <hola@numerologia-astral.devscenter.online>';
 
 /**
  * Función base para envío de correos con Resend (Motor Profesional)
+ * En ambiente de pruebas, simula el envío sin hacer requests reales
  */
 export const enviarEmail = async (to, subject, html) => {
+    // En ambiente de pruebas, solo loggear sin hacer requests reales
+    if (process.env.NODE_ENV === 'test') {
+        console.log(`📧 [TEST MODE] Email simulado para: ${to} | Asunto: ${subject}`);
+        return { id: 'test-email-id' };
+    }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     try {
         const { data, error } = await resend.emails.send({
             from: FROM_EMAIL,

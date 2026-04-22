@@ -20,6 +20,19 @@ import request from 'supertest';
 import express from 'express';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
+
+// Mockear los servicios de correos ANTES de importar las rutas
+jest.mock('../helpers/nodemailer.js', () => ({
+    enviarEmail: jest.fn().mockResolvedValue({ id: 'test-email-id' }),
+    enviarBienvenida: jest.fn().mockResolvedValue({}),
+    enviarRecuperacion: jest.fn().mockResolvedValue({})
+}));
+
+jest.mock('../helpers/mailer.js', () => ({
+    enviarAvisoExpiracion: jest.fn().mockResolvedValue({}),
+    enviarPlanFinalizado: jest.fn().mockResolvedValue({})
+}));
+
 import authRoute from '../routes/auth.js';
 import usuarioRoute from '../routes/usuario.js';
 import Usuario from '../models/usuario.js';
@@ -28,18 +41,6 @@ import Pago from '../models/pagos.js';
 // Configurar entorno de prueba
 process.env.SECRETORPRIVATEKEY = 'test_secret_key_12345_for_testing_only';
 process.env.NODE_ENV = 'test';
-
-// Mock de funciones de email
-jest.mock('../helpers/nodemailer.js', () => ({
-    enviarBienvenida: jest.fn().mockResolvedValue(true),
-    enviarEmail: jest.fn().mockResolvedValue(true),
-    enviarRecuperacion: jest.fn().mockResolvedValue(true)
-}));
-
-jest.mock('../helpers/mailer.js', () => ({
-    enviarAvisoExpiracion: jest.fn().mockResolvedValue(true),
-    enviarPlanFinalizado: jest.fn().mockResolvedValue(true)
-}));
 
 // Crear app Express para pruebas
 const testApp = express();
