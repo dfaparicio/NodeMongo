@@ -22,7 +22,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 1. PRUEBA: FORMATEO DE PRECIOS BÁSICO
     // ==================================================
-    test('✅ Debe formatear 1000 correctamente (formato colombiano)', () => {
+    test('Debe formatear 1000 correctamente (formato colombiano)', () => {
         const resultado = formatoPesos(1000);
         // En Colombia se usa punto para miles: $1.000
         expect(resultado).toContain('$1.000');
@@ -31,7 +31,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 2. PRUEBA: FORMATEO DE PRECIOS CON MILES
     // ==================================================
-    test('✅ Debe formatear 5000 correctamente (formato colombiano)', () => {
+    test('Debe formatear 5000 correctamente (formato colombiano)', () => {
         const resultado = formatoPesos(5000);
         expect(resultado).toContain('$5.000');
     });
@@ -39,7 +39,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 3. PRUEBA: FORMATEO DE PRECIOS CON MILLONES
     // ==================================================
-    test('✅ Debe formatear 1000000 correctamente (formato colombiano)', () => {
+    test('Debe formatear 1000000 correctamente (formato colombiano)', () => {
         const resultado = formatoPesos(1000000);
         // En Colombia: 1.000.000 (un millón)
         expect(resultado).toContain('$1.000.000');
@@ -48,7 +48,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 4. PRUEBA: FORMATEO DE CERO
     // ==================================================
-    test('✅ Debe formatear 0 como $0', () => {
+    test('Debe formatear 0 como $0', () => {
         const resultado = formatoPesos(0);
         expect(resultado).toBe('$0');
     });
@@ -56,7 +56,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 5. PRUEBA: CONVERSIÓN DE FECHA VÁLIDA (STRING YYYY-MM-DD)
     // ==================================================
-    test('✅ Debe convertir una fecha string YYYY-MM-DD a formato local', () => {
+    test('Debe convertir una fecha string YYYY-MM-DD a formato local', () => {
         const resultado = converFecha('2024-04-20');
         expect(resultado).toContain('2024');
         expect(resultado).toContain('abril');
@@ -66,7 +66,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 6. PRUEBA: CONVERSIÓN DE FECHA NULA
     // ==================================================
-    test('✅ Debe devolver -- para fecha nula', () => {
+    test('Debe devolver -- para fecha nula', () => {
         expect(converFecha(null)).toBe('--');
         expect(converFecha(undefined)).toBe('--');
         expect(converFecha('')).toBe('--');
@@ -75,7 +75,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 7. PRUEBA: RESETEAR HORAS
     // ==================================================
-    test('✅ Debe resetear las horas de una fecha a 0', () => {
+    test('Debe resetear las horas de una fecha a 0', () => {
         const fecha = new Date('2024-04-20T15:30:00');
         const fechaReset = resetearHoras(fecha);
         const horas = fechaReset.getHours();
@@ -90,7 +90,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 8. PRUEBA: GENERAR RANGO DE FECHAS
     // ==================================================
-    test('✅ Debe generar un rango de fechas alrededor de una fecha central', () => {
+    test('Debe generar un rango de fechas alrededor de una fecha central', () => {
         const centro = new Date('2024-04-20');
         const radio = 1;
         const stringHoy = converFecha(centro);
@@ -111,7 +111,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 9. PRUEBA: OBTENER ESTADO LECTURA - ENCONTRADA
     // ==================================================
-    test('✅ Debe devolver "encontrada" cuando existe lectura', () => {
+    test('Debe devolver "encontrada" cuando existe lectura', () => {
         const hoy = new Date('2024-04-20');
         const fechaSeleccionada = new Date('2024-04-20');
         const lectura = { contenido: { numero: 5 } };
@@ -123,7 +123,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 10. PRUEBA: OBTENER ESTADO LECTURA - PASADA
     // ==================================================
-    test('✅ Debe devolver "pasada_sin_generar" cuando la fecha es pasada', () => {
+    test('Debe devolver "pasada_sin_generar" cuando la fecha es pasada', () => {
         const hoy = new Date('2024-04-20');
         const fechaSeleccionada = new Date('2024-04-15');
         const lectura = null;
@@ -135,7 +135,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 11. PRUEBA: OBTENER ESTADO LECTURA - FUTURA
     // ==================================================
-    test('✅ Debe devolver "futura" cuando la fecha es futura', () => {
+    test('Debe devolver "futura" cuando la fecha es futura', () => {
         const hoy = new Date('2024-04-20');
         const fechaSeleccionada = new Date('2024-04-25');
         const lectura = null;
@@ -147,7 +147,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 12. PRUEBA: OBTENER ESTADO LECTURA - HOY SIN GENERAR
     // ==================================================
-    test('✅ Debe devolver "no_generada_hoy" cuando es hoy y no hay lectura', () => {
+    test('Debe devolver "no_generada_hoy" cuando es hoy y no hay lectura', () => {
         const hoy = new Date('2024-04-20');
         const fechaSeleccionada = new Date('2024-04-20');
         const lectura = null;
@@ -159,14 +159,14 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 13. PRUEBA: FECHA INVÁLIDA
     // ==================================================
-    test('✅ Debe devolver -- para fecha inválida', () => {
+    test('Debe devolver -- para fecha inválida', () => {
         expect(converFecha('fecha-invalida')).toBe('--');
     });
 
     // ==================================================
     // 14. PRUEBA: FORMATO PRECIOS CON NÚMEROS GRANDES
     // ==================================================
-    test('✅ Debe formatear correctamente números grandes (formato colombiano)', () => {
+    test('Debe formatear correctamente números grandes (formato colombiano)', () => {
         expect(formatoPesos(10000000)).toContain('$10.000.000');
         expect(formatoPesos(999999999)).toContain('$999.999.999');
     });
@@ -174,7 +174,7 @@ describe('🧪 PRUEBAS DE UTILIDADES - CÓDIGO REAL', () => {
     // ==================================================
     // 15. PRUEBA: RANGO DE FECHAS CON RADIO 2
     // ==================================================
-    test('✅ Debe generar rango de 5 días con radio 2', () => {
+    test('Debe generar rango de 5 días con radio 2', () => {
         const centro = new Date('2024-04-20');
         const radio = 2;
         const stringHoy = converFecha(centro);

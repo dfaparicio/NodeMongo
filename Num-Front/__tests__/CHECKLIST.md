@@ -1,6 +1,6 @@
-# 📋 CHECKLIST - COBERTURA DE PRUEBAS JEST (FRONTEND)
+# CHECKLIST - COBERTURA DE PRUEBAS JEST (FRONTEND)
 
-## 🎯 ESTADO ACTUAL
+## ESTADO ACTUAL
 
 **Proyecto:** Numeris Astral - Frontend
 **Tipo de pruebas:** Unitarias con código real
@@ -8,37 +8,37 @@
 
 ---
 
-## ✅ PRUEBAS IMPLEMENTADAS (CÓDIGO REAL)
+## PRUEBAS IMPLEMENTADAS (CÓDIGO REAL)
 
 ### 1. Setup de Pruebas
-- ✅ `jest.setup.js` - Configuración global para Vue 3
-- ✅ `jest.config.js` - Configuración actualizada
+- ✓ `jest.setup.js` - Configuración global para Vue 3
+- ✓ `jest.config.js` - Configuración actualizada
 
 ### 2. Pruebas de Utils (Código Real)
-- ✅ `functions.test.js` - 15/15 tests pasando
-  - ✅ formatoPesos(1000) → Formato colombiano
-  - ✅ formatoPesos(5000) → Formato colombiano
-  - ✅ formatoPesos(1000000) → Formato colombiano
-  - ✅ formatoPesos(0) → '$0'
-  - ✅ converFecha('2024-04-20') → Formato correcto
-  - ✅ converFecha(null) → '--'
-  - ✅ resetearHoras() → Horas en 0
-  - ✅ generarRangoFechas() → Rango de fechas
-  - ✅ obtenerEstadoLectura() → Estados de lectura
-  - ✅ Fecha inválida → '--'
-  - ✅ Números grandes → Formato correcto
-  - ✅ Rango con radio 2 → 5 días
+- ✓ `functions.test.js` - 15/15 tests pasando
+  - ✓ formatoPesos(1000) → Formato colombiano
+  - ✓ formatoPesos(5000) → Formato colombiano
+  - ✓ formatoPesos(1000000) → Formato colombiano
+  - ✓ formatoPesos(0) → '$0'
+  - ✓ converFecha('2024-04-20') → Formato correcto
+  - ✓ converFecha(null) → '--'
+  - ✓ resetearHoras() → Horas en 0
+  - ✓ generarRangoFechas() → Rango de fechas
+  - ✓ obtenerEstadoLectura() → Estados de lectura
+  - ✓ Fecha inválida → '--'
+  - ✓ Números grandes → Formato correcto
+  - ✓ Rango con radio 2 → 5 días
 
 ### 3. Pruebas de Servicios (Código Real)
-- ✅ `services.test.js` - 8/8 tests pasando
-  - ✅ getData() - GET exitoso
-  - ✅ postData() - POST exitoso
-  - ✅ putData() - PUT exitoso
-  - ✅ deleteData() - DELETE exitoso
-  - ✅ getData() - Error de red
-  - ✅ postData() - Error de servidor
-  - ✅ putData() - Error de actualización
-  - ✅ deleteData() - Error de eliminación
+- ✓ `services.test.js` - 8/8 tests pasando
+  - ✓ getData() - GET exitoso
+  - ✓ postData() - POST exitoso
+  - ✓ putData() - PUT exitoso
+  - ✓ deleteData() - DELETE exitoso
+  - ✓ getData() - Error de red
+  - ✓ postData() - Error de servidor
+  - ✓ putData() - Error de actualización
+  - ✓ deleteData() - Error de eliminación
 
 ---
 
@@ -69,7 +69,7 @@
 - ❌ `admin/*.vue` - Componentes de admin
 
 ### Utils (1/2)
-- ✅ `functions.test.js` - Funciones auxiliares
+- ✓ `functions.test.js` - Funciones auxiliares
 - ❌ `notify.test.js` - Sistema de notificaciones
 
 ### Store (0/2)
@@ -78,7 +78,7 @@
 
 ---
 
-## 📊 RESUMEN DE COBERTURA
+##  RESUMEN DE COBERTURA
 
 | Componente | Implementado | Total | % Completado |
 |------------|--------------|-------|--------------|
@@ -112,7 +112,7 @@
 
 ---
 
-## 🚀 CÓMO EJECUTAR LAS PRUEBAS
+##  CÓMO EJECUTAR LAS PRUEBAS
 
 ```bash
 # Entra al directorio del frontend
@@ -133,7 +133,7 @@ npm run test:verbose
 
 ---
 
-## 📝 NOTAS
+##  NOTAS
 
 - **Tipo de pruebas actuales:** Unitarias con código real
 - **Framework:** Vue 3 + @vue/test-utils + Jest
