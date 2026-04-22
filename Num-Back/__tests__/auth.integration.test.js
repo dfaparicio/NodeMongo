@@ -13,10 +13,18 @@
  * - Obtener usuario con token (endpoint protegido)
  */
 
-import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
+import { describe, test, expect, beforeAll, afterAll, jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
 import cors from 'cors';
+
+// Mockear el servicio de correos ANTES de importar las rutas
+jest.mock('../helpers/nodemailer.js', () => ({
+    enviarEmail: jest.fn().mockResolvedValue({ id: 'test-email-id' }),
+    enviarBienvenida: jest.fn().mockResolvedValue({}),
+    enviarRecuperacion: jest.fn().mockResolvedValue({})
+}));
+
 import authRoute from '../routes/auth.js';
 import usuarioRoute from '../routes/usuario.js';
 import Usuario from '../models/usuario.js';
