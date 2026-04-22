@@ -40,7 +40,7 @@ describe('🧪 PRUEBAS DE SERVICIOS - CÓDIGO REAL', () => {
   // ==================================================
   // 1. PRUEBA: GET DATA - ÉXITO
   // ==================================================
-  test('✅ Debe llamar a axios.get y retornar los datos', async () => {
+  test('Debe llamar a axios.get y retornar los datos', async () => {
     const mockData = { success: true, user: { name: 'Test User' } };
     axiosInstance.get.mockResolvedValue({ data: mockData });
 
@@ -53,7 +53,7 @@ describe('🧪 PRUEBAS DE SERVICIOS - CÓDIGO REAL', () => {
   // ==================================================
   // 2. PRUEBA: POST DATA - ÉXITO
   // ==================================================
-  test('✅ Debe llamar a axios.post y retornar los datos', async () => {
+  test('Debe llamar a axios.post y retornar los datos', async () => {
     const mockData = { success: true, id: '123' };
     const payload = { email: 'test@test.com', password: '123456' };
     axiosInstance.post.mockResolvedValue({ data: mockData });
@@ -67,7 +67,7 @@ describe('🧪 PRUEBAS DE SERVICIOS - CÓDIGO REAL', () => {
   // ==================================================
   // 3. PRUEBA: PUT DATA - ÉXITO
   // ==================================================
-  test('✅ Debe llamar a axios.put y retornar los datos', async () => {
+  test('Debe llamar a axios.put y retornar los datos', async () => {
     const mockData = { success: true, updated: true };
     const payload = { name: 'Updated Name' };
     axiosInstance.put.mockResolvedValue({ data: mockData });
@@ -81,7 +81,7 @@ describe('🧪 PRUEBAS DE SERVICIOS - CÓDIGO REAL', () => {
   // ==================================================
   // 4. PRUEBA: DELETE DATA - ÉXITO
   // ==================================================
-  test('✅ Debe llamar a axios.delete y retornar los datos', async () => {
+  test('Debe llamar a axios.delete y retornar los datos', async () => {
     const mockData = { success: true, deleted: true };
     axiosInstance.delete.mockResolvedValue({ data: mockData });
 
@@ -94,7 +94,7 @@ describe('🧪 PRUEBAS DE SERVICIOS - CÓDIGO REAL', () => {
   // ==================================================
   // 5. PRUEBA: GET DATA - ERROR
   // ==================================================
-  test('✅ Debe propagar el error cuando getData falla', async () => {
+  test('Debe propagar el error cuando getData falla', async () => {
     const mockError = new Error('Network Error');
     axiosInstance.get.mockRejectedValue(mockError);
 
@@ -104,7 +104,7 @@ describe('🧪 PRUEBAS DE SERVICIOS - CÓDIGO REAL', () => {
   // ==================================================
   // 6. PRUEBA: POST DATA - ERROR
   // ==================================================
-  test('✅ Debe propagar el error cuando postData falla', async () => {
+  test('Debe propagar el error cuando postData falla', async () => {
     const mockError = new Error('Server Error');
     axiosInstance.post.mockRejectedValue(mockError);
 
@@ -114,7 +114,7 @@ describe('🧪 PRUEBAS DE SERVICIOS - CÓDIGO REAL', () => {
   // ==================================================
   // 7. PRUEBA: PUT DATA - ERROR
   // ==================================================
-  test('✅ Debe propagar el error cuando putData falla', async () => {
+  test('Debe propagar el error cuando putData falla', async () => {
     const mockError = new Error('Update Failed');
     axiosInstance.put.mockRejectedValue(mockError);
 
@@ -124,7 +124,7 @@ describe('🧪 PRUEBAS DE SERVICIOS - CÓDIGO REAL', () => {
   // ==================================================
   // 8. PRUEBA: DELETE DATA - ERROR
   // ==================================================
-  test('✅ Debe propagar el error cuando deleteData falla', async () => {
+  test('Debe propagar el error cuando deleteData falla', async () => {
     const mockError = new Error('Delete Failed');
     axiosInstance.delete.mockRejectedValue(mockError);
 
