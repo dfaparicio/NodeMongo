@@ -45,7 +45,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - AUTH (CÓDIGO REAL)', () => {
     // ==================================================
     // 1. PRUEBA: REGISTRO DE USUARIO (CÓDIGO REAL)
     // ==================================================
-    test('✅ Debe registrar un nuevo usuario - CÓDIGO REAL', async () => {
+    test('Debe registrar un nuevo usuario - CÓDIGO REAL', async () => {
         const nuevoUsuario = {
             nombre: 'Usuario Test',
             email: 'test@integration.com',
@@ -75,7 +75,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - AUTH (CÓDIGO REAL)', () => {
     // ==================================================
     // 2. PRUEBA: LOGIN DE USUARIO (CÓDIGO REAL)
     // ==================================================
-    test('✅ Debe hacer login con credenciales correctas - CÓDIGO REAL', async () => {
+    test('Debe hacer login con credenciales correctas - CÓDIGO REAL', async () => {
         // Primero crear un usuario
         const usuario = {
             nombre: 'Usuario Login',
@@ -107,7 +107,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - AUTH (CÓDIGO REAL)', () => {
     // ==================================================
     // 3. PRUEBA: LOGIN CON CREDENCIALES INCORRECTAS
     // ==================================================
-    test('❌ Debe rechazar login con contraseña incorrecta - CÓDIGO REAL', async () => {
+    test('Debe rechazar login con contraseña incorrecta - CÓDIGO REAL', async () => {
         const response = await request(testApp)
             .post('/api/auth/login')
             .send({
@@ -122,7 +122,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - AUTH (CÓDIGO REAL)', () => {
     // ==================================================
     // 4. PRUEBA: ACCEDER A RUTA PROTEGIDA CON TOKEN
     // ==================================================
-    test('✅ Debe acceder a ruta protegida con token válido - CÓDIGO REAL', async () => {
+    test('Debe acceder a ruta protegida con token válido - CÓDIGO REAL', async () => {
         // Crear usuario y obtener token
         const usuario = {
             nombre: 'Usuario Token',
@@ -151,7 +151,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - AUTH (CÓDIGO REAL)', () => {
     // ==================================================
     // 5. PRUEBA: RUTA PROTEGIDA SIN TOKEN
     // ==================================================
-    test('❌ Debe rechazar ruta protegida sin token - CÓDIGO REAL', async () => {
+    test('Debe rechazar ruta protegida sin token - CÓDIGO REAL', async () => {
         const response = await request(testApp)
             .get('/api/auth/renew')
             .expect(401);

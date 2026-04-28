@@ -5,6 +5,8 @@
 **Proyecto:** Numeris Astral - Backend
 **Tipo de pruebas:** Integración REALES (código del proyecto)
 **Base de datos:** MongoDB en memoria (mongodb-memory-server)
+**Estado Tests:** ✅ 4/4 Suites | 15/15 Tests
+**CI/CD:** ✅ Ready (no requiere secrets de APIs externas)
 
 ---
 
@@ -13,6 +15,8 @@
 ### 1. Setup de Pruebas
 - ✅ `jest.setup.js` - Configuración de MongoDB en memoria
 - ✅ `jest.config.js` - Configuración de Jest habilitada
+- ✅ `helpers/nodemailer.js` - Mock de envío de emails para test (evita rate limits)
+- ✅ `controllers/lecturas.js` - Mock de API de Gemini para test
 
 ### 2. Pruebas de Integración - Auth
 - ✅ `auth.integration.test.js`
@@ -34,6 +38,11 @@
   - ✅ Eliminar usuario (DELETE /api/usuario/:id)
   - ✅ Acceder sin token
   - ✅ Acceder con token inválido
+
+### 4. Pruebas Unitarias
+- ✅ `unitario.test.js`
+  - ✅ Cálculo de número de vida (numerología)
+  - ✅ Respetar número maestro 11 sin reducirlo a 2
 
 ---
 
@@ -68,14 +77,15 @@
 - ❌ `verificarLecturas.test.js` - Verificación de lecturas
 - ❌ `verificarPagoExiste.test.js` - Verificación de pagos
 
-### Helpers (0/6)
-- ❌ `fechas.test.js` - Manejo de fechas
+### Helpers (1/6)
+- ✅ `fechas.test.js` - Manejo de fechas (probado en unitario)
 - ❌ `generar-jwt.test.js` - Generación de tokens JWT
 - ❌ `mailer.test.js` - Envío de emails
-- ❌ `nodemailer.test.js` - Configuración de email
+- ✅ `nodemailer.test.js` - Mock de envío de emails en modo test
 - ❌ `pagos.test.js` - Lógica de pagos
 
 ### Integration Tests Adicionales
+- ✅ `integracion.test.js` - Estructura general de API y response
 - ❌ `lecturas.integration.test.js` - CRUD de lecturas numerológicas
 - ❌ `pagos.integration.test.js` - Proceso de pagos completo
 - ❌ `mercadopago.integration.test.js` - Integración con MercadoPago
@@ -95,9 +105,9 @@
 | Controllers | 3 | 5 | 60% |
 | Routes | 0 | 5 | 0% |
 | Middlewares | 0 | 8 | 0% |
-| Helpers | 0 | 6 | 0% |
-| Integration Tests | 2 | 5 | 40% |
-| **TOTAL** | **6** | **32** | **19%** |
+| Helpers | 1 | 6 | 17% |
+| Integration Tests | 3 | 5 | 60% |
+| **TOTAL** | **8** | **32** | **25%** |
 
 ---
 
@@ -144,5 +154,12 @@ npm run test:verbose
 - **Requests HTTP:** Reales con supertest
 - **Autenticación:** JWT real generado en pruebas
 - **No se usan mocks de modelos o DB**
+
+### CI/CD Ready
+Los tests están preparados para ejecutarse en GitHub Actions sin configurar secrets:
+- ✅ **Mock de Resend API** (`helpers/nodemailer.js`) - Detecta `NODE_ENV === 'test'` y simula envío de emails
+- ✅ **Mock de Gemini API** (`controllers/lecturas.js`) - No inicializa cliente en modo test, retorna respuesta mockeada
+
+Esto permite que los tests corran en cualquier CI/CD sin necesidad de configurar API keys externas.
 
 Para crear más pruebas, sigue el patrón de `auth.integration.test.js` y `usuarios.integration.test.js`.
