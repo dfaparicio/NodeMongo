@@ -14,7 +14,7 @@ describe('--- PRUEBAS UNITARIAS (BACKEND) ---', () => {
   });
 
   test('Debe respetar el número maestro 11 sin reducirlo a 2', () => {
-    const resultado = calcularNumeroVida('1997-25-01');
+    const resultado = calcularNumeroVida('1988-01-11');
     expect(resultado).toBe(11);
   });
 });
