@@ -1,4 +1,3 @@
-// Función de ejemplo (Asegúrate de importar la tuya real)
 const calcularNumeroVida = (fecha) => {
   const digitos = fecha.replace(/-/g, '');
   let suma = [...digitos].reduce((acc, n) => acc + parseInt(n), 0);
@@ -15,7 +14,7 @@ describe('--- PRUEBAS UNITARIAS (BACKEND) ---', () => {
   });
 
   test('Debe respetar el número maestro 11 sin reducirlo a 2', () => {
-    const resultado = calcularNumeroVida('2002-11-05');
+    const resultado = calcularNumeroVida('1997-25-01');
     expect(resultado).toBe(11);
   });
 });

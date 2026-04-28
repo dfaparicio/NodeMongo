@@ -127,7 +127,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - USUARIOS CRUD (CÓDIGO REAL)', () => {
     // ==================================================
     // 2. PRUEBA: OBTENER USUARIO POR EMAIL (CÓDIGO REAL)
     // ==================================================
-    test('✅ Debe obtener usuario por email - CÓDIGO REAL', async () => {
+    test('Debe obtener usuario por email - CÓDIGO REAL', async () => {
         // Primero crear un usuario usando /api/auth/registro (no requiere await de email)
         await request(testApp)
             .post('/api/auth/registro')
@@ -234,7 +234,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - USUARIOS CRUD (CÓDIGO REAL)', () => {
     // ==================================================
     // 5. PRUEBA: INACTIVAR USUARIO (CÓDIGO REAL)
     // ==================================================
-    test('✅ Debe inactivar un usuario - CÓDIGO REAL', async () => {
+    test('Debe inactivar un usuario - CÓDIGO REAL', async () => {
         // Primero crear y activar un usuario usando /api/auth/registro
         const crearResponse = await request(testApp)
             .post('/api/auth/registro')
@@ -269,7 +269,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - USUARIOS CRUD (CÓDIGO REAL)', () => {
     // ==================================================
     // 6. PRUEBA: CAMBIAR PASSWORD (CÓDIGO REAL)
     // ==================================================
-    test('✅ Debe cambiar la contraseña de un usuario - CÓDIGO REAL', async () => {
+    test('Debe cambiar la contraseña de un usuario - CÓDIGO REAL', async () => {
         // Primero crear un usuario usando /api/auth/registro
         const crearResponse = await request(testApp)
             .post('/api/auth/registro')
@@ -301,7 +301,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - USUARIOS CRUD (CÓDIGO REAL)', () => {
     // ==================================================
     // 7. PRUEBA: CAMBIAR PASSWORD INCORRECTA
     // ==================================================
-    test('❌ Debe rechazar cambio de password con contraseña actual incorrecta - CÓDIGO REAL', async () => {
+    test('Debe rechazar cambio de password con contraseña actual incorrecta - CÓDIGO REAL', async () => {
         // Primero crear un usuario usando /api/auth/registro
         const crearResponse = await request(testApp)
             .post('/api/auth/registro')
@@ -332,7 +332,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - USUARIOS CRUD (CÓDIGO REAL)', () => {
     // ==================================================
     // 8. PRUEBA: ELIMINAR USUARIO (CÓDIGO REAL)
     // ==================================================
-    test('✅ Debe eliminar un usuario - CÓDIGO REAL', async () => {
+    test('Debe eliminar un usuario - CÓDIGO REAL', async () => {
         // Primero crear un usuario usando /api/auth/registro
         const crearResponse = await request(testApp)
             .post('/api/auth/registro')
@@ -362,7 +362,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - USUARIOS CRUD (CÓDIGO REAL)', () => {
     // ==================================================
     // 9. PRUEBA: ACCEDER SIN TOKEN
     // ==================================================
-    test('❌ Debe rechazar acceso sin token - CÓDIGO REAL', async () => {
+    test('Debe rechazar acceso sin token - CÓDIGO REAL', async () => {
         const response = await request(testApp)
             .get('/api/usuario')
             .expect(401);
@@ -373,7 +373,7 @@ describe('🧪 PRUEBAS DE INTEGRACIÓN - USUARIOS CRUD (CÓDIGO REAL)', () => {
     // ==================================================
     // 10. PRUEBA: ACCEDER CON TOKEN INVÁLIDO
     // ==================================================
-    test('❌ Debe rechazar acceso con token inválido - CÓDIGO REAL', async () => {
+    test('Debe rechazar acceso con token inválido - CÓDIGO REAL', async () => {
         const response = await request(testApp)
             .get('/api/usuario')
             .set('x-token', 'token_invalido_12345')

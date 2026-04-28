@@ -13,6 +13,9 @@ export default {
     '^.+\\.vue$': '@vue/vue3-jest',
     '^.+\\.(js|jsx|mjs)$': 'babel-jest'
   },
+  moduleNameMapper: {
+    '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/__tests__/mocks/fileMock.js'
+  },
   verbose: true,
   testTimeout: 10000
 };
