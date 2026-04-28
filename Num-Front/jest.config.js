@@ -14,7 +14,7 @@ export default {
     '^.+\\.(js|jsx|mjs)$': 'babel-jest'
   },
   moduleNameMapper: {
-    '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/__tests__/mocks/fileMock.js'
+    '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/__mocks__/fileMock.js'
   },
   verbose: true,
   testTimeout: 10000
